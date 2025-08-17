@@ -25,29 +25,29 @@ export function Footer() {
             <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-cyan-200/40 p-6 shadow-lg shadow-cyan-100/20">
               <Link href="/" className="flex items-center gap-3 text-xl font-bold mb-4 group">
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
-                  <SafeImage src="/logo.webp" alt="МедСИП Протезирование" width={32} height={32} className="w-8 h-8 object-contain" />
+                  <SafeImage src="/logo.webp" alt="Venorus - Российские протезы" width={32} height={32} className="w-8 h-8 object-contain" />
                 </div>
                 <span className="bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">
-                  {siteSettings?.siteName || "МедСИП Протезирование"}
+                  {siteSettings?.siteName || "Venorus"}
                 </span>
               </Link>
               <p className="text-slate-600 mb-6 leading-relaxed">
-                Даем людям возможность жить полноценной жизнью
+                Производство качественных российских протезов и ортопедических изделий
               </p>
 
               {/* Дополнительная информация о компании */}
               <div className="space-y-3 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"></div>
-                  <span>Индивидуальное протезирование</span>
+                  <span>Отечественное производство</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"></div>
-                  <span>Современные технологии</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-blue-500 rounded-full"></div>
+                  <span>Проверенное качество</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"></div>
-                  <span>Профессиональная поддержка</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-white to-red-500 rounded-full"></div>
+                  <span>Гарантия и поддержка</span>
                 </div>
               </div>
             </div>
@@ -80,12 +80,12 @@ export function Footer() {
                   </span>
                 </Link>
 
-                <Link href="mailto:protez@medsip.ru" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 transition-all duration-300 group">
+                <Link href="mailto:info@venorus.ru" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 transition-all duration-300 group">
                   <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
                     <Mail className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-slate-600 group-hover:text-cyan-700 transition-colors duration-300 font-medium">
-                    protez@medsip.ru
+                    info@venorus.ru
                   </span>
                 </Link>
               </div>
@@ -166,7 +166,7 @@ export function Footer() {
         <div className="container mx-auto px-2 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-center items-center">
             <p className="text-sm text-slate-600 font-medium">
-              © {new Date().getFullYear()} <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent font-semibold">{siteSettings?.siteName || "МедСИП Протезирование"}</span>. Все права защищены.
+              © {new Date().getFullYear()} <span className="bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent font-semibold">{siteSettings?.siteName || "Venorus"}</span>. Все права защищены.
             </p>
           </div>
         </div>

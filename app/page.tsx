@@ -901,19 +901,19 @@ export default function HomePage() {
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                    <span className="text-white">Восстанавливаем</span>
+                    <span className="text-white">Российское</span>
                     <br />
-                    <span className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
-                      возможности
+                    <span className="bg-gradient-to-r from-red-400 via-white to-blue-400 bg-clip-text text-transparent">
+                      качество
                     </span>
                     <br />
-                    <span className="text-white/90">возвращаем уверенность</span>
+                    <span className="text-white/90">проверенные решения</span>
                   </h1>
 
                   <p className="text-lg sm:text-xl lg:text-2xl text-white/80 leading-relaxed mb-6 sm:mb-8">
                     {siteSettings?.heroSubtitle && siteSettings?.heroSubtitle.trim() !== "Тестовый подзаголовок"
                       ? siteSettings.heroSubtitle
-                      : "Современные протезы, созданные с заботой о каждом пациенте. Индивидуальный подход и проверенные технологии."}
+                      : "Производство высококачественных протезов и ортопедических изделий в России. Проверенные технологии и отечественное качество."}
                   </p>
 
                   {/* Кнопка перехода к каталогу */}
@@ -930,13 +930,13 @@ export default function HomePage() {
                 {/* Статистика - улучшенная адаптивность */}
                 <div className="grid grid-cols-3 gap-2 sm:gap-6 pt-6 sm:pt-8 border-t border-white/20">
                   <div className="text-center p-2 sm:p-4 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="text-base sm:text-lg lg:text-2xl text-white">Качество</div>
+                    <div className="text-base sm:text-lg lg:text-2xl text-white">Отечественное</div>
                   </div>
                   <div className="text-center p-2 sm:p-4 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="text-base sm:text-lg lg:text-2xl text-white">Надежность</div>
+                    <div className="text-base sm:text-lg lg:text-2xl text-white">Надёжное</div>
                   </div>
                   <div className="text-center p-2 sm:p-4 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="text-base sm:text-lg lg:text-2xl text-white">Ассортимент</div>
+                    <div className="text-base sm:text-lg lg:text-2xl text-white">Качественное</div>
                   </div>
                 </div>
               </div>
@@ -970,8 +970,8 @@ export default function HomePage() {
               </div>
 
               <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent">
-                  Каталог 2025
+                <span className="bg-gradient-to-r from-red-600 via-blue-700 to-red-800 bg-clip-text text-transparent">
+                  Каталог Venorus 2025
                 </span>
               </h2>
 

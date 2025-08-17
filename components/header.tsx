@@ -86,11 +86,11 @@ export default function Header() {
         <div className="flex-1 flex justify-start">
           <InstantLink href="/" className="flex items-center gap-3 transition-all duration-200 hover:opacity-80">
             <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-              <SafeImage src="/logo.webp" alt="МедСИП Протезирование" width={28} height={28} className="h-7 w-auto max-w-none dark:hidden" />
-              <SafeImage src="/dark_logo.webp" alt="МедСИП Протезирование" width={28} height={28} className="h-7 w-auto max-w-none hidden dark:block" />
+              <SafeImage src="/logo.webp" alt="Venorus - Российские протезы" width={28} height={28} className="h-7 w-auto max-w-none dark:hidden" />
+              <SafeImage src="/dark_logo.webp" alt="Venorus - Российские протезы" width={28} height={28} className="h-7 w-auto max-w-none hidden dark:block" />
             </div>
             <span className="text-lg font-semibold text-slate-800 whitespace-nowrap">
-              МедСИП&nbsp;<span className="hidden sm:inline">Протезирование</span>
+              Venorus&nbsp;<span className="hidden sm:inline">Протезы</span>
             </span>
           </InstantLink>
         </div>
@@ -145,7 +145,7 @@ export default function Header() {
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                       <Image
                         src="/logo.webp"
-                        alt="МедСИП Протезирование"
+                        alt="Venorus - Российские протезы"
                         width={32}
                         height={32}
                         className="h-6 w-auto max-w-none dark:hidden"
@@ -158,10 +158,10 @@ export default function Header() {
                           target.src = '/Logo.webp';
                         }}
                       />
-                      <SafeImage src="/dark_logo.webp" alt="МедСИП Протезирование" width={24} height={24} className="h-6 w-auto max-w-none hidden dark:block" />
+                      <SafeImage src="/dark_logo.webp" alt="Venorus - Российские протезы" width={24} height={24} className="h-6 w-auto max-w-none hidden dark:block" />
                     </div>
                     <span className="text-lg font-semibold text-slate-800">
-                      МедСИП
+                      Venorus
                     </span>
                 </InstantLink>
                 {navLinks.map((link) => (
@@ -244,7 +244,7 @@ export default function Header() {
                 </a>
 
                 {/* Email */}
-                <a href="mailto:protez@medsip.ru" className="block">
+                <a href="mailto:info@venorus.ru" className="block">
                   <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-cyan-50/80 to-blue-50/60 border border-cyan-200/30 hover:from-cyan-100/80 hover:to-blue-100/60 hover:border-cyan-300/50 transition-all duration-300 hover:scale-[1.02]">
                     <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg">
                       <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -252,7 +252,7 @@ export default function Header() {
                     <div>
                       <p className="font-semibold text-slate-800">Email</p>
                       <p className="text-cyan-600 font-medium">
-                        protez@medsip.ru
+                        info@venorus.ru
                       </p>
                     </div>
                   </div>
