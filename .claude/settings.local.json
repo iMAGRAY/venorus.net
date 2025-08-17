@@ -19,6 +19,9 @@
       "Bash(mkdir:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\c\\Users\\1\\Documents\\GitHub"
+    ]
   }
 }

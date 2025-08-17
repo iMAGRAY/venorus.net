@@ -129,11 +129,11 @@ export const GET = withCache(async function GET(request: NextRequest) {
                 'price', pv.price,
                 'discountPrice', pv.discount_price,
                 'isAvailable', pv.is_active,
-                'sizeName', pv.size_name,
-                'sizeValue', pv.size_value,
+                'sizeName', pv.name,
+                'sizeValue', pv.short_name,
                 'stockQuantity', pv.stock_quantity,
                 'sku', pv.sku
-              ) ORDER BY pv.sort_order, pv.size_name
+              ) ORDER BY pv.sort_order, pv.name
             ) FILTER (WHERE pv.id IS NOT NULL),
             '[]'::json
           ) as variants
