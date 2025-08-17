@@ -17,7 +17,8 @@
       "Bash(grep:*)",
       "Bash(git add:*)",
       "Bash(mkdir:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": [],
