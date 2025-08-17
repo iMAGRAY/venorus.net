@@ -1,19 +1,19 @@
 {
-  "name": "medsip-protez",
+  "name": "venorus",
   "version": "1.0.0",
-  "description": "Современная система управления протезами и медицинскими изделиями с расширенными возможностями каталогизации, характеристик и административного управления",
+  "description": "Современная система управления каталогом с расширенными возможностями каталогизации, характеристик и административного управления",
   "private": false,
   "author": {
-    "name": "MedSIP Team",
-    "email": "support@medsip.ru"
+    "name": "Venorus Team",
+    "email": "support@venorus.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/iMAGRAY/medsip-protez.git"
+    "url": "https://github.com/iMAGRAY/venorus.git"
   },
-  "homepage": "https://github.com/iMAGRAY/medsip-protez#readme",
+  "homepage": "https://github.com/iMAGRAY/venorus#readme",
   "bugs": {
-    "url": "https://github.com/iMAGRAY/medsip-protez/issues"
+    "url": "https://github.com/iMAGRAY/venorus/issues"
   },
   "keywords": [
     "medical",

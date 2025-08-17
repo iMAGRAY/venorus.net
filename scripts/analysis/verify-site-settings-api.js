@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 async function verifySiteSettingsAPI() {
   const baseUrl = process.env.NODE_ENV === 'production'
-    ? 'https://medsip-protez.ru/api'
+    ? 'https://venorus.com/api'
     : 'http://localhost:3000/api';
   const testData = {
     siteName: 'Test Site Name',

@@ -12,7 +12,7 @@ const https = require('https');
 const { URL } = require('url');
 
 // Конфигурация
-const BASE_URL = process.env.TEST_URL || 'http://localhost:3009';
+const BASE_URL = process.env.TEST_URL || 'http://localhost:3010';
 const TIMEOUT = 5000;
 
 // Цвета для консоли

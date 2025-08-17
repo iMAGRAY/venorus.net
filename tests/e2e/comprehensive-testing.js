@@ -17,7 +17,7 @@ const path = require('path');
 
 // Конфигурация тестирования
 const CONFIG = {
-  BASE_URL: 'http://localhost:3009',
+  BASE_URL: 'http://localhost:3010',
   TIMEOUT: 10000,
   MAX_RETRIES: 3,
   PERFORMANCE_THRESHOLDS: {

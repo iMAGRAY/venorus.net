@@ -64,8 +64,8 @@ async function createSuperAdmin() {
     }
     // Данные нового администратора
     const adminData = {
-      username: 'medsip_admin',
-      email: 'admin@medsip-protez.local',
+      username: 'venorus_admin',
+      email: 'admin@venorus.local',
       password: generateSecurePassword(20),
       firstName: 'Системный',
       lastName: 'Администратор'
@@ -137,7 +137,7 @@ async function createSuperAdmin() {
     // Записываем данные в файл для безопасности
     const fs = require('fs');
     const credentialsFile = path.join(__dirname, '../.admin-credentials.txt');
-    const credentialsData = `MedSIP-Protez Супер-Администратор
+    const credentialsData = `Venorus Супер-Администратор
 ==========================================
 Создан: ${new Date().toISOString()}
 ==========================================

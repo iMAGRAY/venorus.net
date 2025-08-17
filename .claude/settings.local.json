@@ -2,7 +2,20 @@
   "permissions": {
     "allow": [
       "Bash(tasklist:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(npm test)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run test:*)",
+      "Bash(find:*)",
+      "Bash(npm run:*)",
+      "Bash(curl:*)",
+      "Bash(openssl:*)",
+      "Bash(node:*)",
+      "Bash(psql:*)",
+      "Bash(rm:*)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 node test-ssl-proper.js)",
+      "Bash(grep:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

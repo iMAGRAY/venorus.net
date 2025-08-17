@@ -35,7 +35,7 @@ function createPool(): Pool {
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 15_000, // Увеличиваем до 15 секунд
     query_timeout: 30_000, // Добавляем таймаут для запросов
-    ssl: (process.env.PGSSL === "true" || process.env.DATABASE_SSL === "true" || process.env.DATABASE_URL?.includes("sslmode=require")) ? { rejectUnauthorized: false } : undefined,
+    ssl: (process.env.PGSSL === "true" || process.env.DATABASE_SSL === "true" || process.env.DATABASE_URL?.includes("sslmode=require") || process.env.DATABASE_URL?.includes("sslmode=prefer")) ? { rejectUnauthorized: false } : undefined,
   }
 
   logger.info('Connecting to database', {

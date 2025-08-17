@@ -13,7 +13,7 @@ const { URL } = require('url');
 const crypto = require('crypto');
 
 // Конфигурация
-const BASE_URL = process.env.TEST_URL || 'http://localhost:3009';
+const BASE_URL = process.env.TEST_URL || 'http://localhost:3010';
 const TIMEOUT = 10000;
 
 // Цвета для консоли

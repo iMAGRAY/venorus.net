@@ -13,7 +13,7 @@ const { URL } = require('url');
 const { performance } = require('perf_hooks');
 
 // Конфигурация
-const BASE_URL = process.env.TEST_URL || 'http://localhost:3009';
+const BASE_URL = process.env.TEST_URL || 'http://localhost:3010';
 const TIMEOUT = 30000; // Больше времени для нагрузочных тестов
 
 // Настройки нагрузки

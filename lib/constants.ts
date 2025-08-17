@@ -1,4 +1,4 @@
-// Константы URL и конфигурации для проекта MedSIP-Protez
+// Константы URL и конфигурации для проекта Venorus
 
 // API Endpoints
 export const API_ENDPOINTS = {
@@ -107,16 +107,16 @@ export const CONFIG = {
   // S3 конфигурация
   S3: {
     ENDPOINT: process.env.S3_ENDPOINT || 'https://s3.amazonaws.com',
-    BUCKET: process.env.S3_BUCKET_NAME || 'medsip-protez',
+    BUCKET: process.env.S3_BUCKET_NAME || 'venorus',
     REGION: process.env.S3_REGION || 'us-east-1',
   },
 
   // Социальные сети (по умолчанию)
   SOCIAL: {
-    VK: 'https://vk.com/medsip_prosthetics',
-    TELEGRAM: 'https://t.me/medsip_prosthetics',
-    YOUTUBE: 'https://youtube.com/@medsip_prosthetics',
-    OK: 'https://ok.ru/medsip.prosthetics',
+    VK: 'https://vk.com/venorus_prosthetics',
+    TELEGRAM: 'https://t.me/venorus_prosthetics',
+    YOUTUBE: 'https://youtube.com/@venorus_prosthetics',
+    OK: 'https://ok.ru/venorus.prosthetics',
   },
 
   // Лимиты

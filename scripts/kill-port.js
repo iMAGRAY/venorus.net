@@ -31,7 +31,7 @@ async function killPort(port) {
     // Убить каждый процесс
     for (const pid of pids) {
       try {
-        await execAsync(`taskkill //PID ${pid} //F`);
+        await execAsync(`taskkill /PID ${pid} /F`);
         console.log(`Процесс ${pid} остановлен`);
       } catch (error) {
         console.log(`Не удалось остановить процесс ${pid}: ${error.message}`);

@@ -13,10 +13,10 @@ function generateMockMediaFiles(count) {
   for (let i = 0; i < count; i++) {
     files.push({
       name: `image_${i}.jpg`,
-      url: `https://s3.twcstorage.ru/medsip-protez/products/image_${i}.jpg`,
+      url: `https://s3.twcstorage.ru/venorus/products/image_${i}.jpg`,
       size: Math.floor(Math.random() * 500000) + 100000, // 100KB - 600KB
       uploadedAt: new Date(Date.now() - Math.random() * 86400000), // случайная дата в последние 24 часа
-      productName: i % 3 === 0 ? `Протез ${i}` : undefined,
+      productName: i % 3 === 0 ? `Venorus ${i}` : undefined,
       productId: i % 3 === 0 ? i.toString() : undefined,
       type: 's3',
       source: 's3',
