@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface Product {
   id: number
@@ -30,21 +30,48 @@ interface AdminStoreState {
   forceRefresh: () => void
 }
 
-export function useAdminStore(): AdminStoreState {
-  const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [siteSettings, setSiteSettings] = useState({})
-  const [isLoading, setIsLoading] = useState(false)
+// Глобальный кеш для предотвращения повторных запросов
+let globalCache = {
+  products: null as Product[] | null,
+  categories: null as Category[] | null,
+  isLoading: false,
+  hasInitialized: false
+}
 
-  const initializeData = async () => {
+export function useAdminStore(): AdminStoreState {
+  const [products, setProducts] = useState<Product[]>(globalCache.products || [])
+  const [categories, setCategories] = useState<Category[]>(globalCache.categories || [])
+  const [siteSettings, setSiteSettings] = useState({})
+  const [isLoading, setIsLoading] = useState(globalCache.isLoading)
+
+  // Синхронизируем локальное состояние с глобальным кешем
+  useEffect(() => {
+    if (globalCache.products) {
+      setProducts(globalCache.products)
+    }
+    if (globalCache.categories) {
+      setCategories(globalCache.categories)
+    }
+    setIsLoading(globalCache.isLoading)
+  }, [])
+
+  const initializeData = useCallback(async () => {
+    // Предотвращаем повторные запросы
+    if (globalCache.isLoading || globalCache.hasInitialized) {
+      return
+    }
+
+    globalCache.isLoading = true
     setIsLoading(true)
+    
     try {
       // Загружаем продукты
       const productsRes = await fetch('/api/products')
       if (productsRes.ok) {
         const productsData = await productsRes.json()
         if (productsData.success) {
-          setProducts(productsData.data || [])
+          globalCache.products = productsData.data || []
+          setProducts(globalCache.products)
         }
       }
 
@@ -53,17 +80,24 @@ export function useAdminStore(): AdminStoreState {
       if (categoriesRes.ok) {
         const categoriesData = await categoriesRes.json()
         if (categoriesData.success) {
-          setCategories(categoriesData.data || [])
+          globalCache.categories = categoriesData.data || []
+          setCategories(globalCache.categories)
         }
       }
+      
+      globalCache.hasInitialized = true
     } catch (error) {
       console.error('Ошибка загрузки данных:', error)
     } finally {
+      globalCache.isLoading = false
       setIsLoading(false)
     }
-  }
+  }, [])
 
   const forceRefresh = () => {
+    // Сбрасываем кеш для принудительного обновления
+    globalCache.hasInitialized = false
+    globalCache.isLoading = false
     initializeData()
   }
 

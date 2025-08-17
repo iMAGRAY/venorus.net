@@ -39,16 +39,18 @@ export function ProductRecommendations({
   const [isVisible, setIsVisible] = useState(false)
   const [sourceProducts, setSourceProducts] = useState<Prosthetic[]>(allProducts)
 
-  // Загружаем товары, если они не переданы
+  // Загружаем товары, если они не переданы (только один раз)
   useEffect(() => {
-    if (allProducts.length === 0) {
+    if (allProducts.length === 0 && sourceProducts.length === 0) {
       fetchProducts().then((loaded) => {
         if (loaded.length > 0) {
           setSourceProducts(loaded)
         }
       })
+    } else if (allProducts.length > 0) {
+      setSourceProducts(allProducts)
     }
-  }, [allProducts.length])
+  }, [allProducts.length, sourceProducts.length])
 
   // Получаем рекомендации
   const recommendations = useMemo(() => {
@@ -239,16 +241,18 @@ export function ProductRecommendationsSidebar({
 }: ProductRecommendationsProps) {
   const [sourceProducts, setSourceProducts] = useState<Prosthetic[]>(allProducts)
 
-  // Загружаем товары, если они не переданы
+  // Загружаем товары, если они не переданы (только один раз)
   useEffect(() => {
-    if (allProducts.length === 0) {
+    if (allProducts.length === 0 && sourceProducts.length === 0) {
       fetchProducts().then((loaded) => {
         if (loaded.length > 0) {
           setSourceProducts(loaded)
         }
       })
+    } else if (allProducts.length > 0) {
+      setSourceProducts(allProducts)
     }
-  }, [allProducts.length])
+  }, [allProducts.length, sourceProducts.length])
 
   const sidebarRecommendations = useMemo(() => {
     if (!currentProduct || sourceProducts.length === 0) return []
