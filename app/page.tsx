@@ -901,19 +901,19 @@ export default function HomePage() {
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                    <span className="text-white">Российское</span>
+                    <span className="text-white drop-shadow-lg">🇷🇺 Российское</span>
                     <br />
-                    <span className="bg-gradient-to-r from-red-400 via-white to-blue-400 bg-clip-text text-transparent">
-                      качество
+                    <span className="bg-gradient-to-r from-red-500 via-white to-blue-500 bg-clip-text text-transparent drop-shadow-md">
+                      КАЧЕСТВО
                     </span>
                     <br />
-                    <span className="text-white/90">проверенные решения</span>
+                    <span className="text-white/90 drop-shadow-md">✨ Проверенные решения ✨</span>
                   </h1>
 
                   <p className="text-lg sm:text-xl lg:text-2xl text-white/80 leading-relaxed mb-6 sm:mb-8">
                     {siteSettings?.heroSubtitle && siteSettings?.heroSubtitle.trim() !== "Тестовый подзаголовок"
                       ? siteSettings.heroSubtitle
-                      : "Производство высококачественных протезов и ортопедических изделий в России. Проверенные технологии и отечественное качество."}
+                      : "🏭 Производство высококачественных протезов и ортопедических изделий в России. 💪 Проверенные российские технологии и отечественное качество для здоровья нации! 🌟"}
                   </p>
 
                   {/* Кнопка перехода к каталогу */}

@@ -89,7 +89,7 @@ export default function Header() {
               <SafeImage src="/dark_logo.webp" alt="Venorus - Российские протезы" width={28} height={28} className="h-7 w-auto max-w-none hidden dark:block" />
             </div>
             <span className="text-lg font-semibold text-slate-800 whitespace-nowrap">
-              Venorus&nbsp;<span className="hidden sm:inline">Протезы</span>
+              🇷🇺 Venorus&nbsp;<span className="hidden sm:inline">- Российские Протезы</span>
             </span>
           </InstantLink>
         </div>
@@ -152,7 +152,7 @@ export default function Header() {
                       <SafeImage src="/dark_logo.webp" alt="Venorus - Российские протезы" width={24} height={24} className="h-6 w-auto max-w-none hidden dark:block" />
                     </div>
                     <span className="text-lg font-semibold text-slate-800">
-                      Venorus
+                      🇷🇺 Venorus
                     </span>
                 </InstantLink>
                 {navLinks.map((link) => (

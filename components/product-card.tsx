@@ -45,10 +45,10 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
   return (
     <div className="group relative">
-      {/* Фоновый градиент */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/30 to-blue-100/40 rounded-2xl blur-sm transform group-hover:scale-105 transition-transform duration-300"></div>
+      {/* Фоновый градиент в российских цветах */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-white/20 to-red-100/40 rounded-2xl blur-sm transform group-hover:scale-105 transition-transform duration-300"></div>
 
-      <Card className="relative flex flex-col h-full min-h-[400px] sm:min-h-[500px] overflow-hidden bg-white/90 backdrop-blur-lg border border-cyan-200/50 rounded-xl sm:rounded-2xl shadow-lg shadow-cyan-100/20 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-200/30 hover:border-cyan-300/60">
+      <Card className="relative flex flex-col h-full min-h-[400px] sm:min-h-[500px] overflow-hidden bg-white/90 backdrop-blur-lg border border-blue-200/50 rounded-xl sm:rounded-2xl shadow-lg shadow-blue-100/20 transition-all duration-300 hover:shadow-xl hover:shadow-red-200/30 hover:border-red-300/60">
 
         <CardHeader className="p-0 relative overflow-hidden rounded-t-2xl">
           <div className="relative w-full aspect-square bg-gradient-to-br from-cyan-50 to-blue-50">
@@ -267,11 +267,11 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 size="sm"
                 className={`w-full py-1 sm:py-3 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 touch-manipulation ${
                   isProductAvailable(product)
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 border-0'
+                    ? 'bg-gradient-to-r from-blue-600 to-red-500 hover:from-blue-700 hover:to-red-600 text-white shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-red-300/40 border-0'
                     : 'bg-gradient-to-r from-slate-200 to-gray-200 text-slate-500 cursor-not-allowed border border-slate-300'
                 }`}
               >
-                {isProductAvailable(product) ? "Подробнее" : "Нет в наличии"}
+                {isProductAvailable(product) ? "🇷🇺 Подробнее" : "❌ Нет в наличии"}
               </Button>
             </InstantLink>
 
@@ -294,9 +294,9 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                   })
                 }}
                 size="sm"
-                className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-white/80 backdrop-blur-sm border-2 border-cyan-300 text-cyan-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 hover:border-cyan-400 transition-all duration-300 shadow-md hover:shadow-lg rounded-lg sm:rounded-xl"
+                className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-white/80 backdrop-blur-sm border-2 border-red-300 text-red-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-red-400 transition-all duration-300 shadow-md hover:shadow-lg rounded-lg sm:rounded-xl"
               >
-                <span className="text-xs sm:text-sm truncate">В заявку</span>
+                <span className="text-xs sm:text-sm truncate">📋 В заявку</span>
               </Button>
             )}
             {inCart && (
@@ -308,9 +308,9 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 }}
                 size="sm"
                 variant="outline"
-                className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-cyan-100/60 border-cyan-300 text-cyan-700 hover:bg-cyan-200/60 transition-colors rounded-lg sm:rounded-xl"
+                className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-green-100/60 border-green-300 text-green-700 hover:bg-green-200/60 transition-colors rounded-lg sm:rounded-xl"
               >
-                В заявке
+                ✅ В заявке
               </Button>
             )}
           </div>

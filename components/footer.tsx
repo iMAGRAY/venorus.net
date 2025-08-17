@@ -32,22 +32,27 @@ export function Footer() {
                 </span>
               </Link>
               <p className="text-slate-600 mb-6 leading-relaxed">
-                Производство качественных российских протезов и ортопедических изделий
+                🏭 Производство качественных российских протезов и ортопедических изделий <br/>
+                🇷🇺 <strong>Сделано в России</strong> для здоровья нации! 💪
               </p>
 
               {/* Дополнительная информация о компании */}
               <div className="space-y-3 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"></div>
-                  <span>Отечественное производство</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
+                  <span>🏭 <strong>100% Отечественное производство</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-blue-500 rounded-full"></div>
-                  <span>Проверенное качество</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-red-600 rounded-full"></div>
+                  <span>⭐ <strong>Российское качество</strong> - проверено временем</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-white to-red-500 rounded-full"></div>
-                  <span>Гарантия и поддержка</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-white to-white rounded-full border border-red-300"></div>
+                  <span>🛡️ <strong>Гарантия и поддержка</strong> по всей стране</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full"></div>
+                  <span>🌟 Сертифицировано в России</span>
                 </div>
               </div>
             </div>
@@ -165,9 +170,14 @@ export function Footer() {
       <div className="relative z-10 border-t border-cyan-200/40 bg-white/40 backdrop-blur-xl">
         <div className="container mx-auto px-2 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-center items-center">
-            <p className="text-sm text-slate-600 font-medium">
-              © {new Date().getFullYear()} <span className="bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent font-semibold">{siteSettings?.siteName || "Venorus"}</span>. Все права защищены.
-            </p>
+            <div className="text-center">
+              <p className="text-sm text-slate-600 font-medium mb-2">
+                © {new Date().getFullYear()} <span className="bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent font-semibold">{siteSettings?.siteName || "Venorus"}</span>. Все права защищены.
+              </p>
+              <p className="text-xs text-slate-500 italic">
+                🇷🇺 <strong>"Здоровье нации - в российских руках!"</strong> 🇷🇺
+              </p>
+            </div>
           </div>
         </div>
       </div>
