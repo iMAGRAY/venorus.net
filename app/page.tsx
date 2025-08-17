@@ -12,6 +12,7 @@ import { ViewToggle } from "@/components/view-toggle"
 import { ProductQuickView } from "@/components/product-quick-view"
 import { Button } from "@/components/ui/button"
 import { ChevronRight, Filter, Loader2, X, ChevronUp, ChevronDown } from "lucide-react"
+import FlagIcon from '@mui/icons-material/Flag'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { useAdminStore } from "@/lib/admin-store"
 import logger from "@/lib/logger"
@@ -896,17 +897,20 @@ export default function HomePage() {
                 <div className="space-y-6">
                   <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 shadow-lg">
                     <div className="w-3 h-3 bg-gradient-to-r from-red-400 to-blue-400 rounded-full mr-3 animate-pulse"></div>
-                    <span className="text-white text-sm font-semibold">🇷🇺 Сделано в России</span>
+                    <span className="text-white text-sm font-semibold flex items-center gap-2">
+                      <FlagIcon className="w-4 h-4" />
+                      Сделано в России
+                    </span>
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                    <span className="text-white drop-shadow-lg">Российские</span>
+                    <span className="text-white drop-shadow-lg">Товары</span>
                     <br />
                     <span className="bg-gradient-to-r from-red-500 via-white to-blue-500 bg-clip-text text-transparent drop-shadow-md">
-                      ТОВАРЫ НАРОДНОГО
+                      ИЗ РОССИИ
                     </span>
                     <br />
-                    <span className="text-white/90 drop-shadow-md">Производства</span>
+                    <span className="text-white/90 drop-shadow-md">Качество и Традиции</span>
                   </h1>
 
                   <p className="text-lg sm:text-xl lg:text-2xl text-white/85 leading-relaxed mb-6 sm:mb-8 max-w-4xl mx-auto lg:mx-0">
@@ -922,7 +926,7 @@ export default function HomePage() {
                     className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border-0"
                   >
                     <ChevronRight className="w-5 h-5 mr-2" />
-                    Смотреть каталог
+                    Смотреть товары
                   </Button>
                 </div>
 
