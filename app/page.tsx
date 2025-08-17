@@ -865,108 +865,110 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen notion-page">
       <Header />
       <main className="flex-grow">
-        {/* Hero Section - элегантный тиффани стиль с улучшенной адаптивностью */}
-        <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-cyan-50/50 via-white to-blue-50/40">
-          {/* Фоновое изображение с теплым жизнерадостным светом */}
+        {/* Hero Section - российская тематика с национальными цветами */}
+        <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-red-50/30 via-white to-blue-50/30">
+          {/* Фоновое изображение с российскими акцентами */}
           <div className="absolute inset-0">
             <HeroVideo />
-            {/* Теплый свет из-за спины семьи */}
-            <div className="absolute inset-0 bg-gradient-radial from-amber-300/30 via-orange-200/20 to-transparent bg-center opacity-60 animate-pulse" style={{
-              animationDuration: '4s',
-              backgroundImage: 'radial-gradient(ellipse 800px 600px at 65% 45%, rgba(251, 191, 36, 0.3) 0%, rgba(251, 146, 60, 0.2) 25%, rgba(234, 88, 12, 0.1) 50%, transparent 70%)'
+            {/* Российский триколор overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-red-500/10 via-blue-600/5 to-red-600/10 opacity-40"></div>
+            {/* Патриотический акцент */}
+            <div className="absolute inset-0 bg-gradient-radial from-red-300/20 via-blue-200/15 to-transparent bg-center opacity-50" style={{
+              backgroundImage: 'radial-gradient(ellipse 900px 700px at 50% 40%, rgba(239, 68, 68, 0.2) 0%, rgba(59, 130, 246, 0.15) 50%, transparent 70%)'
             }}></div>
-            {/* Избирательный темный overlay - больше слева для текста, меньше в центре для семьи */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-800/35 to-slate-700/45 sm:from-slate-900/60 sm:via-slate-800/25 sm:to-slate-700/35"></div>
-            {/* Дополнительное освещение для семьи */}
+            {/* Основной темный overlay для читаемости текста */}
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/75 via-slate-800/45 to-slate-700/55"></div>
+            {/* Дополнительное освещение в центре */}
             <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(ellipse 600px 500px at 60% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%)'
+              backgroundImage: 'radial-gradient(ellipse 700px 600px at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 60%)'
             }}></div>
-            {/* Дополнительный теплый градиент для глубины */}
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-amber-900/15"></div>
           </div>
 
-          {/* Декоративные элементы в тиффани стиле - адаптивные размеры */}
-          <div className="absolute top-10 left-4 w-16 h-16 sm:top-20 sm:left-20 sm:w-32 sm:h-32 bg-gradient-to-br from-cyan-200/20 to-blue-200/30 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-16 right-4 w-20 h-20 sm:bottom-32 sm:right-16 sm:w-40 sm:h-40 bg-gradient-to-tr from-cyan-100/30 to-blue-100/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/4 right-1/4 w-12 h-12 sm:right-1/3 sm:w-24 sm:h-24 bg-gradient-to-br from-cyan-300/10 to-blue-300/15 rounded-full blur-xl"></div>
+          {/* Декоративные элементы в российских цветах */}
+          <div className="absolute top-10 left-4 w-16 h-16 sm:top-20 sm:left-20 sm:w-32 sm:h-32 bg-gradient-to-br from-red-200/25 to-blue-200/25 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-16 right-4 w-20 h-20 sm:bottom-32 sm:right-16 sm:w-40 sm:h-40 bg-gradient-to-tr from-blue-100/30 to-red-100/25 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/3 right-1/4 w-12 h-12 sm:right-1/3 sm:w-24 sm:h-24 bg-gradient-to-br from-red-300/15 to-blue-300/15 rounded-full blur-xl"></div>
 
           <div className="container relative z-10 mx-auto px-2 sm:px-6 lg:px-12">
             <div className="grid lg:grid-cols-1 gap-12 items-center">
-              {/* Левая колонка - основной контент */}
-              <div className="space-y-8">
+              {/* Основной контент */}
+              <div className="space-y-8 text-center lg:text-left">
                 <div className="space-y-6">
-                  <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full mr-3 animate-pulse"></div>
-                    <span className="text-white text-sm font-semibold">Ваш надёжный партнёр</span>
+                  <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 shadow-lg">
+                    <div className="w-3 h-3 bg-gradient-to-r from-red-400 to-blue-400 rounded-full mr-3 animate-pulse"></div>
+                    <span className="text-white text-sm font-semibold">🇷🇺 Сделано в России</span>
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                    <span className="text-white drop-shadow-lg">🇷🇺 Российское</span>
+                    <span className="text-white drop-shadow-lg">Российские</span>
                     <br />
                     <span className="bg-gradient-to-r from-red-500 via-white to-blue-500 bg-clip-text text-transparent drop-shadow-md">
-                      КАЧЕСТВО
+                      ТОВАРЫ НАРОДНОГО
                     </span>
                     <br />
-                    <span className="text-white/90 drop-shadow-md">✨ Проверенные решения ✨</span>
+                    <span className="text-white/90 drop-shadow-md">Производства</span>
                   </h1>
 
-                  <p className="text-lg sm:text-xl lg:text-2xl text-white/80 leading-relaxed mb-6 sm:mb-8">
+                  <p className="text-lg sm:text-xl lg:text-2xl text-white/85 leading-relaxed mb-6 sm:mb-8 max-w-4xl mx-auto lg:mx-0">
                     {siteSettings?.heroSubtitle && siteSettings?.heroSubtitle.trim() !== "Тестовый подзаголовок"
                       ? siteSettings.heroSubtitle
-                      : "🏭 Производство высококачественных протезов и ортопедических изделий в России. 💪 Проверенные российские технологии и отечественное качество для здоровья нации! 🌟"}
+                      : "Качественные российские товары от отечественных производителей. Поддержим наше производство - выберем российское! Надёжность, проверенная временем."}
                   </p>
 
                   {/* Кнопка перехода к каталогу */}
                   <Button
                     onClick={scrollToCatalog}
                     size="lg"
-                    className="bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg hover:bg-white/30 text-white font-semibold px-8 py-4 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border-0"
                   >
                     <ChevronRight className="w-5 h-5 mr-2" />
-                    Подобрать
+                    Смотреть каталог
                   </Button>
                 </div>
 
-                {/* Статистика - улучшенная адаптивность */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-6 pt-6 sm:pt-8 border-t border-white/20">
-                  <div className="text-center p-2 sm:p-4 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="text-base sm:text-lg lg:text-2xl text-white">Отечественное</div>
+                {/* Преимущества российского производства */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-white/20">
+                  <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-red-600/5 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div className="text-2xl mb-2">🏭</div>
+                    <div className="text-base sm:text-lg font-semibold text-white mb-1">Отечественное</div>
+                    <div className="text-sm text-white/70">Производство в России</div>
                   </div>
-                  <div className="text-center p-2 sm:p-4 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="text-base sm:text-lg lg:text-2xl text-white">Надёжное</div>
+                  <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div className="text-2xl mb-2">⭐</div>
+                    <div className="text-base sm:text-lg font-semibold text-white mb-1">Качественное</div>
+                    <div className="text-sm text-white/70">Российские стандарты</div>
                   </div>
-                  <div className="text-center p-2 sm:p-4 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="text-base sm:text-lg lg:text-2xl text-white">Качественное</div>
+                  <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-blue-500/10 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div className="text-2xl mb-2">🛡️</div>
+                    <div className="text-base sm:text-lg font-semibold text-white mb-1">Надёжное</div>
+                    <div className="text-sm text-white/70">Проверено временем</div>
                   </div>
                 </div>
               </div>
-
-              {/* Правая колонка - карточка с преимуществами */}
-              {/* Удалено: правая колонка карточка преимуществ полностью */}
             </div>
           </div>
 
           {/* Scroll indicator */}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center bg-white/10 backdrop-blur-sm">
+            <div className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center bg-gradient-to-b from-red-500/20 to-blue-500/20 backdrop-blur-sm">
               <div className="w-1.5 h-4 bg-white/80 rounded-full mt-2 animate-pulse"></div>
             </div>
           </div>
         </section>
 
-        {/* Products Section - элегантный тиффани стиль с улучшенной адаптивностью */}
+        {/* Products Section - российская цветовая схема */}
         <section id="products" className="py-12 sm:py-16 md:py-20 lg:py-24 relative">
-          {/* Фоновые декоративные элементы - адаптивные размеры */}
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/30 via-white to-blue-50/40"></div>
-          <div className="absolute top-10 right-4 w-32 h-32 sm:top-20 sm:right-10 sm:w-64 sm:h-64 bg-gradient-to-br from-cyan-100/20 to-blue-100/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-16 left-4 w-24 h-24 sm:bottom-32 sm:left-16 sm:w-48 sm:h-48 bg-gradient-to-tr from-teal-100/15 to-cyan-100/20 rounded-full blur-2xl"></div>
+          {/* Фоновые декоративные элементы в российских цветах */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-50/25 via-white to-blue-50/30"></div>
+          <div className="absolute top-10 right-4 w-32 h-32 sm:top-20 sm:right-10 sm:w-64 sm:h-64 bg-gradient-to-br from-red-100/15 to-blue-100/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-16 left-4 w-24 h-24 sm:bottom-32 sm:left-16 sm:w-48 sm:h-48 bg-gradient-to-tr from-blue-100/15 to-red-100/20 rounded-full blur-2xl"></div>
 
           <div className="container mx-auto px-2 sm:px-6 lg:px-12 relative z-10">
-            {/* Заголовок секции с тиффани акцентами */}
+            {/* Заголовок секции в российских цветах */}
             <div className="text-center mb-16">
-              <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-cyan-100/50 to-blue-100/40 backdrop-blur-sm border border-cyan-200/30 mb-6">
-                <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full mr-3 animate-pulse"></div>
-                <span className="text-cyan-700 text-sm font-medium">Каталог решений</span>
+              <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-red-100/40 to-blue-100/40 backdrop-blur-sm border border-red-200/30 mb-6">
+                <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-blue-500 rounded-full mr-3 animate-pulse"></div>
+                <span className="text-red-700 text-sm font-medium">Каталог российских товаров</span>
               </div>
 
               <h2 className="text-4xl lg:text-5xl font-bold mb-6">
@@ -979,23 +981,23 @@ export default function HomePage() {
               <CatalogDownloadButtons />
             </div>
 
-            {/* Search and Controls - элегантный тиффани стиль с улучшенной адаптивностью */}
-            <div className="bg-white/60 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-cyan-200/40 p-4 sm:p-6 mb-8 sm:mb-10 shadow-lg shadow-cyan-100/20">
+            {/* Search and Controls - российская цветовая схема */}
+            <div className="bg-white/65 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-red-200/35 p-4 sm:p-6 mb-8 sm:mb-10 shadow-lg shadow-red-100/15">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div className="relative flex-1 sm:flex-none">
                     <SearchBar onSearch={handleSearch} />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-100/20 to-blue-100/20 pointer-events-none"></div>
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-100/15 to-blue-100/15 pointer-events-none"></div>
                   </div>
                   <div className="relative">
                     <SortDropdown onSort={handleSort} currentSort={sortBy} />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-100/20 to-blue-100/20 pointer-events-none"></div>
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-100/15 to-blue-100/15 pointer-events-none"></div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 justify-between sm:justify-end">
                   <div className="relative">
                     <ViewToggle view={view} onViewChange={handleViewChange} />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-100/20 to-blue-100/20 pointer-events-none"></div>
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-100/15 to-blue-100/15 pointer-events-none"></div>
                   </div>
                   <div className="lg:hidden flex gap-2">
                     {/* Кнопка Категории */}
@@ -1004,20 +1006,20 @@ export default function HomePage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className={`bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200 text-cyan-700 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-300 transition-all duration-300 ${
-                            activeCategory !== "All" && activeCategory !== "Все категории" ? "ring-2 ring-cyan-400" : ""
+                          className={`bg-gradient-to-r from-red-50 to-blue-50 border-red-200 text-red-700 hover:from-red-100 hover:to-blue-100 hover:border-red-300 transition-all duration-300 ${
+                            activeCategory !== "All" && activeCategory !== "Все категории" ? "ring-2 ring-red-400" : ""
                           }`}
                         >
                           <ChevronRight className="w-4 h-4 mr-1 sm:mr-2" />
                           <span>Категории</span>
                           {activeCategory !== "All" && activeCategory !== "Все категории" && (
-                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-cyan-600 text-white rounded-full">1</span>
+                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-full">1</span>
                           )}
                         </Button>
                       </DrawerTrigger>
-                      <DrawerContent className="bg-gradient-to-br from-white via-cyan-50/30 to-blue-50/20 backdrop-blur-xl border-cyan-200/40 max-h-[80vh]">
+                      <DrawerContent className="bg-gradient-to-br from-white via-red-50/25 to-blue-50/25 backdrop-blur-xl border-red-200/35 max-h-[80vh]">
                         <DrawerHeader className="pb-2">
-                          <DrawerTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                          <DrawerTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
                             Категории
                           </DrawerTitle>
                         </DrawerHeader>
@@ -1033,22 +1035,22 @@ export default function HomePage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className={`bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200 text-cyan-700 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-300 transition-all duration-300 ${
-                            Object.keys(appliedFilters.characteristics).length > 0 ? "ring-2 ring-cyan-400" : ""
+                          className={`bg-gradient-to-r from-red-50 to-blue-50 border-red-200 text-red-700 hover:from-red-100 hover:to-blue-100 hover:border-red-300 transition-all duration-300 ${
+                            Object.keys(appliedFilters.characteristics).length > 0 ? "ring-2 ring-red-400" : ""
                           }`}
                         >
                           <Filter className="w-4 h-4 mr-1 sm:mr-2" />
                           <span>Фильтры</span>
                           {Object.keys(appliedFilters.characteristics).length > 0 && (
-                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-cyan-600 text-white rounded-full">
+                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-full">
                               {Object.values(appliedFilters.characteristics).flat().length}
                             </span>
                           )}
                         </Button>
                       </DrawerTrigger>
-                      <DrawerContent className="bg-gradient-to-br from-white via-cyan-50/30 to-blue-50/20 backdrop-blur-xl border-cyan-200/40 max-h-[80vh]">
+                      <DrawerContent className="bg-gradient-to-br from-white via-red-50/25 to-blue-50/25 backdrop-blur-xl border-red-200/35 max-h-[80vh]">
                         <DrawerHeader className="pb-2">
-                          <DrawerTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                          <DrawerTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
                             Фильтры
                           </DrawerTitle>
                         </DrawerHeader>
@@ -1056,12 +1058,12 @@ export default function HomePage() {
                           <div className="space-y-4">
                             {/* Активные фильтры */}
                             {Object.keys(appliedFilters.characteristics).length > 0 && (
-                                <div className="bg-cyan-50/50 rounded-lg p-3 border border-cyan-200/30">
+                                <div className="bg-red-50/40 rounded-lg p-3 border border-red-200/30">
                                   <div className="flex justify-between items-center mb-2">
                                     <h4 className="text-sm font-medium text-slate-700">Активные фильтры</h4>
                                     <button
                                       onClick={clearCharacteristicFilters}
-                                      className="text-xs text-cyan-600 hover:text-cyan-700 font-medium px-2 py-1 rounded-full bg-cyan-100/50 hover:bg-cyan-200/50 transition-all duration-200"
+                                      className="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded-full bg-red-100/50 hover:bg-red-200/50 transition-all duration-200"
                                     >
                                       Очистить все
                                     </button>
@@ -1072,7 +1074,7 @@ export default function HomePage() {
                                         <button
                                           key={`${charName}-${value}`}
                                           onClick={() => handleCharacteristicFilterChange(charName, value, false)}
-                                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-cyan-100 text-cyan-700 rounded-full hover:bg-cyan-200 transition-colors"
+                                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
                                         >
                                           {charName}: {value}
                                           <X className="w-3 h-3" />
@@ -1087,24 +1089,24 @@ export default function HomePage() {
                               {isLoadingCharacteristics ? (
                                 <div className="space-y-4">
                                   {[1, 2, 3].map((i) => (
-                                    <div key={i} className="border border-cyan-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
-                                      <div className="h-4 bg-cyan-100/50 rounded w-24 mb-2"></div>
-                                      <div className="h-3 bg-cyan-50/50 rounded w-full mb-1"></div>
-                                      <div className="h-3 bg-cyan-50/50 rounded w-3/4"></div>
+                                    <div key={i} className="border border-red-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
+                                      <div className="h-4 bg-red-100/50 rounded w-24 mb-2"></div>
+                                      <div className="h-3 bg-red-50/50 rounded w-full mb-1"></div>
+                                      <div className="h-3 bg-red-50/50 rounded w-3/4"></div>
                                     </div>
                                   ))}
                                 </div>
                               ) : (
                                 availableCharacteristics.map((characteristic) => (
-                                  <div key={characteristic.name} className="border border-cyan-200/30 rounded-lg p-3 bg-white/50">
+                                  <div key={characteristic.name} className="border border-red-200/30 rounded-lg p-3 bg-white/50">
                                     <button
                                       onClick={() => toggleMobileCharGroup(characteristic.name)}
                                       className="flex items-center justify-between w-full text-left mb-2"
                                     >
                                       <h4 className="text-sm font-medium text-slate-700">{characteristic.name}</h4>
                                     {mobileExpandedCharGroups.has(characteristic.name) ?
-                                        <ChevronUp className="w-4 h-4 text-cyan-600" /> :
-                                        <ChevronDown className="w-4 h-4 text-cyan-600" />
+                                        <ChevronUp className="w-4 h-4 text-red-600" /> :
+                                        <ChevronDown className="w-4 h-4 text-red-600" />
                                       }
                                     </button>
 
@@ -1113,16 +1115,16 @@ export default function HomePage() {
                                         {(characteristic.values || []).map((valueObj: any, index: number) => (
                                           <label
                                             key={`${characteristic.name}-${index}`}
-                                            className="flex items-center gap-2 text-sm cursor-pointer hover:text-cyan-700 transition-colors"
+                                            className="flex items-center gap-2 text-sm cursor-pointer hover:text-red-700 transition-colors"
                                           >
                                             <input
                                               type="checkbox"
                                               checked={appliedFilters.characteristics[characteristic.name]?.includes(valueObj.value) || false}
                                               onChange={(e) => handleCharacteristicFilterChange(characteristic.name, valueObj.value, e.target.checked)}
-                                              className="h-4 w-4 text-cyan-600 border-cyan-300 rounded focus:ring-cyan-500 focus:ring-1"
+                                              className="h-4 w-4 text-red-600 border-red-300 rounded focus:ring-red-500 focus:ring-1"
                                             />
                                             <span className="flex-1">{valueObj.value}</span>
-                                            <span className="text-cyan-500/70 bg-cyan-100/40 px-1.5 py-0.5 rounded text-xs">
+                                            <span className="text-red-500/70 bg-red-100/40 px-1.5 py-0.5 rounded text-xs">
                                               {valueObj.productCount}
                                             </span>
                                           </label>
@@ -1138,7 +1140,7 @@ export default function HomePage() {
                           <div className="mt-6 flex justify-end">
                             <Button
                               onClick={() => setIsFilterDrawerOpen(false)}
-                              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white"
+                              className="bg-gradient-to-r from-red-500 to-blue-500 hover:from-red-600 hover:to-blue-600 text-white"
                             >
                               Применить
                             </Button>
@@ -1159,7 +1161,7 @@ export default function HomePage() {
                       <span className="text-xs text-slate-600 font-medium">Категория:</span>
                       <button
                         onClick={() => handleCategoryChange("All")}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-cyan-100 text-cyan-700 rounded-full hover:bg-cyan-200 transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
                       >
                         {activeCategory}
                         <X className="w-3 h-3" />
@@ -1179,7 +1181,7 @@ export default function HomePage() {
                             <button
                               key={`${charKey}-${value}`}
                               onClick={() => handleCharacteristicFilterChange(charKey, value, false)}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-cyan-100 text-cyan-700 rounded-full hover:bg-cyan-200 transition-colors"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
                             >
                               {charName}: {value}
                               <X className="w-2.5 h-2.5" />
@@ -1189,7 +1191,7 @@ export default function HomePage() {
                         {Object.values(appliedFilters.characteristics).flat().length > 3 && (
                           <button
                             onClick={() => setIsFilterDrawerOpen(true)}
-                            className="inline-flex items-center px-2 py-0.5 text-xs bg-cyan-50 text-cyan-600 rounded-full hover:bg-cyan-100 transition-colors"
+                            className="inline-flex items-center px-2 py-0.5 text-xs bg-red-50 text-red-600 rounded-full hover:bg-red-100 transition-colors"
                           >
                             +{Object.values(appliedFilters.characteristics).flat().length - 3} еще
                           </button>
@@ -1202,13 +1204,13 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col gap-6 lg:flex-row lg:gap-6 xl:gap-8">
-              {/* Desktop Sidebar - элегантная тиффани панель */}
+              {/* Desktop Sidebar - российская цветовая схема */}
               <div className="hidden lg:block lg:w-64 xl:w-72 2xl:w-80 3xl:w-96 lg:flex-shrink-0">
                 <div className="sticky top-6">
-                  <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-cyan-200/40 shadow-lg shadow-cyan-100/20 overflow-hidden">
-                    <div className="bg-gradient-to-r from-cyan-100/50 to-blue-100/40 p-6 border-b border-cyan-200/30">
+                  <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-red-200/35 shadow-lg shadow-red-100/15 overflow-hidden">
+                    <div className="bg-gradient-to-r from-red-100/40 to-blue-100/40 p-6 border-b border-red-200/30">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
                           {sidebarMode === 'categories' ? 'Категории' : 'Фильтры'}
                         </h3>
                       </div>
@@ -1217,8 +1219,8 @@ export default function HomePage() {
                           onClick={() => setSidebarMode('categories')}
                           className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                             sidebarMode === 'categories'
-                              ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-200/30'
-                              : 'bg-white/50 text-cyan-700 hover:bg-cyan-50 border border-cyan-200/40'
+                              ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-lg shadow-red-200/30'
+                              : 'bg-white/50 text-red-700 hover:bg-red-50 border border-red-200/40'
                           }`}
                         >
                           Категории
@@ -1227,8 +1229,8 @@ export default function HomePage() {
                           onClick={() => setSidebarMode('filters')}
                           className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
                             sidebarMode === 'filters'
-                              ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-200/30'
-                              : 'bg-white/50 text-cyan-700 hover:bg-cyan-50 border border-cyan-200/40'
+                              ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-lg shadow-red-200/30'
+                              : 'bg-white/50 text-red-700 hover:bg-red-50 border border-red-200/40'
                           }`}
                         >
                           <Filter className="w-4 h-4" />
@@ -1248,12 +1250,12 @@ export default function HomePage() {
                         <div className="space-y-4">
                           {/* Активные фильтры */}
                           {Object.keys(appliedFilters.characteristics).length > 0 && (
-                            <div className="bg-cyan-50/50 rounded-lg p-3 border border-cyan-200/30">
+                            <div className="bg-red-50/40 rounded-lg p-3 border border-red-200/30">
                               <div className="flex justify-between items-center mb-2">
                                 <h4 className="text-sm font-medium text-slate-700">Активные фильтры</h4>
                                 <button
                                   onClick={clearCharacteristicFilters}
-                                  className="text-xs text-cyan-600 hover:text-cyan-700 font-medium px-2 py-1 rounded-full bg-cyan-100/50 hover:bg-cyan-200/50 transition-all duration-200"
+                                  className="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded-full bg-red-100/50 hover:bg-red-200/50 transition-all duration-200"
                                 >
                                   Очистить все
                                 </button>
@@ -1264,7 +1266,7 @@ export default function HomePage() {
                                     <button
                                       key={`${charName}-${value}`}
                                       onClick={() => handleCharacteristicFilterChange(charName, value, false)}
-                                      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-cyan-100 text-cyan-700 rounded-full hover:bg-cyan-200 transition-colors"
+                                      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
                                     >
                                       {charName}: {value}
                                       <X className="w-3 h-3" />
@@ -1279,10 +1281,10 @@ export default function HomePage() {
                           {isLoadingCharacteristics ? (
                             <div className="space-y-4">
                               {[1, 2, 3].map((i) => (
-                                <div key={i} className="border border-cyan-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
-                                  <div className="h-4 bg-cyan-100/50 rounded w-24 mb-2"></div>
-                                  <div className="h-3 bg-cyan-50/50 rounded w-full mb-1"></div>
-                                  <div className="h-3 bg-cyan-50/50 rounded w-3/4"></div>
+                                <div key={i} className="border border-red-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
+                                  <div className="h-4 bg-red-100/50 rounded w-24 mb-2"></div>
+                                  <div className="h-3 bg-red-50/50 rounded w-full mb-1"></div>
+                                  <div className="h-3 bg-red-50/50 rounded w-3/4"></div>
                                 </div>
                               ))}
                             </div>
@@ -1292,15 +1294,15 @@ export default function HomePage() {
                             </div>
                           ) : (
                             availableCharacteristics.map((characteristic) => (
-                              <div key={characteristic.name} className="border border-cyan-200/30 rounded-lg p-3 bg-white/50">
+                              <div key={characteristic.name} className="border border-red-200/30 rounded-lg p-3 bg-white/50">
                                 <button
                                   onClick={() => toggleDesktopCharGroup(characteristic.name)}
                                   className="flex items-center justify-between w-full text-left mb-2"
                                 >
                                   <h4 className="text-sm font-medium text-slate-700">{characteristic.name}</h4>
                                   {desktopExpandedCharGroups.has(characteristic.name) ?
-                                    <ChevronUp className="w-4 h-4 text-cyan-600" /> :
-                                    <ChevronDown className="w-4 h-4 text-cyan-600" />
+                                    <ChevronUp className="w-4 h-4 text-red-600" /> :
+                                    <ChevronDown className="w-4 h-4 text-red-600" />
                                   }
                                 </button>
 
@@ -1309,17 +1311,17 @@ export default function HomePage() {
                                     {(characteristic.values || []).map((valueObj: any, index: number) => (
                                       <label
                                         key={`${characteristic.name}-${index}`}
-                                        className="flex items-center gap-2 text-sm cursor-pointer hover:text-cyan-700 transition-colors"
+                                        className="flex items-center gap-2 text-sm cursor-pointer hover:text-red-700 transition-colors"
                                       >
                                         <input
                                           type="checkbox"
                                           checked={appliedFilters.characteristics[characteristic.name]?.includes(valueObj.value) || false}
                                           onChange={(e) => handleCharacteristicFilterChange(characteristic.name, valueObj.value, e.target.checked)}
-                                          className="h-3 w-3 text-cyan-600 border-cyan-300 rounded focus:ring-cyan-500 focus:ring-1"
+                                          className="h-3 w-3 text-red-600 border-red-300 rounded focus:ring-red-500 focus:ring-1"
                                         />
                                         <span className="flex-1 truncate">{valueObj.value}</span>
                                         {valueObj.product_count && (
-                                          <span className="text-cyan-500/70 bg-cyan-100/40 px-1.5 py-0.5 rounded text-xs">
+                                          <span className="text-red-500/70 bg-red-100/40 px-1.5 py-0.5 rounded text-xs">
                                             {valueObj.product_count}
                                           </span>
                                         )}
@@ -1337,10 +1339,10 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Product Grid с тиффани обертками */}
+              {/* Product Grid с российской цветовой схемой */}
               <div className="flex-1 min-w-0">
 
-                <div className="bg-white/40 backdrop-blur-sm rounded-2xl border border-cyan-200/30 p-6 shadow-sm">
+                <div className="bg-white/45 backdrop-blur-sm rounded-2xl border border-red-200/25 p-6 shadow-sm">
                   <ProductGrid
                     products={displayedProducts}
                     view={view}
@@ -1349,22 +1351,22 @@ export default function HomePage() {
                   />
                 </div>
 
-                {/* Infinite Scroll Trigger - тиффани стиль */}
+                {/* Infinite Scroll Trigger - российская цветовая схема */}
                 <div ref={loadMoreRef} className="mt-8">
                   {isLoadingMore && (
                     <div className="text-center py-8">
-                      <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-cyan-200/40 p-6 shadow-lg shadow-cyan-100/20 max-w-sm mx-auto">
-                        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-3 text-cyan-500" />
-                        <p className="text-cyan-700 font-medium">Загружаем еще товары...</p>
+                      <div className="bg-white/65 backdrop-blur-lg rounded-2xl border border-red-200/35 p-6 shadow-lg shadow-red-100/15 max-w-sm mx-auto">
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-3 text-red-500" />
+                        <p className="text-red-700 font-medium">Загружаем еще товары...</p>
                       </div>
                     </div>
                   )}
 
                   {!hasMore && filteredProducts.length > 0 && (
                     <div className="text-center py-8">
-                      <div className="bg-gradient-to-r from-cyan-50 to-blue-50 backdrop-blur-lg rounded-2xl border border-cyan-200/40 p-6 shadow-lg shadow-cyan-100/20 max-w-sm mx-auto">
-                        <p className="text-cyan-700 font-medium">Все товары загружены</p>
-                        <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full mx-auto mt-3"></div>
+                      <div className="bg-gradient-to-r from-red-50 to-blue-50 backdrop-blur-lg rounded-2xl border border-red-200/35 p-6 shadow-lg shadow-red-100/15 max-w-sm mx-auto">
+                        <p className="text-red-700 font-medium">Все товары загружены</p>
+                        <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-blue-500 rounded-full mx-auto mt-3"></div>
                       </div>
                     </div>
                   )}

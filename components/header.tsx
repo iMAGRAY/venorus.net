@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X, Phone, Mail, MapPin, ClipboardList } from "lucide-react"
+import HomeIcon from '@mui/icons-material/Home'
 import { useAdminStore } from "@/lib/admin-store"
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { InstantLink } from "@/components/instant-link"
@@ -89,7 +90,10 @@ export default function Header() {
               <SafeImage src="/dark_logo.webp" alt="Venorus - Российские протезы" width={28} height={28} className="h-7 w-auto max-w-none hidden dark:block" />
             </div>
             <span className="text-lg font-semibold text-slate-800 whitespace-nowrap">
-              🇷🇺 Venorus&nbsp;<span className="hidden sm:inline">- Российские Протезы</span>
+              <span className="flex items-center gap-2">
+                <HomeIcon className="w-4 h-4" />
+                Venorus&nbsp;<span className="hidden sm:inline">- Товары из России</span>
+              </span>
             </span>
           </InstantLink>
         </div>
@@ -152,7 +156,10 @@ export default function Header() {
                       <SafeImage src="/dark_logo.webp" alt="Venorus - Российские протезы" width={24} height={24} className="h-6 w-auto max-w-none hidden dark:block" />
                     </div>
                     <span className="text-lg font-semibold text-slate-800">
-                      🇷🇺 Venorus
+                    <span className="flex items-center gap-2">
+                      <HomeIcon className="w-4 h-4" />
+                      Venorus
+                    </span>
                     </span>
                 </InstantLink>
                 {navLinks.map((link) => (

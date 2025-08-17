@@ -68,7 +68,7 @@
     "prepare": "husky install",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "clean": "rm -rf .next out dist",
+    "clean": "rm -rf .next && npm run build",
     "analyze": "cross-env ANALYZE=true npm run build",
     "security:check": "node scripts/analysis/security-audit.js",
     "db:apply-indexes": "node scripts/analysis/apply-indexes.js",
@@ -77,12 +77,15 @@
     "analyze:deps": "npx depcheck",
     "analyze:types": "npx ts-prune",
     "deploy:auto": "node scripts/deploy/auto-deploy.js",
-    "deploy:manual": "npm run build && npm run start",
-    "clean": "rm -rf .next && npm run build"
+    "deploy:manual": "npm run build && npm run start"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.828.0",
     "@aws-sdk/s3-request-presigner": "^3.828.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.1",
+    "@mui/material": "^7.3.1",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",

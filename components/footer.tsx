@@ -3,6 +3,11 @@
 import Link from "next/link"
 import { Mail, Phone, MapPin, Youtube } from "lucide-react"
 import { VkIcon, TelegramIcon, OkIcon } from "@/components/social-icons"
+import FactoryIcon from '@mui/icons-material/Factory'
+import StarIcon from '@mui/icons-material/Star'
+import ShieldIcon from '@mui/icons-material/Shield'
+import VerifiedIcon from '@mui/icons-material/Verified'
+import HomeIcon from '@mui/icons-material/Home'
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { useAdminStore } from "@/lib/admin-store"
 import { SafeImage } from "@/components/safe-image"
@@ -31,28 +36,46 @@ export function Footer() {
                   {siteSettings?.siteName || "Venorus"}
                 </span>
               </Link>
-              <p className="text-slate-600 mb-6 leading-relaxed">
-                🏭 Производство качественных российских протезов и ортопедических изделий <br/>
-                🇷🇺 <strong>Сделано в России</strong> для здоровья нации! 💪
-              </p>
+              <div className="text-slate-600 mb-6 leading-relaxed">
+                <span className="flex items-center gap-2 mb-2">
+                  <FactoryIcon className="w-5 h-5" />
+                  Производство качественных российских товаров
+                </span>
+                <span className="flex items-center gap-2">
+                  <HomeIcon className="w-5 h-5" />
+                  <strong>Сделано в России</strong> для всей страны!
+                </span>
+              </div>
 
               {/* Дополнительная информация о компании */}
               <div className="space-y-3 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
-                  <span>🏭 <strong>100% Отечественное производство</strong></span>
+                  <span className="flex items-center gap-2">
+                    <FactoryIcon className="w-4 h-4" />
+                    <strong>100% Отечественное производство</strong>
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-red-600 rounded-full"></div>
-                  <span>⭐ <strong>Российское качество</strong> - проверено временем</span>
+                  <span className="flex items-center gap-2">
+                    <StarIcon className="w-4 h-4" />
+                    <strong>Российское качество</strong> - проверено временем
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-white to-white rounded-full border border-red-300"></div>
-                  <span>🛡️ <strong>Гарантия и поддержка</strong> по всей стране</span>
+                  <span className="flex items-center gap-2">
+                    <ShieldIcon className="w-4 h-4" />
+                    <strong>Гарантия и поддержка</strong> по всей стране
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full"></div>
-                  <span>🌟 Сертифицировано в России</span>
+                  <span className="flex items-center gap-2">
+                    <VerifiedIcon className="w-4 h-4" />
+                    Сертифицировано в России
+                  </span>
                 </div>
               </div>
             </div>
@@ -175,7 +198,11 @@ export function Footer() {
                 © {new Date().getFullYear()} <span className="bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent font-semibold">{siteSettings?.siteName || "Venorus"}</span>. Все права защищены.
               </p>
               <p className="text-xs text-slate-500 italic">
-                🇷🇺 <strong>"Здоровье нации - в российских руках!"</strong> 🇷🇺
+                <span className="flex items-center gap-2 justify-center">
+                  <HomeIcon className="w-4 h-4" />
+                  <strong>"Качество и надёжность - российские традиции!"</strong>
+                  <HomeIcon className="w-4 h-4" />
+                </span>
               </p>
             </div>
           </div>

@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { Prosthetic } from "@/lib/data"
 import { Package, Clock, ChevronLeft, ChevronRight, Eye, Layers, Grid3X3 } from "lucide-react"
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useState } from "react"
 import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
 import { InstantLink } from "@/components/instant-link"
@@ -271,7 +274,17 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                     : 'bg-gradient-to-r from-slate-200 to-gray-200 text-slate-500 cursor-not-allowed border border-slate-300'
                 }`}
               >
-                {isProductAvailable(product) ? "🇷🇺 Подробнее" : "❌ Нет в наличии"}
+                {isProductAvailable(product) ? (
+                  <span className="flex items-center gap-2">
+                    <CheckIcon className="w-4 h-4" />
+                    Подробнее
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <CloseIcon className="w-4 h-4" />
+                    Нет в наличии
+                  </span>
+                )}
               </Button>
             </InstantLink>
 
@@ -296,7 +309,10 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 size="sm"
                 className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-white/80 backdrop-blur-sm border-2 border-red-300 text-red-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-red-400 transition-all duration-300 shadow-md hover:shadow-lg rounded-lg sm:rounded-xl"
               >
-                <span className="text-xs sm:text-sm truncate">📋 В заявку</span>
+                <span className="text-xs sm:text-sm truncate flex items-center gap-1 justify-center">
+                  <AssignmentIcon className="w-3 h-3" />
+                  В заявку
+                </span>
               </Button>
             )}
             {inCart && (
@@ -310,7 +326,10 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 variant="outline"
                 className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-green-100/60 border-green-300 text-green-700 hover:bg-green-200/60 transition-colors rounded-lg sm:rounded-xl"
               >
-                ✅ В заявке
+                <span className="flex items-center gap-1 justify-center">
+                  <CheckIcon className="w-3 h-3" />
+                  В заявке
+                </span>
               </Button>
             )}
           </div>
