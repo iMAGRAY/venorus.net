@@ -75,7 +75,10 @@
     "db:migrate:ensure": "node scripts/migration/ensure-missing-tables.js",
     "db:optimize": "npm run db:audit:out && npm run db:apply-indexes && npm run test:perf:db",
     "analyze:deps": "npx depcheck",
-    "analyze:types": "npx ts-prune"
+    "analyze:types": "npx ts-prune",
+    "deploy:auto": "node scripts/deploy/auto-deploy.js",
+    "deploy:manual": "npm run build && npm run start",
+    "clean": "rm -rf .next && npm run build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.828.0",
