@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { Minus, Plus, Trash2, ClipboardList, Phone, MessageCircle, Share2 } from "lucide-react"
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import { useCart } from "@/lib/cart-context"
 import { OrderForm } from "@/components/order-form"
 import { toast } from "sonner"
@@ -41,9 +44,9 @@ export function CartDrawer({ children }: CartDrawerProps) {
 
   // Функция поделиться заявкой
   const shareCart = async () => {
-    const shareText = `🛒 Заявка на товары
-📦 ${items.length} товар${items.length > 1 ? 'ов' : ''}
-💰 ${totalPrice.toLocaleString('ru-RU')} ₽
+    const shareText = `Заявка на товары
+${items.length} товар${items.length > 1 ? 'ов' : ''}
+${totalPrice.toLocaleString('ru-RU')} ₽
 
 ${items.map(item => {
   let itemText = `• ${item.name} - ${item.quantity} шт.${item.is_on_request ? ' (цена по запросу)' : ` × ${item.price.toLocaleString('ru-RU')} ₽`}`

@@ -13,6 +13,18 @@ import { ProductQuickView } from "@/components/product-quick-view"
 import { Button } from "@/components/ui/button"
 import { ChevronRight, Filter, Loader2, X, ChevronUp, ChevronDown } from "lucide-react"
 import FlagIcon from '@mui/icons-material/Flag'
+import StarIcon from '@mui/icons-material/Star'
+import HomeIcon from '@mui/icons-material/Home'
+import CategoryIcon from '@mui/icons-material/Category'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import SearchIcon from '@mui/icons-material/Search'
+import SettingsIcon from '@mui/icons-material/Settings'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import WarningIcon from '@mui/icons-material/Warning'
+import LanguageIcon from '@mui/icons-material/Language'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import FactoryIcon from '@mui/icons-material/Factory'
+import ShieldIcon from '@mui/icons-material/Shield'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { useAdminStore } from "@/lib/admin-store"
 import logger from "@/lib/logger"
@@ -67,7 +79,7 @@ interface _Product {
 const PRODUCTS_PER_PAGE = 12 // Количество товаров для загрузки за раз
 
 export default function HomePage() {
-  console.log('🏠 HomePage рендерится')
+  console.log('HomePage рендерится')
   
   const {
     products: allProducts,
@@ -80,23 +92,23 @@ export default function HomePage() {
 
   // Initialize data on mount
   useEffect(() => {
-    logger.log("🏠 HomePage: useEffect triggered, allProducts.length:", allProducts.length)
-    logger.log("🏠 HomePage: isLoading:", isLoading)
+    logger.log("HomePage: useEffect triggered, allProducts.length:", allProducts.length)
+    logger.log("HomePage: isLoading:", isLoading)
 
     // Always try to initialize data if we don't have products
     if (allProducts.length === 0 && !isLoading) {
-      logger.log("🏠 HomePage: No products found, initializing data...")
+      logger.log("HomePage: No products found, initializing data...")
       initializeData()
     } else {
-      logger.log("🏠 HomePage: Products already loaded:", allProducts.length)
+      logger.log("HomePage: Products already loaded:", allProducts.length)
     }
   }, [initializeData, allProducts.length, isLoading])
 
   // Debug log for products
   useEffect(() => {
-    logger.log("🏠 HomePage: Products updated:", allProducts.length)
+    logger.log("HomePage: Products updated:", allProducts.length)
     if (allProducts.length > 0) {
-      logger.log("🏷️ Примеры товаров, их категорий и характеристик:",
+      logger.log("Примеры товаров, их категорий и характеристик:",
         allProducts.slice(0, 3).map(p => ({
           name: p.name,
           category: p.category,
@@ -107,7 +119,7 @@ export default function HomePage() {
         }))
       )
     }
-    logger.log("🏠 HomePage: Categories:", adminCategories.length)
+    logger.log("HomePage: Categories:", adminCategories.length)
   }, [allProducts, adminCategories])
 
   // Функция для принудительного обновления данных
@@ -155,7 +167,7 @@ export default function HomePage() {
 
   // Функция загрузки характеристик для фильтрации
   const loadFilterCharacteristics = useCallback(async (categoryId?: number | null) => {
-    console.log('🎯 loadFilterCharacteristics вызвана с categoryId:', categoryId)
+    console.log('loadFilterCharacteristics вызвана с categoryId:', categoryId)
     
     // Отменяем предыдущий запрос если он есть
     if (abortControllerRef.current) {
@@ -168,7 +180,7 @@ export default function HomePage() {
     
     setIsLoadingCharacteristics(true)
     try {
-      logger.log('🔄 Загрузка характеристик для фильтрации...', { categoryId })
+      logger.log('Загрузка характеристик для фильтрации...', { categoryId })
 
       // Если выбрана категория, используем новый API
       const url = categoryId 
@@ -206,7 +218,7 @@ export default function HomePage() {
           })) || []
         ) || []
         
-        console.log('🔧 allGroups после обработки:', {
+        console.log('allGroups после обработки:', {
           count: allGroups.length,
           sample: allGroups.slice(0, 3)
         })
@@ -227,15 +239,15 @@ export default function HomePage() {
           values: group.values
         }))
 
-        console.log('📦 flatCharacteristics после преобразования:', {
+        console.log('flatCharacteristics после преобразования:', {
           count: flatCharacteristics.length,
           sample: flatCharacteristics.slice(0, 3),
           groupNameCounts
         })
 
-        logger.log(`✅ Получено характеристик для фильтрации: ${flatCharacteristics.length}`)
+        logger.log(`Получено характеристик для фильтрации: ${flatCharacteristics.length}`)
         if (flatCharacteristics.length > 0) {
-          logger.log(`🔧 Примеры характеристик фильтра:`,
+          logger.log(`Примеры характеристик фильтра:`,
             flatCharacteristics.slice(0, 3).map((char: any) => ({
               name: char.name,
               valuesCount: char.values?.length || 0,
@@ -246,7 +258,7 @@ export default function HomePage() {
         // Проверяем что запрос не был отменен перед обновлением состояния
         if (!abortController.signal.aborted) {
           setAvailableCharacteristics(flatCharacteristics)
-          console.log('✅ Установлены характеристики:', flatCharacteristics.length, flatCharacteristics)
+          console.log('Установлены характеристики:', flatCharacteristics.length, flatCharacteristics)
         }
       } else {
         if (!abortController.signal.aborted) {
@@ -279,7 +291,7 @@ export default function HomePage() {
 
     const loadCategories = async () => {
       try {
-        logger.log('🔄 Загрузка категорий товаров...')
+        logger.log('Загрузка категорий товаров...')
 
         const response = await fetch('/api/categories')
         const result = await response.json()
@@ -288,7 +300,7 @@ export default function HomePage() {
 
         // Проверяем новый формат API с success и data
         if (result.success && result.data && Array.isArray(result.data)) {
-          logger.log(`✅ Получено категорий: ${result.data.length}`)
+          logger.log(`Получено категорий: ${result.data.length}`)
 
           // Преобразуем категории в формат для меню
           const transformCategories = (categories: any[]): any[] => {
@@ -316,7 +328,7 @@ export default function HomePage() {
           })
           setExpandedCategories(categoriesWithChildren)
 
-          logger.log(`📋 Структура категорий:`)
+          logger.log(`Структура категорий:`)
           transformedCategories.forEach((item: any, index: number) => {
             logger.log(`   ${index + 1}. ${item.name} (ID: ${item.id})`)
             if (item.children && item.children.length > 0) {
@@ -392,19 +404,19 @@ export default function HomePage() {
 
   // Состояние для фильтров характеристик
   const [availableCharacteristics, setAvailableCharacteristics] = useState<any[]>(() => {
-    console.log('🎯 Инициализация availableCharacteristics: пустой массив')
+    console.log('Инициализация availableCharacteristics: пустой массив')
     return []
   })
   const [isLoadingCharacteristics, setIsLoadingCharacteristics] = useState(false)
   
   // Логируем изменения availableCharacteristics
   useEffect(() => {
-    console.log('📦 availableCharacteristics изменились:', availableCharacteristics.length, availableCharacteristics)
+    console.log('availableCharacteristics изменились:', availableCharacteristics.length, availableCharacteristics)
   }, [availableCharacteristics])
 
   const handleCategoryChange = useCallback((categoryName: string, categoryId?: number) => {
-    console.log('🌐 handleCategoryChange вызвана:', { categoryName, categoryId })
-    logger.log(`🔄 Смена категории на: "${categoryName}" (ID: ${categoryId})`)
+    console.log('handleCategoryChange вызвана:', { categoryName, categoryId })
+    logger.log(`Смена категории на: "${categoryName}" (ID: ${categoryId})`)
     setActiveCategory(categoryName)
     setActiveCategoryId(categoryId || null)
     setIsFilterDrawerOpen(false)
@@ -415,13 +427,13 @@ export default function HomePage() {
     
     // Загружаем характеристики для новой категории
     if (categoryName === "All" || categoryName === "Все категории") {
-      console.log('📦 Загружаем все характеристики')
+      console.log('Загружаем все характеристики')
       loadFilterCharacteristics(null)
     } else if (categoryId) {
-      console.log('🎯 Загружаем характеристики для категории:', categoryId)
+      console.log('Загружаем характеристики для категории:', categoryId)
       loadFilterCharacteristics(categoryId)
     } else {
-      console.log('⚠️ Нет categoryId для категории "' + categoryName + '", очищаем характеристики')
+      console.log('Нет categoryId для категории "' + categoryName + '", очищаем характеристики')
       setAvailableCharacteristics([])
     }
   }, [loadFilterCharacteristics])
@@ -463,7 +475,7 @@ export default function HomePage() {
           {/* Кнопка категории */}
           <button
             onClick={() => {
-              console.log('🎯 Категория нажата:', { name: group.name, id: group.id })
+              console.log('Категория нажата:', { name: group.name, id: group.id })
               handleCategoryChange(group.name, group.id)
             }}
             className={`
@@ -617,12 +629,12 @@ export default function HomePage() {
     if (activeCategoryId && activeCategory !== "All" && activeCategory !== "Все категории") {
       const relevantCategoryIds = findGroupAndChildrenById(hierarchicalCategories, activeCategoryId)
 
-      logger.log(`🔍 Фильтрация по категории: "${activeCategory}" (ID: ${activeCategoryId})`)
-      logger.log(`📋 Найденные ID категорий для фильтрации:`, relevantCategoryIds)
-      logger.log(`📦 Всего товаров до фильтрации: ${tempProducts.length}`)
+      logger.log(`Фильтрация по категории: "${activeCategory}" (ID: ${activeCategoryId})`)
+      logger.log(`Найденные ID категорий для фильтрации:`, relevantCategoryIds)
+      logger.log(`Всего товаров до фильтрации: ${tempProducts.length}`)
 
       if (tempProducts.length > 0) {
-        logger.log(`🏷️ Примеры категорий товаров:`, tempProducts.slice(0, 5).map(p => ({ 
+        logger.log(`Примеры категорий товаров:`, tempProducts.slice(0, 5).map(p => ({ 
           name: p.name, 
           category: p.category,
           category_id: p.category_id 
@@ -633,7 +645,7 @@ export default function HomePage() {
         product.category_id && relevantCategoryIds.includes(Number(product.category_id))
       )
 
-      logger.log(`📦 Товаров после фильтрации: ${tempProducts.length}`)
+      logger.log(`Товаров после фильтрации: ${tempProducts.length}`)
     }
 
     // Apply advanced filters
@@ -643,11 +655,11 @@ export default function HomePage() {
 
     // Apply characteristics filters
     if (appliedFilters.characteristics && Object.keys(appliedFilters.characteristics).length > 0) {
-      logger.log(`🔍 Фильтрация по характеристикам:`, appliedFilters.characteristics)
-      logger.log(`📦 Товаров до фильтрации по характеристикам: ${tempProducts.length}`)
+      logger.log(`Фильтрация по характеристикам:`, appliedFilters.characteristics)
+      logger.log(`Товаров до фильтрации по характеристикам: ${tempProducts.length}`)
 
       if (tempProducts.length > 0) {
-        logger.log(`🏷️ Примеры характеристик товаров:`, tempProducts.slice(0, 3).map(p => ({
+        logger.log(`Примеры характеристик товаров:`, tempProducts.slice(0, 3).map(p => ({
           name: p.name,
           specifications: p.specifications?.slice(0, 3) || []
         })))
@@ -666,12 +678,12 @@ export default function HomePage() {
             spec.group_id?.toString() === groupId && selectedValues.includes(spec.spec_value)
           )
 
-          logger.log(`🔍 Товар "${product.name}" имеет характеристику "${charName}" (группа ${groupId}):`, hasCharacteristic)
+          logger.log(`Товар "${product.name}" имеет характеристику "${charName}" (группа ${groupId}):`, hasCharacteristic)
           return hasCharacteristic
         })
       })
 
-      logger.log(`📦 Товаров после фильтрации по характеристикам: ${tempProducts.length}`)
+      logger.log(`Товаров после фильтрации по характеристикам: ${tempProducts.length}`)
     }
 
     // Apply sorting
@@ -933,17 +945,17 @@ export default function HomePage() {
                 {/* Преимущества российского производства */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-white/20">
                   <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-red-600/5 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="text-2xl mb-2">🏭</div>
+                    <div className="text-2xl mb-2"><FactoryIcon className="w-8 h-8 text-red-400" /></div>
                     <div className="text-base sm:text-lg font-semibold text-white mb-1">Отечественное</div>
                     <div className="text-sm text-white/70">Производство в России</div>
                   </div>
                   <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="text-2xl mb-2">⭐</div>
+                    <div className="text-2xl mb-2"><StarIcon className="w-8 h-8 text-yellow-400" /></div>
                     <div className="text-base sm:text-lg font-semibold text-white mb-1">Качественное</div>
                     <div className="text-sm text-white/70">Российские стандарты</div>
                   </div>
                   <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-blue-500/10 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="text-2xl mb-2">🛡️</div>
+                    <div className="text-2xl mb-2"><ShieldIcon className="w-8 h-8 text-blue-400" /></div>
                     <div className="text-base sm:text-lg font-semibold text-white mb-1">Надёжное</div>
                     <div className="text-sm text-white/70">Проверено временем</div>
                   </div>

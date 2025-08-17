@@ -30,7 +30,7 @@ export function Footer() {
             <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-cyan-200/40 p-6 shadow-lg shadow-cyan-100/20">
               <Link href="/" className="flex items-center gap-3 text-xl font-bold mb-4 group">
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
-                  <SafeImage src="/logo.webp" alt="Venorus - Товары из России" width={32} height={32} className="w-8 h-8 object-contain" />
+                  <SafeImage src="/logo.webp?v=2" alt="Venorus - Товары из России" width={32} height={32} className="w-8 h-8 object-contain" />
                 </div>
                 <span className="bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">
                   {siteSettings?.siteName || "Venorus"}

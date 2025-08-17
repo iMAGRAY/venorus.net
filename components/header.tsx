@@ -86,7 +86,7 @@ export default function Header() {
         <div className="flex-1 flex justify-start">
           <InstantLink href="/" className="flex items-center gap-3 transition-all duration-200 hover:opacity-80">
             <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-              <SafeImage src="/logo.webp" alt="Venorus - Товары из России" width={28} height={28} className="h-7 w-auto max-w-none" />
+              <SafeImage src="/logo.webp?v=2" alt="Venorus - Товары из России" width={28} height={28} className="h-7 w-auto max-w-none" />
             </div>
             <span className="text-lg font-semibold text-slate-800 whitespace-nowrap">
               <span className="flex items-center gap-2">
@@ -146,7 +146,7 @@ export default function Header() {
                   <InstantLink href="/" className="flex items-center gap-3 mb-4">
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                       <SafeImage
-                        src="/logo.webp"
+                        src="/logo.webp?v=2"
                         alt="Venorus - Товары из России"
                         width={32}
                         height={32}
