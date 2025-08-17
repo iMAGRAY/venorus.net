@@ -15,7 +15,8 @@
       "Bash(rm:*)",
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 node test-ssl-proper.js)",
       "Bash(grep:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
