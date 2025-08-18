@@ -12,6 +12,7 @@ import { useCart } from "@/lib/cart-context"
 import { getActualPrice } from "@/lib/utils"
 import Link from "next/link"
 import { ProductTagsDisplay } from "@/components/product-tags-display"
+import { useI18n } from "@/components/i18n-provider"
 
 interface ProductCardSimpleProps {
   product: Prosthetic & {
@@ -27,6 +28,7 @@ interface ProductCardSimpleProps {
 }
 
 export function ProductCardSimple({ product, onQuickView, className = "" }: ProductCardSimpleProps) {
+  const { t } = useI18n()
   const { addItem } = useCart()
   const { items } = useCart()
 
@@ -62,13 +64,13 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
 
   return (
     <div className={`group relative ${className}`}>
-      {/* Фоновый градиент */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/30 to-blue-100/40 rounded-xl blur-sm transform group-hover:scale-105 transition-transform duration-300"></div>
+      {/* Чистый фон без ярких градиентов */}
+      <div className="absolute inset-0 rounded-xl"></div>
 
-      <div className="relative flex flex-col h-full min-h-[350px] overflow-hidden bg-white/90 backdrop-blur-lg border border-cyan-200/50 rounded-xl shadow-lg shadow-cyan-100/20 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-200/30 hover:border-cyan-300/60">
+      <div className="relative flex flex-col h-full min-h-[350px] overflow-hidden bg-white border border-slate-200 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
 
         {/* Изображение */}
-        <div className="relative w-full aspect-square bg-gradient-to-br from-cyan-50 to-blue-50 overflow-hidden">
+        <div className="relative w-full aspect-square bg-slate-50 overflow-hidden">
           <SafeImage
             src={product.imageUrl || product.image_url || (product.images && product.images.length > 0 ? product.images[0] : null) || PROSTHETIC_FALLBACK_IMAGE}
                             alt={product.short_name || product.name}
@@ -77,15 +79,21 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
             className="object-cover transition-all duration-500 ease-out group-hover:scale-105"
           />
 
-          {/* Элегантный overlay градиент */}
-          <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/20 via-transparent to-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {/* Лёгкая маска при ховере */}
+          <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+          {/* Бейджи происхождения и доставки */}
+          <div className="absolute top-3 left-3 flex gap-1">
+            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇷🇺 Сделано в России</span>
+            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">🇻🇪 Доставка</span>
+          </div>
 
           {/* Кнопка быстрого просмотра */}
           <div className="absolute top-3 right-3">
             <button
               onClick={handleQuickView}
               onTouchEnd={handleQuickViewTouch}
-              className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg border border-cyan-200/50 text-cyan-700 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:bg-cyan-50 hover:scale-110 touch-manipulation"
+              className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg border border-blue-200/50 text-blue-700 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:bg-blue-50 hover:scale-110 touch-manipulation"
               aria-label="Быстрый просмотр"
             >
               <Eye className="w-4 h-4" />
@@ -110,7 +118,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
           {/* Заголовок - ссылка на страницу товара */}
           <InstantLink
             href={`/products/${product.id}`}
-            className="block text-base sm:text-base font-semibold text-slate-800 line-clamp-2 mb-2 min-h-[2.5rem] leading-tight hover:text-cyan-700 transition-colors touch-manipulation"
+            className="block text-base sm:text-base font-medium text-slate-900 line-clamp-2 mb-2 min-h-[2.5rem] leading-tight hover:text-slate-700 transition-colors touch-manipulation"
           >
             {product.short_name || product.name}
           </InstantLink>
@@ -119,7 +127,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
           <div className="mb-3">
             <Badge
               variant="outline"
-              className="text-xs border-cyan-200 text-cyan-600 bg-cyan-50/50"
+              className="text-xs border-slate-200 text-slate-600 bg-slate-50"
             >
               {product.category_name || product.category}
             </Badge>
@@ -140,12 +148,12 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
               if (product.variants && product.variants.length > 0) {
                 const availableVariants = product.variants.filter(v => v.isAvailable)
                 if (availableVariants.length === 0) {
-                  return <span className="text-base font-bold text-slate-600">Нет в наличии</span>
+                  return <span className="text-base font-bold text-slate-600">{t('product.outOfStock')}</span>
                 }
                 
                 const prices = availableVariants.map(v => v.discountPrice || v.price || 0).filter(p => p > 0)
                 if (prices.length === 0) {
-                  return <span className="text-base font-bold text-slate-600">По запросу</span>
+                  return <span className="text-base font-bold text-slate-600">{t('product.onRequest')}</span>
                 }
                 
                 const minPrice = Math.min(...prices)
@@ -153,19 +161,19 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                 
                 if (minPrice === maxPrice) {
                   return (
-                    <span className="text-base font-bold text-cyan-600 truncate block">
-                      {new Intl.NumberFormat('ru-RU', {
-                        style: 'currency',
-                        currency: 'RUB',
-                        maximumFractionDigits: 0
-                      }).format(minPrice)}
-                    </span>
+                      <span className="text-base font-bold text-slate-900 truncate block">
+                        {new Intl.NumberFormat('ru-RU', {
+                          style: 'currency',
+                          currency: 'RUB',
+                          maximumFractionDigits: 0
+                        }).format(minPrice)}
+                      </span>
                   )
                 } else {
                   return (
                     <div className="space-y-1">
                       <span className="text-xs text-slate-500">от</span>
-                      <span className="text-base font-bold text-cyan-600 truncate block">
+                      <span className="text-base font-bold text-slate-900 truncate block">
                         {new Intl.NumberFormat('ru-RU', {
                           style: 'currency',
                           currency: 'RUB',
@@ -179,12 +187,12 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
               
               // Стандартная логика для товаров без вариантов
               if (product.show_price === false || (!product.price && !product.discount_price)) {
-                return <span className="text-base font-bold text-slate-600">По запросу</span>
+                return <span className="text-base font-bold text-slate-600">{t('product.onRequest')}</span>
               } else if (product.price || product.discount_price) {
                 if (product.discount_price && product.price && product.discount_price < product.price) {
                   return (
                     <div className="space-y-1">
-                      <span className="text-base font-bold text-cyan-600 truncate block">
+                      <span className="text-base font-bold text-slate-900 truncate block">
                         {new Intl.NumberFormat('ru-RU', {
                           style: 'currency',
                           currency: 'RUB',
@@ -212,7 +220,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                   )
                 }
               } else {
-                return <span className="text-base font-bold text-slate-600">По запросу</span>
+                return <span className="text-base font-bold text-slate-600">{t('product.onRequest')}</span>
               }
             })()}
           </div>
@@ -224,9 +232,9 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
               <Button
                 onClick={handleAddToCart}
                 size="sm"
-                className="w-full sm:flex-1 px-3 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 rounded-lg font-medium text-xs touch-manipulation"
+                className="w-full sm:flex-1 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white border-0 transition-all duration-200 shadow-sm rounded-lg font-medium text-xs touch-manipulation"
               >
-                В заявку
+                {t('product.addToCart')}
               </Button>
             )}
 
@@ -240,19 +248,19 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                   const btn = document.getElementById('cart-button') as HTMLButtonElement | null
                   btn?.click()
                 }}
-                className="w-full sm:w-auto px-3 py-2 bg-cyan-100/60 border-cyan-300 text-cyan-700 hover:bg-cyan-200/60 transition-colors rounded-lg text-xs touch-manipulation"
+                className="w-full sm:w-auto px-3 py-2 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200 transition-colors rounded-lg text-xs touch-manipulation"
               >
-                В заявке
+                {t('product.inCart')}
               </Button>
             )}
 
             {/* Кнопка подробнее - переход на страницу товара */}
             <Link
               href={`/products/${product.id}`}
-              className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-300 hover:shadow-lg touch-manipulation"
+              className="inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-200 touch-manipulation"
               onClick={(e) => e.stopPropagation()}
             >
-              Подробнее
+              {t('product.details')}
             </Link>
           </div>
         </div>

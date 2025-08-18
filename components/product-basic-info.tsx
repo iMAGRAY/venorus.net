@@ -31,18 +31,18 @@ interface ProductBasicInfoProps {
 export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
 
   return (
-    <Card className="w-full bg-white/80 backdrop-blur-sm border-cyan-200/40 shadow-lg shadow-cyan-100/20">
+    <Card className="w-full bg-white/80 backdrop-blur-sm border-blue-200/40 shadow-lg shadow-blue-100/20">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+        <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
           Основная информация
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Описание товара */}
         {product.description && (
-          <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/30 rounded-xl border border-cyan-200/40 overflow-hidden shadow-sm">
-            <div className="px-4 py-3 border-b border-cyan-200/30 bg-gradient-to-r from-white/90 to-cyan-50/50">
-              <h3 className="text-sm font-semibold text-cyan-800 flex items-center gap-2">
+          <div className="bg-gradient-to-r from-red-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 overflow-hidden shadow-sm">
+            <div className="px-4 py-3 border-b border-blue-200/30 bg-gradient-to-r from-white/90 to-blue-50/50">
+              <h3 className="text-sm font-semibold text-blue-800 flex items-center gap-2">
                 <FileText className="w-4 h-4" />
                 Описание товара
               </h3>
@@ -61,7 +61,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
               {/* Индикатор скролла для мобильных */}
               <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none sm:hidden">
                 <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-                  <ChevronDown className="w-5 h-5 text-cyan-600 animate-bounce" />
+                  <ChevronDown className="w-5 h-5 text-blue-600 animate-bounce" />
                 </div>
               </div>
             </div>

@@ -43,8 +43,8 @@ export interface SortOption {
 
 // Sort options for compatibility
 export const sortOptions: SortOption[] = [
-  { value: 'name-asc', label: 'По названию А-Я', field: 'name', direction: 'asc' },
-  { value: 'name-desc', label: 'По названию Я-А', field: 'name', direction: 'desc' },
-  { value: 'price-asc', label: 'По цене ↑', field: 'price', direction: 'asc' },
-  { value: 'price-desc', label: 'По цене ↓', field: 'price', direction: 'desc' }
+  { value: 'name-asc', label: 'sort.nameAsc', field: 'name', direction: 'asc' },
+  { value: 'name-desc', label: 'sort.nameDesc', field: 'name', direction: 'desc' },
+  { value: 'price-asc', label: 'sort.priceAsc', field: 'price', direction: 'asc' },
+  { value: 'price-desc', label: 'sort.priceDesc', field: 'price', direction: 'desc' }
 ]

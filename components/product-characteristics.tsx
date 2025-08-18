@@ -44,8 +44,8 @@ export default function ProductCharacteristics({
 
   if (!sections || sections.length === 0) {
     return (
-      <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-cyan-200/30 p-8 shadow-sm text-center">
-        <h2 className="text-xl font-semibold mb-3 bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+      <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-blue-200/30 p-8 shadow-sm text-center">
+        <h2 className="text-xl font-semibold mb-3 bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
           Характеристики
         </h2>
         <p className="text-slate-600">
@@ -209,7 +209,7 @@ export default function ProductCharacteristics({
       {detailedSections.length > 0 && (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2 bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+            <h2 className="text-xl font-semibold mb-2 bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
               Подробные характеристики
             </h2>
             <p className="text-sm text-slate-600">
@@ -223,7 +223,7 @@ export default function ProductCharacteristics({
               {/* Section header */}
               <div className="border-b border-slate-200 pb-4">
                 <h3 className="text-xl font-bold text-slate-800 flex items-center gap-3">
-                  <Layers className="w-6 h-6 text-cyan-600" />
+                  <Layers className="w-6 h-6 text-blue-600" />
                   {section.section_name}
                       </h3>
                 {section.section_description && (
@@ -244,14 +244,14 @@ export default function ProductCharacteristics({
                     } else {
                       // Card format for groups
                       return (
-                <div key={group.group_id} className="bg-white/60 backdrop-blur-sm rounded-2xl border border-cyan-200/30 p-6 shadow-sm">
+                <div key={group.group_id} className="bg-white/60 backdrop-blur-sm rounded-2xl border border-blue-200/30 p-6 shadow-sm">
                   {/* Group header */}
-                  <div className="pb-4 border-b border-cyan-200/30">
+                  <div className="pb-4 border-b border-blue-200/30">
                             <h4 className="text-lg font-semibold text-slate-800 mb-1 flex items-center gap-2">
-                              <Package className="w-5 h-5 text-cyan-600" />
+                              <Package className="w-5 h-5 text-blue-600" />
                       {group.group_name}
                             </h4>
-                    <p className="text-xs text-cyan-600">
+                    <p className="text-xs text-blue-700">
                       {group.characteristics.length} параметр{group.characteristics.length !== 1 ? 'ов' : ''}
                     </p>
                   </div>

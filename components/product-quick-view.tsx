@@ -15,6 +15,7 @@ import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
 import { isProductOutOfStock, isProductAvailable, getActualPrice } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/cart-context"
+import { useI18n } from "@/components/i18n-provider"
 
 interface ProductQuickViewProps {
   product: Prosthetic | null
@@ -57,6 +58,7 @@ interface ProductVariant {
 
 
 export function ProductQuickView({ product, isOpen, onClose, onProductChange }: ProductQuickViewProps) {
+  const { t } = useI18n()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)
   const { addItem } = useCart()
@@ -149,7 +151,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
         <div className="relative flex-shrink-0 p-3 sm:p-4 lg:p-6 pb-2 sm:pb-4 border-b">
           <button
             onClick={onClose}
-            className="absolute top-1 right-1 sm:top-2 sm:right-2 lg:top-3 lg:right-3 p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-cyan-100/50 to-blue-100/50 text-cyan-700 hover:from-cyan-200/50 hover:to-blue-200/50 transition-all duration-300 hover:scale-110 z-10"
+            className="absolute top-1 right-1 sm:top-2 sm:right-2 lg:top-3 lg:right-3 p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-red-100/50 to-blue-100/50 text-blue-700 hover:from-red-200/50 hover:to-blue-200/50 transition-all duration-300 hover:scale-110 z-10"
           >
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -159,7 +161,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
               {selectedVariant?.name || product.name}
             </CustomDialogTitle>
             <CustomDialogDescription className="text-xs sm:text-sm lg:text-base hidden sm:block">
-              Быстрый просмотр характеристик и выбор вариантов товара
+              {t('product.selectVariant')}
             </CustomDialogDescription>
           </CustomDialogHeader>
         </div>
@@ -278,7 +280,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                             setSelectedVariant(null)
                           }
                         }}
-                        className="bg-white/60 backdrop-blur-sm rounded-lg border border-cyan-200/30"
+                        className="bg-white/60 backdrop-blur-sm rounded-lg border border-blue-200/30"
                       />
                     </div>
                   )}
@@ -286,7 +288,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
 
 
                   {/* Цена и кнопка добавления в заявку */}
-                  <div className="pt-1 sm:pt-2 space-y-2 sm:space-y-3 bg-white/60 backdrop-blur-sm rounded-lg border border-cyan-200/30 p-2 sm:p-3">
+                  <div className="pt-1 sm:pt-2 space-y-2 sm:space-y-3 bg-white/60 backdrop-blur-sm rounded-lg border border-blue-200/30 p-2 sm:p-3">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                       {product.show_price === false || !actualPrice ? (
                         <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-600">
@@ -294,7 +296,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                         </span>
                       ) : selectedVariant && selectedVariant.discountPrice && selectedVariant.price && selectedVariant.discountPrice < selectedVariant.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                          <span className="text-base sm:text-lg lg:text-xl font-bold text-cyan-600">
+                          <span className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
                             {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.discountPrice)}
                           </span>
                           <span className="text-xs sm:text-sm line-through text-slate-400">
@@ -303,7 +305,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                         </div>
                       ) : product.discount_price && product.price && product.discount_price < product.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                          <span className="text-base sm:text-lg lg:text-xl font-bold text-cyan-600">
+                          <span className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
                             {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(product.discount_price)}
                           </span>
                           <span className="text-xs sm:text-sm line-through text-slate-400">
@@ -325,7 +327,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                     <div className="space-y-1.5 sm:space-y-2">
                       <Button
                         onClick={handleAddToCart}
-                        className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 rounded-lg font-medium"
+                        className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 rounded-lg font-medium"
                       >
                         <span>Добавить в заявку</span>
                       </Button>
@@ -337,7 +339,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                           onClose(); // Закрываем модальное окно
                           window.location.href = `/products/${product.id}`; // Переходим на страницу товара в той же вкладке
                         }}
-                        className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base border-cyan-300 bg-white/80 hover:bg-cyan-50 text-cyan-700 transition-all duration-300 rounded-lg font-medium"
+                        className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base border-blue-300 bg-white/80 hover:bg-blue-50 text-blue-700 transition-all duration-300 rounded-lg font-medium"
                       >
                         <span>Подробнее</span>
                       </Button>
@@ -345,7 +347,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                   </div>
 
                   <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                    <Badge variant="outline" className="border-teal-200 text-teal-600 text-[10px] sm:text-xs lg:text-sm">
+                    <Badge variant="outline" className="border-blue-200 text-blue-700 text-[10px] sm:text-xs lg:text-sm">
                       <Tag className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
                       {product.category_name || product.category}
                     </Badge>
@@ -372,14 +374,14 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                     <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 sm:mb-3 text-slate-800">Характеристики</h3>
                     <div className="space-y-1.5 sm:space-y-2">
                       {product.warranty && (
-                        <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-green-50 to-emerald-50 p-1.5 sm:p-2 rounded-lg border border-green-200/50">
+                        <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-green-50 to-green-100 p-1.5 sm:p-2 rounded-lg border border-green-200/50">
                           <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-green-600" />
                           <span className="font-medium text-green-700">Гарантия:</span>
                           <span className="ml-1">{product.warranty}</span>
                         </div>
                       )}
                       {product.batteryLife && (
-                        <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-blue-50 to-sky-50 p-1.5 sm:p-2 rounded-lg border border-blue-200/50">
+                        <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-blue-50 to-blue-100 p-1.5 sm:p-2 rounded-lg border border-blue-200/50">
                           <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-blue-600" />
                           <span className="font-medium text-blue-700">Время работы:</span>
                           <span className="ml-1">{product.batteryLife}</span>

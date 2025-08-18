@@ -76,7 +76,7 @@ export function ProductVariantsGallery({
               key={variant.id}
               className={cn(
                 "cursor-pointer transition-all hover:shadow-lg",
-                selectedVariant?.id === variant.id && "ring-2 ring-cyan-500"
+                selectedVariant?.id === variant.id && "ring-2 ring-blue-600"
               )}
               onClick={() => onVariantSelect(variant)}
             >
@@ -139,7 +139,7 @@ export function ProductVariantsGallery({
                     <div>
                       {variant.discountPrice ? (
                         <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold text-cyan-700">
+                          <span className="text-lg font-bold text-blue-700">
                             {variant.discountPrice.toLocaleString('ru-RU')} ₽
                           </span>
                           <span className="text-sm line-through text-slate-400">

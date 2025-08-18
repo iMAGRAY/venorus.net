@@ -23,13 +23,13 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
   return (
     <div className="group relative">
       {/* Фоновый градиент */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-100/30 to-blue-100/40 rounded-2xl blur-sm transform group-hover:scale-[1.02] transition-transform duration-300"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-red-100/30 to-blue-100/40 rounded-2xl blur-sm transform group-hover:scale-[1.02] transition-transform duration-300"></div>
 
-      <Card className="relative overflow-hidden min-h-[120px] bg-white/90 backdrop-blur-lg border border-cyan-200/50 shadow-lg shadow-cyan-100/20 hover:shadow-xl hover:shadow-cyan-200/30 transition-all duration-300 hover:border-cyan-300/60 rounded-2xl">
+      <Card className="relative overflow-hidden min-h-[120px] bg-white/90 backdrop-blur-lg border border-blue-200/50 shadow-lg shadow-blue-100/20 hover:shadow-xl hover:shadow-blue-200/30 transition-all duration-300 hover:border-blue-300/60 rounded-2xl">
         <CardContent className="p-0 relative">
           <div className="flex flex-col sm:flex-row">
             {/* Секция изображения */}
-            <div className="relative w-full aspect-square sm:w-64 sm:h-64 flex-shrink-0 overflow-hidden rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none bg-gradient-to-br from-cyan-50 to-blue-50">
+            <div className="relative w-full aspect-square sm:w-64 sm:h-64 flex-shrink-0 overflow-hidden rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none bg-gradient-to-br from-red-50 to-blue-50">
               <SafeImage
                 src={product.imageUrl || PROSTHETIC_FALLBACK_IMAGE}
                 alt={product.short_name || product.name}
@@ -39,13 +39,13 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
               />
 
               {/* Элегантный overlay градиент */}
-              <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/20 via-transparent to-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-red-900/20 via-transparent to-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               {/* Кнопка быстрого просмотра */}
               <div className="absolute top-3 right-3">
                 <button
                   onClick={() => onQuickView(product)}
-                  className="p-2 rounded-full bg-white/90 backdrop-blur-sm text-cyan-700 hover:bg-cyan-50 hover:scale-110 transition-all duration-300 shadow-lg border border-cyan-200/50"
+                  className="p-2 rounded-full bg-white/90 backdrop-blur-sm text-blue-700 hover:bg-blue-50 hover:scale-110 transition-all duration-300 shadow-lg border border-blue-200/50"
                 >
                   <Eye className="w-4 h-4" />
                 </button>
@@ -70,7 +70,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <Link href={`/products/${product.id}`} className="block">
-                    <h3 className="font-bold text-base sm:text-lg md:text-xl text-slate-800 line-clamp-2 hover:text-cyan-700 transition-colors duration-200 mb-1" style={{ wordWrap: 'break-word', wordBreak: 'normal', whiteSpace: 'normal' }}>
+                    <h3 className="font-bold text-base sm:text-lg md:text-xl text-slate-800 line-clamp-2 hover:text-blue-700 transition-colors duration-200 mb-1" style={{ wordWrap: 'break-word', wordBreak: 'normal', whiteSpace: 'normal' }}>
                       {formatProductName(product.short_name || product.name)}
                     </h3>
                   </Link>
@@ -104,7 +104,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                       )}
                       {/* Отображение количества вариантов */}
                       {product.has_variants && product.variants_count && product.variants_count > 0 && (
-                        <Badge className="bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-700 border border-cyan-200 text-[10px] sm:text-xs px-1.5 py-0.5">
+                        <Badge className="bg-gradient-to-r from-red-100 to-blue-100 text-blue-700 border border-blue-200 text-[10px] sm:text-xs px-1.5 py-0.5">
                           <Layers className="w-2.5 h-2.5 mr-0.5" />
                           {product.variants_count + 1} вар.
                         </Badge>
@@ -129,7 +129,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                     ) : (product.price || product.discount_price) ? (
                       product.discount_price && product.price && product.discount_price < product.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                          <span className="text-xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                          <span className="text-xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
                             {new Intl.NumberFormat('ru-RU', {
                               style: 'currency',
                               currency: 'RUB',
@@ -172,7 +172,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                         size="sm"
                         className={`w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 touch-manipulation ${
                           isProductAvailable(product)
-                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 border-0'
+                            ? 'bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 border-0'
                             : 'bg-gradient-to-r from-slate-200 to-gray-200 text-slate-500 cursor-not-allowed border border-slate-300'
                         }`}
                       >
@@ -199,7 +199,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                         })
                       }}
                   size="sm"
-                      className="w-full sm:w-auto px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-cyan-300 text-cyan-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 hover:border-cyan-400 transition-all duration-300 shadow-md hover:shadow-lg rounded-lg"
+                      className="w-full sm:w-auto px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-blue-400 transition-all duration-300 shadow-md hover:shadow-lg rounded-lg"
                 >
                       <span>В заявку</span>
                 </Button>

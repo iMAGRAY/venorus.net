@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { SkeletonProvider } from "@/components/skeleton-provider"
+import { I18nProvider } from "@/components/i18n-provider"
 import { InstantNavigationProvider } from "@/components/instant-navigation-provider"
 import { CartProvider } from "@/lib/cart-context"
 import { OrdersProvider } from "@/lib/orders-context"
@@ -62,10 +63,12 @@ export default function RootLayout({
         <OrdersProvider>
         <CartProvider>
           <InstantNavigationProvider>
-            <SkeletonProvider>
-              {children}
-              <Toaster position="top-right" />
-            </SkeletonProvider>
+            <I18nProvider>
+              <SkeletonProvider>
+                {children}
+                <Toaster position="top-right" />
+              </SkeletonProvider>
+            </I18nProvider>
           </InstantNavigationProvider>
         </CartProvider>
         </OrdersProvider>

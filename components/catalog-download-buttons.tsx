@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
 import { FileDown, Share2, ChevronDown, ChevronUp } from 'lucide-react'
 import { toast } from 'sonner'
+import { useI18n } from "@/components/i18n-provider"
 
 interface CatalogFile {
   id: number
@@ -17,6 +18,7 @@ interface CatalogFile {
 }
 
 export function CatalogDownloadButtons() {
+  const { t } = useI18n()
   const [catalogs, setCatalogs] = useState<CatalogFile[]>([])
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState<number | null>(null)
@@ -152,7 +154,7 @@ export function CatalogDownloadButtons() {
       {displayedCatalogs.map((catalog) => (
         <div 
           key={catalog.id} 
-          className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-white/80 backdrop-blur-sm border border-cyan-200/40 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+          className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-white/80 backdrop-blur-sm border border-blue-200/40 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
         >
           <div className="flex-1 text-center sm:text-left">
             <h3 className="font-semibold text-lg text-gray-800">{catalog.title}</h3>
@@ -162,17 +164,17 @@ export function CatalogDownloadButtons() {
             <Button
               onClick={() => handleDownload(catalog)}
               disabled={downloading === catalog.id}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-300 rounded-lg font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 rounded-lg font-medium"
             >
               {downloading === catalog.id ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Загрузка...</span>
+                  <span>{t('common.loading')}</span>
                 </>
               ) : (
                 <>
                   <FileDown className="w-4 h-4" />
-                  <span>{isMobile ? 'Открыть' : 'Скачать'}</span>
+                  <span>{isMobile ? t('common.open') : t('common.download')}</span>
                 </>
               )}
             </Button>
@@ -183,7 +185,7 @@ export function CatalogDownloadButtons() {
               className="flex items-center gap-2 px-4 py-2 bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 rounded-lg font-medium"
             >
               <Share2 className="w-4 h-4" />
-              <span>Поделиться</span>
+              <span>{t('common.share')}</span>
             </Button>
           </div>
         </div>
@@ -194,9 +196,9 @@ export function CatalogDownloadButtons() {
         <Button
           onClick={() => setShowAll(true)}
           variant="outline"
-          className="mx-auto mt-2 flex items-center gap-2 text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50 border-cyan-300"
+          className="mx-auto mt-2 flex items-center gap-2 text-blue-700 hover:text-blue-800 hover:bg-blue-50 border-blue-300"
         >
-          <span>Показать все каталоги ({sortedCatalogs.length})</span>
+          <span>{t('common.showAllProducts')} ({sortedCatalogs.length})</span>
           <ChevronDown className="w-4 h-4" />
         </Button>
       )}
@@ -208,7 +210,7 @@ export function CatalogDownloadButtons() {
           variant="outline"
           className="mx-auto mt-2 flex items-center gap-2 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
         >
-          <span>Свернуть</span>
+          <span>{t('common.collapse')}</span>
           <ChevronUp className="w-4 h-4" />
         </Button>
       )}

@@ -186,9 +186,9 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
   if (showSuccess) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border border-cyan-200/50 shadow-2xl shadow-cyan-200/20">
+        <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border border-blue-200/50 shadow-2xl shadow-blue-200/20">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
               Заказ успешно оформлен!
             </DialogTitle>
             <DialogDescription className="text-slate-600">
@@ -202,7 +202,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
 
             {/* Информация о заказе */}
             {createdOrder && (
-              <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-200/30 mb-6">
+              <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-xl p-4 border border-blue-200/30 mb-6">
                 <div className="text-left space-y-2">
                   <p className="text-sm text-slate-600">
                     <span className="font-medium">Номер заказа:</span> #{createdOrder.id}
@@ -222,7 +222,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
               {isWebShareSupported() ? (
                 <Button
                   onClick={shareOrder}
-                  className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white"
+                  className="flex-1 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white"
                   size="sm"
                 >
                   <Share2 className="w-4 h-4 mr-2" />
@@ -240,7 +240,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
               )}
             </div>
 
-            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full mx-auto"></div>
+            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-blue-600 rounded-full mx-auto"></div>
           </div>
         </DialogContent>
       </Dialog>
@@ -249,10 +249,10 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl bg-white/95 backdrop-blur-xl border border-cyan-200/50 shadow-2xl shadow-cyan-200/20 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl bg-white/95 backdrop-blur-xl border border-blue-200/50 shadow-2xl shadow-blue-200/20 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent flex items-center gap-2">
-                          <ClipboardList className="w-6 h-6 text-cyan-600" />
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent flex items-center gap-2">
+                          <ClipboardList className="w-6 h-6 text-blue-600" />
             Оформление заказа
           </DialogTitle>
           <DialogDescription className="text-slate-600">
@@ -262,9 +262,9 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Контактные данные */}
-          <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-6 border border-cyan-200/30">
+          <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-6 border border-blue-200/30">
             <h3 className="text-lg font-semibold mb-4 text-slate-800 flex items-center gap-2">
-              <Phone className="w-5 h-5 text-cyan-600" />
+              <Phone className="w-5 h-5 text-blue-600" />
               Контактные данные
             </h3>
 
@@ -279,7 +279,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
                   placeholder="+7 (999) 123-45-67"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className={`bg-white/80 border-cyan-200/50 focus:border-cyan-400 focus:ring-cyan-400/20 ${
+                  className={`bg-white/80 border-blue-200/50 focus:border-blue-400 focus:ring-blue-400/20 ${
                     errors.phone ? 'border-red-300 focus:border-red-400' : ''
                   }`}
                 />
@@ -298,7 +298,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
                   placeholder="example@email.com"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={`bg-white/80 border-cyan-200/50 focus:border-cyan-400 focus:ring-cyan-400/20 ${
+                  className={`bg-white/80 border-blue-200/50 focus:border-blue-400 focus:ring-blue-400/20 ${
                     errors.email ? 'border-red-300 focus:border-red-400' : ''
                   }`}
                 />
@@ -317,22 +317,22 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
                 placeholder="Дополнительные пожелания или вопросы..."
                 value={formData.notes}
                 onChange={(e) => handleInputChange('notes', e.target.value)}
-                className="bg-white/80 border-cyan-200/50 focus:border-cyan-400 focus:ring-cyan-400/20 min-h-[80px]"
+                className="bg-white/80 border-blue-200/50 focus:border-blue-400 focus:ring-blue-400/20 min-h-[80px]"
               />
             </div>
           </div>
 
           {/* Итоги заказа */}
-          <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-6 border border-cyan-200/30">
+          <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-6 border border-blue-200/30">
             <h3 className="text-lg font-semibold mb-4 text-slate-800">
               Итоги заказа
             </h3>
 
             <div className="space-y-3">
               {items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-2 border-b border-cyan-200/30 last:border-0">
+                <div key={item.id} className="flex items-center justify-between py-2 border-b border-blue-200/30 last:border-0">
                   <div className="flex items-center gap-3">
-                    <SafeImage src={item.image_url} alt={item.name} width={48} height={48} className="w-12 h-12 rounded-lg object-cover border border-cyan-200/30" />
+                    <SafeImage src={item.image_url} alt={item.name} width={48} height={48} className="w-12 h-12 rounded-lg object-cover border border-blue-200/30" />
                     <div>
                       <p className="font-medium text-slate-800">{item.name}</p>
                       <p className="text-sm text-slate-600">
@@ -347,9 +347,9 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
                 </div>
               ))}
 
-              <div className="flex justify-between items-center pt-4 border-t border-cyan-300/50">
+              <div className="flex justify-between items-center pt-4 border-t border-blue-300/50">
                 <p className="text-lg font-bold text-slate-800">Итого:</p>
-                <p className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">
                   {totalPrice.toLocaleString('ru-RU')} ₽
                 </p>
               </div>
@@ -369,7 +369,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 hover:scale-[1.02]"
+              className="flex-1 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02]"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

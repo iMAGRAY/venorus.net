@@ -168,7 +168,7 @@ export function ProductVariantSelector({
       <>
         <div className={cn("space-y-2", className)}>
           <h3 className="text-sm font-medium text-slate-700">Вариант товара</h3>
-          <div className="p-3 bg-cyan-50 border border-cyan-200 rounded-lg flex items-center justify-between">
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
             <div>
               <p className="font-medium text-slate-800">{singleVariant.sizeName}</p>
               {singleVariant.sizeValue && (
@@ -265,7 +265,7 @@ export function ProductVariantSelector({
                 className={cn(
                   "flex items-center justify-between p-5 rounded-lg border-2 cursor-pointer transition-all",
                   "hover:bg-slate-50",
-                  "peer-checked:border-cyan-500 peer-checked:bg-cyan-50",
+                  "peer-checked:border-blue-600 peer-checked:bg-blue-50",
                   !variant.isAvailable && "opacity-50 cursor-not-allowed bg-slate-50"
                 )}
               >
@@ -297,7 +297,7 @@ export function ProductVariantSelector({
                         <p className="text-sm line-through text-slate-400">
                           {variant.price?.toLocaleString('ru-RU')} ₽
                         </p>
-                        <p className="font-bold text-cyan-700">
+                        <p className="font-bold text-blue-700">
                           {variant.discountPrice.toLocaleString('ru-RU')} ₽
                         </p>
                       </div>

@@ -178,7 +178,7 @@ export function ProductVariantSelectorModal({
               className={cn(
                 "relative group cursor-pointer rounded-lg border-2 bg-white transition-all duration-300 p-3",
                 isSelected
-                  ? "border-cyan-500 shadow-md shadow-cyan-200/50 bg-gradient-to-br from-cyan-50 to-blue-50"
+                  ? "border-blue-600 shadow-md shadow-blue-200/50 bg-gradient-to-br from-red-50 to-blue-50"
                   : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                 !inStock && "opacity-60"
               )}
@@ -193,7 +193,7 @@ export function ProductVariantSelectorModal({
               {/* Чекбокс выбора */}
               <div className="absolute top-2 right-2 z-10">
                 {isSelected ? (
-                  <div className="w-5 h-5 bg-cyan-500 rounded-full flex items-center justify-center shadow-md">
+                  <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
                     <CheckCircle className="w-3 h-3 text-white" />
                   </div>
                 ) : (
@@ -230,7 +230,7 @@ export function ProductVariantSelectorModal({
                     <div className="text-sm text-gray-600">По запросу</div>
                   ) : itemData.discount_price ? (
                     <div className="space-y-0.5">
-                      <div className="text-base font-bold text-cyan-700">
+                      <div className="text-base font-bold text-blue-700">
                         {itemData.discount_price.toLocaleString('ru-RU')} ₽
                       </div>
                       <div className="text-xs line-through text-gray-400">

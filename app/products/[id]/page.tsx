@@ -6,6 +6,7 @@ import { sanitizeTitle } from "@/lib/utils/sanitize"
 import { SafeImage } from "@/components/safe-image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/components/i18n-provider"
 import { Badge } from "@/components/ui/badge"
 import Header from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -82,6 +83,7 @@ interface ProductVariantV2 {
 }
 
 export default function ProductPage() {
+  const { t } = useI18n()
   const params = useParams()
   const router = useRouter()
   const { products } = useAdminStore()
@@ -559,15 +561,15 @@ export default function ProductPage() {
     return (
       <div className="flex flex-col min-h-screen">
         {/* Фоновые декоративные элементы в стиле Tiffany */}
-        <div className="fixed inset-0 bg-gradient-to-br from-cyan-50/30 via-white to-blue-50/40 pointer-events-none"></div>
-        <div className="fixed top-20 right-10 w-64 h-64 bg-gradient-to-br from-cyan-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="fixed bottom-32 left-16 w-48 h-48 bg-gradient-to-tr from-teal-100/15 to-cyan-100/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="fixed inset-0 bg-gradient-to-br from-red-50/30 via-white to-blue-50/40 pointer-events-none"></div>
+        <div className="fixed top-20 right-10 w-64 h-64 bg-gradient-to-br from-red-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="fixed bottom-32 left-16 w-48 h-48 bg-gradient-to-tr from-red-100/15 to-blue-100/20 rounded-full blur-2xl pointer-events-none"></div>
 
         <Header />
         <main className="flex-grow flex items-center justify-center relative z-10">
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-cyan-200/40 shadow-xl shadow-cyan-100/20 p-12 text-center">
-            <div className="w-12 h-12 animate-spin mx-auto mb-6 border-4 border-cyan-500 border-t-transparent rounded-full"></div>
-            <p className="text-cyan-700 font-medium text-lg">Загрузка товара...</p>
+          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-blue-200/40 shadow-xl shadow-blue-100/20 p-12 text-center">
+            <div className="w-12 h-12 animate-spin mx-auto mb-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+            <p className="text-blue-700 font-medium text-lg">{t('productPage.loading')}</p>
           </div>
         </main>
         <Footer />
@@ -579,25 +581,23 @@ export default function ProductPage() {
     return (
       <div className="flex flex-col min-h-screen">
         {/* Фоновые декоративные элементы в стиле Tiffany */}
-        <div className="fixed inset-0 bg-gradient-to-br from-cyan-50/30 via-white to-blue-50/40 pointer-events-none"></div>
-        <div className="fixed top-20 right-10 w-64 h-64 bg-gradient-to-br from-cyan-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="fixed bottom-32 left-16 w-48 h-48 bg-gradient-to-tr from-teal-100/15 to-cyan-100/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="fixed inset-0 bg-gradient-to-br from-red-50/30 via-white to-blue-50/40 pointer-events-none"></div>
+        <div className="fixed top-20 right-10 w-64 h-64 bg-gradient-to-br from-red-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="fixed bottom-32 left-16 w-48 h-48 bg-gradient-to-tr from-red-100/15 to-blue-100/20 rounded-full blur-2xl pointer-events-none"></div>
 
         <Header />
         <main className="flex-grow flex items-center justify-center relative z-10">
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-cyan-200/40 shadow-xl shadow-cyan-100/20 p-12 text-center max-w-md">
-            <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent">
-              Товар не найден
-            </h1>
+          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-blue-200/40 shadow-xl shadow-blue-100/20 p-12 text-center max-w-md">
+            <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-red-700 to-blue-800 bg-clip-text text-transparent">{t('productPage.notFound')}</h1>
             <p className="text-slate-600 mb-8 leading-relaxed">
               Запрашиваемый товар не существует или был удален.
             </p>
             <Button
-              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 hover:scale-[1.02] rounded-xl font-medium"
+              className="px-8 py-4 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] rounded-xl font-medium"
               onClick={() => window.location.href = '/'}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Вернуться на главную
+              {t('productPage.goHome')}
             </Button>
           </div>
         </main>
@@ -609,24 +609,24 @@ export default function ProductPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Фоновые декоративные элементы в стиле Tiffany - адаптивные */}
-      <div className="fixed inset-0 bg-gradient-to-br from-cyan-50/30 via-white to-blue-50/40 pointer-events-none"></div>
-      <div className="fixed top-10 right-4 w-32 h-32 sm:top-20 sm:right-10 sm:w-64 sm:h-64 bg-gradient-to-br from-cyan-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="fixed bottom-16 left-4 w-24 h-24 sm:bottom-32 sm:left-16 sm:w-48 sm:h-48 bg-gradient-to-tr from-teal-100/15 to-cyan-100/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-red-50/30 via-white to-blue-50/40 pointer-events-none"></div>
+      <div className="fixed top-10 right-4 w-32 h-32 sm:top-20 sm:right-10 sm:w-64 sm:h-64 bg-gradient-to-br from-red-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed bottom-16 left-4 w-24 h-24 sm:bottom-32 sm:left-16 sm:w-48 sm:h-48 bg-gradient-to-tr from-red-100/15 to-blue-100/20 rounded-full blur-2xl pointer-events-none"></div>
 
       <Header />
       <main className="flex-grow relative z-10">
         <div className="container mx-auto py-4 sm:py-8 px-2 sm:px-6 lg:px-12">
           {/* Breadcrumb - Tiffany style с адаптивностью */}
-          <div className="bg-white/60 backdrop-blur-lg rounded-lg sm:rounded-xl border border-cyan-200/40 p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm shadow-cyan-100/20">
-            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-cyan-700 overflow-x-auto">
-              <Link href="/" className="hover:text-cyan-600 transition-colors font-medium whitespace-nowrap">
-                Главная
+          <div className="bg-white/60 backdrop-blur-lg rounded-lg sm:rounded-xl border border-blue-200/40 p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm shadow-blue-100/20">
+            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-blue-700 overflow-x-auto">
+              <Link href="/" className="hover:text-blue-700 transition-colors font-medium whitespace-nowrap">
+                {t('common.home')}
               </Link>
-              <span className="text-cyan-400">/</span>
-              <Link href="/#products" className="hover:text-cyan-600 transition-colors font-medium whitespace-nowrap">
-                Товары
+              <span className="text-blue-400">/</span>
+              <Link href="/#products" className="hover:text-blue-700 transition-colors font-medium whitespace-nowrap">
+                {t('common.products')}
               </Link>
-              <span className="text-cyan-400">/</span>
+              <span className="text-blue-400">/</span>
               <span className="text-slate-800 font-semibold truncate">{product.short_name || product.name}</span>
             </div>
           </div>
@@ -654,22 +654,22 @@ export default function ProductPage() {
                 router.push('/')
               }
             }}
-            className="mb-4 sm:mb-8 bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200 text-cyan-700 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-300 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mb-4 sm:mb-8 bg-gradient-to-r from-red-50 to-blue-50 border-blue-200 text-blue-700 hover:from-red-100 hover:to-blue-100 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Назад
           </Button>
 
           {/* Main Product Section - Tiffany glass card с адаптивностью */}
-          <div className="bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-cyan-200/40 shadow-xl shadow-cyan-100/20 overflow-hidden mb-8 sm:mb-12">
+          <div className="bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-blue-200/40 shadow-xl shadow-blue-100/20 overflow-hidden mb-8 sm:mb-12">
             <div className="grid lg:grid-cols-2 gap-0">
               {/* Product Images - левая часть с адаптивностью */}
-              <div className="p-3 sm:p-6 lg:p-8 bg-gradient-to-br from-white/80 to-cyan-50/30">
+              <div className="p-3 sm:p-6 lg:p-8 bg-gradient-to-br from-white/80 to-blue-50/30">
                 <div className="space-y-2 sm:space-y-4">
-                  <div className="relative aspect-square max-w-md sm:max-w-lg lg:max-w-2xl xl:max-w-3xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-cyan-200/30 shadow-lg bg-white/50 backdrop-blur-sm">
+                  <div className="relative aspect-square max-w-md sm:max-w-lg lg:max-w-2xl xl:max-w-3xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-blue-200/30 shadow-lg bg-white/50 backdrop-blur-sm">
                     {imagesLoading ? (
                       <div className="flex items-center justify-center h-full">
-                        <div className="w-8 h-8 animate-spin border-4 border-cyan-500 border-t-transparent rounded-full"></div>
+                        <div className="w-8 h-8 animate-spin border-4 border-blue-600 border-t-transparent rounded-full"></div>
                       </div>
                     ) : (
                       <>
@@ -691,7 +691,7 @@ export default function ProductPage() {
                           {/* Overlay с иконкой увеличения */}
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
                             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
-                              <svg className="w-6 h-6 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                               </svg>
                             </div>
@@ -704,13 +704,13 @@ export default function ProductPage() {
                       <>
                         <button
                           onClick={prevImage}
-                          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-cyan-200/40 text-cyan-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 hover:border-cyan-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+                          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-blue-200/40 text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-blue-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                           <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                         <button
                           onClick={nextImage}
-                          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-cyan-200/40 text-cyan-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 hover:border-cyan-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+                          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-blue-200/40 text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-blue-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                           <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
@@ -727,8 +727,8 @@ export default function ProductPage() {
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
                           className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all duration-300 ${index === currentImageIndex
-                              ? "border-cyan-500 shadow-lg shadow-cyan-200/50"
-                              : "border-cyan-200/50 hover:border-cyan-400/70 hover:shadow-md"
+                              ? "border-blue-600 shadow-lg shadow-blue-200/50"
+                              : "border-blue-200/50 hover:border-blue-400/70 hover:shadow-md"
                             }`}
                         >
                           <SafeImage
@@ -764,7 +764,7 @@ export default function ProductPage() {
               <div className="p-4 sm:p-8 lg:p-12 bg-gradient-to-br from-white/90 to-blue-50/30 flex flex-col min-h-[400px] sm:min-h-[600px]">
                 <div className="flex-1 space-y-4 sm:space-y-6">
                   {/* Название */}
-                  <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent leading-tight break-words">
+                  <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-slate-800 via-blue-700 to-blue-800 bg-clip-text text-transparent leading-tight break-words">
                     {displayProduct?.name || product.name}
                   </h1>
 
@@ -778,14 +778,14 @@ export default function ProductPage() {
                   />
 
                   {/* Цена и кнопка добавления */}
-                  <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/30 rounded-xl border border-cyan-200/40 p-4 sm:p-6 shadow-lg shadow-cyan-100/20">
+                  <div className="bg-gradient-to-r from-red-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 p-4 sm:p-6 shadow-lg shadow-blue-100/20">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center shadow-md">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-600 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
                           <span className="text-white font-bold text-sm sm:text-base">₽</span>
                         </div>
                         <div>
-                          <h3 className="text-sm sm:text-base font-semibold text-cyan-800 mb-1">Цена</h3>
+                          <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-1">Цена</h3>
                           {/* Если выбран вариант, показываем его цену */}
                           {selectedVariant ? (
                             // Проверяем show_price варианта
@@ -795,7 +795,7 @@ export default function ProductPage() {
                               </span>
                             ) : selectedVariant.discount_price ? (
                               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                                <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                                <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-800 bg-clip-text text-transparent">
                                   {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.discount_price)}
                                 </span>
                                 {selectedVariant.price && (
@@ -822,7 +822,7 @@ export default function ProductPage() {
                             ) : (product.price || product.discount_price) ? (
                               product.discount_price && product.price && product.discount_price < product.price ? (
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-800 bg-clip-text text-transparent">
                                     {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(product.discount_price)}
                                   </span>
                                   <span className="text-xs sm:text-sm line-through text-slate-400">
@@ -867,7 +867,7 @@ export default function ProductPage() {
                     
                     {/* Кнопка добавления в заявку */}
                     <Button
-                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 hover:scale-[1.02] rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center gap-2"
+                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center gap-2"
                       onClick={async () => {
                         if (product) {
                           // Если есть выбранный вариант, используем его данные
@@ -1042,7 +1042,7 @@ export default function ProductPage() {
           <div className="mt-12">
             <div className="text-center mb-8">
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-slate-800 via-blue-700 to-blue-800 bg-clip-text text-transparent">
                   Похожие товары
                 </span>
               </h3>
@@ -1162,7 +1162,7 @@ export default function ProductPage() {
                       onClick={() => setCurrentImageIndex(index)}
                       className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all duration-300 hover:scale-105 ${
                         index === currentImageIndex
-                          ? "border-cyan-400 shadow-lg shadow-cyan-400/50"
+                          ? "border-blue-400 shadow-lg shadow-blue-400/50"
                           : "border-white/30 hover:border-white/50"
                       }`}
                     >
@@ -1174,8 +1174,8 @@ export default function ProductPage() {
                         className="object-cover"
                       />
                       {index === currentImageIndex && (
-                        <div className="absolute inset-0 bg-cyan-400/20 flex items-center justify-center">
-                          <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+                        <div className="absolute inset-0 bg-blue-400/20 flex items-center justify-center">
+                          <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                         </div>
                       )}
                     </button>
@@ -1189,7 +1189,7 @@ export default function ProductPage() {
                       key={index}
                       className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                         index === currentImageIndex
-                          ? "bg-cyan-400 scale-125"
+                          ? "bg-blue-400 scale-125"
                           : "bg-white/50 hover:bg-white/70"
                       }`}
                     />

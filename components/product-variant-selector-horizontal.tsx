@@ -201,8 +201,8 @@ export function ProductVariantSelectorHorizontal({
           className={cn(
             "p-3 border-2 rounded-xl cursor-pointer transition-all duration-300",
             selectedVariant?.id === variants[0].id
-              ? "bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-500 shadow-lg shadow-cyan-200/50"
-              : "bg-white border-gray-200 hover:border-cyan-300 hover:shadow-md"
+              ? "bg-gradient-to-r from-red-50 to-blue-50 border-blue-600 shadow-lg shadow-blue-200/50"
+              : "bg-white border-gray-200 hover:border-blue-300 hover:shadow-md"
           )}
           onClick={() => handleVariantSelect(variants[0])}
         >
@@ -236,7 +236,7 @@ export function ProductVariantSelectorHorizontal({
               )}
             </div>
             {selectedVariant?.id === variants[0].id ? (
-              <CheckCircle className="w-5 h-5 text-cyan-600" />
+              <CheckCircle className="w-5 h-5 text-blue-700" />
             ) : (
               <Circle className="w-5 h-5 text-gray-400" />
             )}
@@ -294,7 +294,7 @@ export function ProductVariantSelectorHorizontal({
                   className={cn(
                     "relative group cursor-pointer rounded-xl border-2 bg-white transition-all duration-300 flex-shrink-0 min-w-[100px] max-w-[150px] hover:scale-105",
                     selectedVariant?.id === variant.id
-                      ? "border-cyan-500 shadow-lg shadow-cyan-200/50 bg-gradient-to-br from-cyan-50 to-blue-50"
+                      ? "border-blue-600 shadow-lg shadow-blue-200/50 bg-gradient-to-br from-red-50 to-blue-50"
                       : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                     !variant.in_stock && "opacity-60 cursor-not-allowed"
                   )}
@@ -339,11 +339,11 @@ export function ProductVariantSelectorHorizontal({
                     {/* Индикатор выбора */}
                     <div className="absolute top-1 left-1">
                       {selectedVariant?.id === variant.id ? (
-                        <div className="w-5 h-5 bg-cyan-500 rounded-full flex items-center justify-center shadow-md">
+                        <div className="w-5 h-5 bg-blue-700 rounded-full flex items-center justify-center shadow-md">
                           <CheckCircle className="w-3 h-3 text-white" />
                         </div>
                       ) : (
-                        <Circle className="w-5 h-5 text-gray-400 group-hover:text-cyan-500 transition-colors" />
+                        <Circle className="w-5 h-5 text-gray-400 group-hover:text-blue-700 transition-colors" />
                       )}
                     </div>
 
@@ -400,7 +400,7 @@ export function ProductVariantSelectorHorizontal({
                     <div className="text-center">
                       {variant.discount_price ? (
                         <div className="space-y-0.5">
-                          <div className="text-xs font-bold text-cyan-700">
+                          <div className="text-xs font-bold text-blue-700">
                             {variant.discount_price.toLocaleString('ru-RU')} ₽
                           </div>
                           <div className="text-[10px] line-through text-gray-400">
@@ -449,7 +449,7 @@ export function ProductVariantSelectorHorizontal({
 
       {/* Информация о выбранном варианте */}
       {selectedVariant && (
-        <div className="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl transition-all duration-300">
+        <div className="p-4 bg-gradient-to-r from-red-50 to-blue-50 border border-blue-200 rounded-xl transition-all duration-300">
           <div className="flex items-start gap-4">
             {selectedVariant.primary_image_url && (
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-white shadow-sm flex-shrink-0">
@@ -475,7 +475,7 @@ export function ProductVariantSelectorHorizontal({
                 <div className="flex items-center gap-2">
                   {selectedVariant.discount_price ? (
                     <>
-                      <span className="text-lg font-bold text-cyan-700">
+                      <span className="text-lg font-bold text-blue-700">
                         {selectedVariant.discount_price.toLocaleString('ru-RU')} ₽
                       </span>
                       <span className="text-sm line-through text-gray-400">

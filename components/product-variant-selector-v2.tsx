@@ -236,7 +236,7 @@ export function ProductVariantSelectorV2({
               className={cn(
                 "relative group cursor-pointer rounded-xl border-2 p-5 transition-all",
                 selectedVariant?.id === variant.id
-                  ? "border-cyan-500 bg-cyan-50 shadow-lg"
+                  ? "border-blue-600 bg-blue-50 shadow-lg"
                   : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                 !variant.in_stock && "opacity-60"
               )}
@@ -303,7 +303,7 @@ export function ProductVariantSelectorV2({
                 <div className="pt-2">
                   {variant.discount_price ? (
                     <div className="flex items-baseline gap-2">
-                      <span className="text-lg font-bold text-cyan-700">
+                      <span className="text-lg font-bold text-blue-700">
                         {variant.discount_price.toLocaleString('ru-RU')} ₽
                       </span>
                       <span className="text-sm line-through text-gray-400">
@@ -376,7 +376,7 @@ export function ProductVariantSelectorV2({
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-2 -right-2 w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center shadow-lg"
+                  className="absolute -top-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"
                 >
                   <Check className="w-5 h-5 text-white" />
                 </motion.div>

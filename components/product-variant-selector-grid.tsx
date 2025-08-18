@@ -202,7 +202,7 @@ export function ProductVariantSelectorGrid({
                   "relative group cursor-pointer rounded-lg sm:rounded-xl border-2 bg-white transition-all duration-300 flex-shrink-0",
                   "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[160px]", // Квадратные размеры
                   isSelected
-                    ? "border-cyan-500 shadow-md shadow-cyan-200/50 bg-gradient-to-br from-cyan-50 to-blue-50"
+                    ? "border-blue-600 shadow-md shadow-blue-200/50 bg-gradient-to-br from-red-50 to-blue-50"
                     : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                   !inStock && "opacity-60"
                 )}
@@ -264,7 +264,7 @@ export function ProductVariantSelectorGrid({
 
                   <div className="absolute bottom-1 right-1">
                     {isSelected ? (
-                      <div className="w-4 sm:w-5 h-4 sm:h-5 bg-cyan-500 rounded-full flex items-center justify-center shadow-md">
+                      <div className="w-4 sm:w-5 h-4 sm:h-5 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
                         <CheckCircle className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-white" />
                       </div>
                     ) : (
@@ -292,7 +292,7 @@ export function ProductVariantSelectorGrid({
                       <div className="text-[8px] sm:text-[9px] text-gray-600">По запросу</div>
                     ) : itemData.discount_price ? (
                       <div className="space-y-0">
-                        <div className="text-[9px] sm:text-[11px] md:text-xs font-bold text-cyan-700">
+                        <div className="text-[9px] sm:text-[11px] md:text-xs font-bold text-blue-700">
                           {itemData.discount_price.toLocaleString('ru-RU')} ₽
                         </div>
                         {itemData.price && (

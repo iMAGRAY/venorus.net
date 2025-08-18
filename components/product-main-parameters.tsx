@@ -95,7 +95,7 @@ export default function ProductMainParameters({
         {/* Важные параметры */}
         {groupedParams.important.length > 0 && (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-medium text-cyan-700">
+            <div className="flex items-center gap-2 text-sm font-medium text-blue-700">
               {showIcons && <Zap className="w-4 h-4" />}
               Важные характеристики
             </div>
@@ -104,7 +104,7 @@ export default function ProductMainParameters({
                 <Badge
                   key={param.id}
                   variant="outline"
-                  className="bg-cyan-50 text-cyan-700 border-cyan-200 hover:bg-cyan-100"
+                  className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
                 >
                   {param.display_name}: {param.value}
                 </Badge>

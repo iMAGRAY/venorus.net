@@ -69,15 +69,15 @@ export function ProductConfigurationSelector({
   return (
     <Card 
       data-config-selector
-      className={`${className} bg-gradient-to-br from-cyan-50/30 to-blue-50/20 border-2 transition-all duration-300 ${
+      className={`${className} bg-gradient-to-br from-red-50/30 to-blue-50/20 border-2 transition-all duration-300 ${
         hasError 
           ? 'border-red-500 shadow-lg shadow-red-200/50' 
-          : 'border-cyan-200/40'
+          : 'border-blue-200/40'
       }`}
     >
       <CardHeader className="pb-4">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Settings className={`w-5 h-5 ${hasError ? 'text-red-600' : 'text-cyan-600'}`} />
+          <Settings className={`w-5 h-5 ${hasError ? 'text-red-600' : 'text-blue-600'}`} />
           <span className={hasError ? 'text-red-700' : ''}>Конфигурация товара</span>
           {hasError && (
             <span className="text-sm text-red-600 font-normal ml-auto">
@@ -99,7 +99,7 @@ export function ProductConfigurationSelector({
               <div key={groupId} className={`flex items-center justify-between p-3 bg-white/60 rounded-lg border-2 transition-all duration-300 ${
                 hasError && !configuration[groupId] 
                   ? 'border-red-500 shadow-md shadow-red-200/30' 
-                  : 'border-cyan-200/30'
+                  : 'border-blue-200/30'
               }`}>
                 <div className="flex items-center gap-2">
                   <Label htmlFor={`config-${groupId}`} className="text-sm font-medium cursor-pointer">
@@ -109,7 +109,7 @@ export function ProductConfigurationSelector({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Info className="w-4 h-4 text-cyan-600" />
+                          <Info className="w-4 h-4 text-blue-600" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="text-sm">{char.additional_value}</p>
@@ -152,7 +152,7 @@ export function ProductConfigurationSelector({
                   <SelectTrigger className={`w-full bg-white/80 hover:bg-white/90 transition-colors ${
                     hasError && !configuration[groupId] 
                       ? 'border-red-500 border-2' 
-                      : 'border-cyan-200/40'
+                      : 'border-blue-200/40'
                   }`}>
                     <SelectValue placeholder="Выберите вариант" />
                   </SelectTrigger>
@@ -182,7 +182,7 @@ export function ProductConfigurationSelector({
         
         {/* Информация о выбранной конфигурации */}
         {Object.keys(configuration).length > 0 && (
-          <div className="pt-3 border-t border-cyan-200/40">
+          <div className="pt-3 border-t border-blue-200/40">
             <p className="text-sm text-gray-600 mb-2">Выбранная конфигурация:</p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(configuration).map(([groupId, config]) => {

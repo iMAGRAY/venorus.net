@@ -7,6 +7,7 @@ import { SafeImage } from "@/components/safe-image"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Sparkles, Package, Building2, TrendingUp } from "lucide-react"
 import type { Prosthetic } from "@/lib/data"
+import { useI18n } from "@/components/i18n-provider"
 
 // Функция загрузки товаров из API
 async function fetchProducts(): Promise<Prosthetic[]> {
@@ -35,6 +36,7 @@ export function ProductRecommendations({
   onProductSelect,
   className = ""
 }: ProductRecommendationsProps) {
+  const { t } = useI18n()
   const [currentRecommendationIndex, setCurrentRecommendationIndex] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const [sourceProducts, setSourceProducts] = useState<Prosthetic[]>(allProducts)
@@ -71,11 +73,10 @@ export function ProductRecommendations({
   // Если нет рекомендаций, не показываем компонент
   if (recommendations.length === 0) {
     return (
-      <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-cyan-200/40 shadow-lg shadow-cyan-100/20 p-8 text-center">
+      <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-blue-200/40 shadow-lg shadow-blue-100/20 p-8 text-center">
         <div className="text-slate-500">
           <Package className="w-16 h-16 mx-auto mb-4 opacity-50" />
-          <h3 className="text-lg font-medium mb-2">Пока нет рекомендаций</h3>
-          <p className="text-sm">Мы работаем над улучшением алгоритма рекомендаций</p>
+          <h3 className="text-lg font-medium">{t('common.noRecommendations')}</h3>
         </div>
       </div>
     )
@@ -114,10 +115,10 @@ export function ProductRecommendations({
 
   return (
     <div className={`transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${className}`}>
-      <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-cyan-200/40 shadow-lg shadow-cyan-100/20 overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-blue-200/40 shadow-lg shadow-blue-100/20 overflow-hidden">
 
         {/* Заголовок с навигацией */}
-        <div className="bg-gradient-to-r from-cyan-50/80 to-blue-50/60 p-4 border-b border-cyan-200/30">
+        <div className="bg-gradient-to-r from-red-50/80 to-blue-50/60 p-4 border-b border-blue-200/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {getRecommendationIcon(currentRecommendation.type)}
@@ -138,7 +139,7 @@ export function ProductRecommendations({
                   variant="outline"
                   size="sm"
                   onClick={prevRecommendation}
-                  className="w-8 h-8 p-0 bg-white/50 border-cyan-200 hover:bg-cyan-50 touch-manipulation"
+                  className="w-8 h-8 p-0 bg-white/50 border-blue-200 hover:bg-blue-50 touch-manipulation"
                   aria-label="Предыдущая рекомендация"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -151,8 +152,8 @@ export function ProductRecommendations({
                       onClick={() => setCurrentRecommendationIndex(index)}
                       className={`w-2 h-2 rounded-full transition-colors touch-manipulation ${
                         index === currentRecommendationIndex
-                          ? 'bg-cyan-500'
-                          : 'bg-cyan-200 hover:bg-cyan-300'
+                          ? 'bg-blue-600'
+                          : 'bg-blue-200 hover:bg-blue-300'
                       }`}
                       aria-label={`Перейти к рекомендации ${index + 1}`}
                     />
@@ -163,7 +164,7 @@ export function ProductRecommendations({
                   variant="outline"
                   size="sm"
                   onClick={nextRecommendation}
-                  className="w-8 h-8 p-0 bg-white/50 border-cyan-200 hover:bg-cyan-50 touch-manipulation"
+                  className="w-8 h-8 p-0 bg-white/50 border-blue-200 hover:bg-blue-50 touch-manipulation"
                   aria-label="Следующая рекомендация"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -217,9 +218,9 @@ export function ProductRecommendations({
                   
                   window.location.href = `/products${categoryFilter || manufacturerFilter}`
                 }}
-                className="bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200 text-cyan-700 hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-300 touch-manipulation"
+                className="bg-gradient-to-r from-red-50 to-blue-50 border-blue-200 text-blue-700 hover:from-red-100 hover:to-blue-100 hover:border-blue-300 touch-manipulation"
               >
-                Показать все {currentRecommendation.products.length} товаров
+                {t('common.showAllProducts')} ({currentRecommendation.products.length})
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
@@ -239,6 +240,7 @@ export function ProductRecommendationsSidebar({
   onProductSelect,
   className = ""
 }: ProductRecommendationsProps) {
+  const { t } = useI18n()
   const [sourceProducts, setSourceProducts] = useState<Prosthetic[]>(allProducts)
 
   // Загружаем товары, если они не переданы (только один раз)
@@ -265,11 +267,11 @@ export function ProductRecommendationsSidebar({
   }
 
   return (
-    <div className={`bg-white/70 backdrop-blur-xl rounded-xl border border-cyan-200/40 shadow-sm overflow-hidden ${className}`}>
-      <div className="bg-gradient-to-r from-cyan-50/80 to-blue-50/60 p-3 border-b border-cyan-200/30">
+    <div className={`bg-white/70 backdrop-blur-xl rounded-xl border border-blue-200/40 shadow-sm overflow-hidden ${className}`}>
+      <div className="bg-gradient-to-r from-red-50/80 to-blue-50/60 p-3 border-b border-blue-200/30">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-cyan-600" />
-          <h4 className="text-sm font-semibold text-slate-800">Рекомендуем</h4>
+          <Sparkles className="w-4 h-4 text-blue-700" />
+          <h4 className="text-sm font-semibold text-slate-800">{t('hero.alsoRecommend')}</h4>
         </div>
       </div>
 
@@ -299,8 +301,8 @@ export function ProductRecommendationsSidebar({
               }
             }}
           >
-            <div className="flex gap-3 p-2 rounded-lg hover:bg-cyan-50/50 transition-colors">
-              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-cyan-50 to-blue-50">
+            <div className="flex gap-3 p-2 rounded-lg hover:bg-blue-50/50 transition-colors">
+              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-red-50 to-blue-50">
                 <SafeImage
                   src={product.imageUrl || product.image_url || (product.images && product.images.length > 0 ? product.images[0] : null) || '/placeholder.jpg'}
                   alt={product.name}
@@ -310,14 +312,14 @@ export function ProductRecommendationsSidebar({
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <h5 className="text-sm font-medium text-slate-800 line-clamp-2 group-hover:text-cyan-700">
+                <h5 className="text-sm font-medium text-slate-800 line-clamp-2 group-hover:text-blue-700">
                   {product.name}
                 </h5>
                 <p className="text-xs text-slate-500 mt-1">
-                  {reasons[0] || 'Похожий товар'}
+                  {reasons[0] || t('common.similarProduct')}
                 </p>
                 {product.price && (
-                  <p className="text-xs font-medium text-cyan-600 mt-1">
+                  <p className="text-xs font-medium text-blue-600 mt-1">
                     {new Intl.NumberFormat('ru-RU', {
                       style: 'currency',
                       currency: 'RUB'

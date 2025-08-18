@@ -2,6 +2,7 @@
 
 import { SearchableSelect, createSelectOptions } from "@/components/ui/searchable-select"
 import { sortOptions } from "@/lib/data"
+import { useI18n } from "@/components/i18n-provider"
 
 interface SortDropdownProps {
   onSort: (value: string) => void
@@ -10,6 +11,7 @@ interface SortDropdownProps {
 
 export function SortDropdown({ onSort, currentSort }: SortDropdownProps) {
   const options = createSelectOptions(sortOptions, 'value', 'label')
+  const { t } = useI18n()
 
   return (
     <div className="w-48">
@@ -17,8 +19,8 @@ export function SortDropdown({ onSort, currentSort }: SortDropdownProps) {
         options={options}
         value={currentSort}
         onValueChange={onSort}
-        placeholder="Сортировать по..."
-        searchPlaceholder="Поиск вариантов сортировки..."
+        placeholder={t('common.sortBy')}
+        searchPlaceholder={t('common.searchSortOptions')}
         className="notion-select"
       />
     </div>

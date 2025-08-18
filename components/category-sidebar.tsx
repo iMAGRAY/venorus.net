@@ -19,6 +19,8 @@ interface CategorySidebarProps {
   HierarchicalCategoryItem: React.ComponentType<{ group: CategoryGroup }>
 }
 
+import { useI18n } from "@/components/i18n-provider"
+
 export function CategorySidebar({
   hierarchicalCategories,
   activeCategory,
@@ -26,6 +28,7 @@ export function CategorySidebar({
   onCategoryChange,
   HierarchicalCategoryItem
 }: CategorySidebarProps) {
+  const { t } = useI18n()
   return (
     <>
       {/* Кнопка "Все категории" */}
@@ -36,12 +39,12 @@ export function CategorySidebar({
             w-full text-left px-4 py-3 rounded-lg transition-all duration-300 font-medium border
             ${
               activeCategory === "All" || activeCategoryId === null
-                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-200/30 border-cyan-400"
-                : "text-cyan-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 border-cyan-200/40 hover:border-cyan-300/60 hover:shadow-md"
+                ? "bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-lg shadow-blue-200/30 border-blue-400"
+                : "text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 border-blue-200/40 hover:border-blue-300/60 hover:shadow-md"
             }
           `}
         >
-          Все категории
+          {t('common.allCategories')}
         </button>
       </div>
 
@@ -54,9 +57,9 @@ export function CategorySidebar({
 
       {/* Информация внизу */}
       {hierarchicalCategories.length === 0 && (
-        <div className="text-center py-8 text-cyan-600/70">
-          <p className="text-sm font-medium">Меню каталога пустое</p>
-          <p className="text-xs mt-2 text-cyan-500/60">Настройте его в админ панели</p>
+        <div className="text-center py-8 text-blue-600/70">
+          <p className="text-sm font-medium">{t('category.emptyMenu')}</p>
+          <p className="text-xs mt-2 text-blue-500/60">{t('category.chooseCategoryForFilters')}</p>
         </div>
       )}
 

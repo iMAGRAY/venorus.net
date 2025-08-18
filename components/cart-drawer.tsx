@@ -13,12 +13,14 @@ import { OrderForm } from "@/components/order-form"
 import { toast } from "sonner"
 import { SafeImage } from "@/components/safe-image"
 import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
+import { useI18n } from "@/components/i18n-provider"
 
 interface CartDrawerProps {
   children: React.ReactNode
 }
 
 export function CartDrawer({ children }: CartDrawerProps) {
+  const { t } = useI18n()
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [showOrderForm, setShowOrderForm] = useState(false)
@@ -117,28 +119,26 @@ ${items.map(item => {
           <SheetTrigger asChild>
             {children}
           </SheetTrigger>
-          <SheetContent side="right" className="w-full sm:max-w-lg bg-white/95 backdrop-blur-xl border-cyan-200/50 shadow-2xl shadow-cyan-200/20">
+          <SheetContent side="right" className="w-full sm:max-w-lg bg-white/95 backdrop-blur-xl border-blue-200/50 shadow-2xl shadow-blue-200/20">
             <SheetHeader>
-              <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent flex items-center gap-2">
-                <ClipboardList className="w-6 h-6 text-cyan-600" />
-              Заявка
+              <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-red-700 to-blue-800 bg-clip-text text-transparent flex items-center gap-2">
+                <ClipboardList className="w-6 h-6 text-blue-600" />
+              {t('cart.title')}
               </SheetTitle>
             </SheetHeader>
 
             <div className="flex flex-col items-center justify-center h-full py-16">
-              <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/40 backdrop-blur-sm rounded-3xl p-12 text-center border border-cyan-200/30">
-                <ClipboardList className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
-                <h3 className="text-xl font-semibold text-slate-800 mb-4">
-                  Заявка пуста
-                </h3>
+              <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-3xl p-12 text-center border border-blue-200/30">
+                <ClipboardList className="w-16 h-16 text-blue-500 mx-auto mb-6" />
+                <h3 className="text-xl font-semibold text-slate-800 mb-4">{t('cart.empty')}</h3>
                 <p className="text-slate-600 mb-6">
                   Добавьте товары в заявку для оформления заказа
                 </p>
                 <Button
                   onClick={() => setIsOpen(false)}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 hover:scale-[1.02]"
+                  className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02]"
                 >
-                  Продолжить формирование заявки
+                  {t('cart.continue')}
                 </Button>
               </div>
             </div>
@@ -154,12 +154,12 @@ ${items.map(item => {
         <SheetTrigger asChild>
           {children}
         </SheetTrigger>
-        <SheetContent side="right" className="w-full sm:max-w-lg bg-white/95 backdrop-blur-xl border-cyan-200/50 shadow-2xl shadow-cyan-200/20 flex flex-col">
+        <SheetContent side="right" className="w-full sm:max-w-lg bg-white/95 backdrop-blur-xl border-blue-200/50 shadow-2xl shadow-blue-200/20 flex flex-col">
           <SheetHeader>
-            <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-cyan-700 to-blue-800 bg-clip-text text-transparent flex items-center gap-2">
-              <ClipboardList className="w-6 h-6 text-cyan-600" />
-              Заявка
-              <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 text-sm">
+            <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-red-700 to-blue-800 bg-clip-text text-transparent flex items-center gap-2">
+              <ClipboardList className="w-6 h-6 text-blue-600" />
+              {t('cart.title')}
+              <Badge className="bg-gradient-to-r from-red-600 to-blue-600 text-white border-0 text-sm">
                 {items.length}
               </Badge>
             </SheetTitle>
@@ -171,7 +171,7 @@ ${items.map(item => {
               {items.map((item, index) => {
                 const uniqueKey = `${item.id}-${index}`
                 return (
-                  <div key={uniqueKey} className="bg-gradient-to-r from-cyan-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-cyan-200/30">
+                  <div key={uniqueKey} className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30">
                     <div className="flex items-start gap-4">
                       {!imageErrors[uniqueKey] ? (
                         <SafeImage
@@ -179,12 +179,12 @@ ${items.map(item => {
                           alt={item.name}
                           width={64}
                           height={64}
-                          className="w-16 h-16 rounded-xl object-cover border border-cyan-200/30 flex-shrink-0"
+                          className="w-16 h-16 rounded-xl object-cover border border-blue-200/30 flex-shrink-0"
                           onError={() => setImageErrors(prev => ({ ...prev, [uniqueKey]: true }))}
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-100 to-blue-100 border border-cyan-200/30 flex-shrink-0 flex items-center justify-center">
-                          <ClipboardList className="w-6 h-6 text-cyan-600" />
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-100 to-blue-100 border border-blue-200/30 flex-shrink-0 flex items-center justify-center">
+                          <ClipboardList className="w-6 h-6 text-blue-600" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
@@ -200,7 +200,7 @@ ${items.map(item => {
                                 <Badge 
                                   key={groupId} 
                                   variant="outline" 
-                                  className="text-xs bg-cyan-50/80 border-cyan-200/50"
+                                  className="text-xs bg-blue-50/80 border-blue-200/50"
                                 >
                                   {config.value_name}
                                 </Badge>
@@ -210,7 +210,7 @@ ${items.map(item => {
                         )}
 
                         {/* Цена */}
-                        <p className="text-lg font-bold text-cyan-600 mb-3">
+                        <p className="text-lg font-bold text-blue-600 mb-3">
                           {item.is_on_request ? 'По запросу' : `${item.price.toLocaleString('ru-RU')} ₽`}
                         </p>
 
@@ -221,7 +221,7 @@ ${items.map(item => {
                               variant="outline"
                               size="sm"
                               onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                              className="w-8 h-8 p-0 bg-white/80 border-cyan-200/50 hover:bg-cyan-50 hover:border-cyan-300"
+                              className="w-8 h-8 p-0 bg-white/80 border-blue-200/50 hover:bg-blue-50 hover:border-blue-300"
                             >
                               <Minus className="w-3 h-3" />
                             </Button>
@@ -235,13 +235,13 @@ ${items.map(item => {
                                   handleQuantityChange(item.id, val)
                                 }
                               }}
-                              className="w-12 text-center font-semibold text-slate-800 bg-white/70 border border-cyan-200/50 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                              className="w-12 text-center font-semibold text-slate-800 bg-white/70 border border-blue-200/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
                             />
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                              className="w-8 h-8 p-0 bg-white/80 border-cyan-200/50 hover:bg-cyan-50 hover:border-cyan-300"
+                              className="w-8 h-8 p-0 bg-white/80 border-blue-200/50 hover:bg-blue-50 hover:border-blue-300"
                             >
                               <Plus className="w-3 h-3" />
                             </Button>
@@ -265,12 +265,12 @@ ${items.map(item => {
           </div>
 
           {/* Итоги и действия */}
-          <div className="border-t border-cyan-200/30 pt-4 space-y-4">
+          <div className="border-t border-blue-200/30 pt-4 space-y-4">
             {/* Итоговая сумма */}
-            <div className="bg-gradient-to-r from-cyan-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-cyan-200/30">
+            <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30">
               <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-slate-800">Итого:</span>
-                <span className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                <span className="text-lg font-semibold text-slate-800">{t('cart.total')}</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">
                   {totalPrice.toLocaleString('ru-RU')} ₽
                 </span>
               </div>
@@ -280,10 +280,10 @@ ${items.map(item => {
             <div className="space-y-3">
               <Button
                 onClick={handleOrderClick}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0 transition-all duration-300 shadow-lg shadow-cyan-200/30 hover:shadow-xl hover:shadow-cyan-300/40 hover:scale-[1.02] py-3"
+                className="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] py-3"
               >
                 <Phone className="w-4 h-4 mr-2" />
-                Оформить заказ
+                {t('cart.checkout')}
               </Button>
 
               <Button
@@ -292,7 +292,7 @@ ${items.map(item => {
                 className="w-full bg-gradient-to-r from-green-50 to-green-100 border-green-200 text-green-700 hover:from-green-100 hover:to-green-200 hover:border-green-300 transition-all duration-300 shadow-sm hover:shadow-md py-3"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Консультация в WhatsApp
+                {t('cart.consult')}
               </Button>
 
               {/* Кнопка поделиться заявкой - показываем только если есть товары */}
@@ -304,7 +304,7 @@ ${items.map(item => {
                     className="w-full bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 text-blue-700 hover:from-blue-100 hover:to-blue-200 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md py-3"
                   >
                     <Share2 className="w-4 h-4 mr-2" />
-                    Поделиться заявкой
+                    {t('cart.share')}
                   </Button>
                 ) : (
                   <Button
@@ -313,7 +313,7 @@ ${items.map(item => {
                     className="w-full bg-gradient-to-r from-green-50 to-green-100 border-green-200 text-green-700 hover:from-green-100 hover:to-green-200 hover:border-green-300 transition-all duration-300 shadow-sm hover:shadow-md py-3"
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    Отправить в WhatsApp
+                    {t('cart.sendToWhatsApp')}
                   </Button>
                 )
               )}
@@ -324,7 +324,7 @@ ${items.map(item => {
                 className="w-full bg-gradient-to-r from-slate-50 to-slate-100 border-slate-200 text-slate-700 hover:from-slate-100 hover:to-slate-200 hover:border-slate-300 transition-all duration-300"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Очистить заявку
+                {t('cart.clear')}
               </Button>
             </div>
           </div>
