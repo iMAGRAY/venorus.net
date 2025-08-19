@@ -232,21 +232,21 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   if (!authStatus.authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader className="text-center pb-6">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50/70 via-white to-blue-50/60 p-4">
+        <Card className="w-full max-w-md bg-white/90 backdrop-blur-xl rounded-2xl border border-blue-200/40 shadow-lg shadow-blue-100/20 overflow-hidden">
+          <CardHeader className="text-center pb-6 p-6 border-b border-blue-100/50">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-blue-100 rounded-xl flex items-center justify-center">
                 <LayoutDashboard className="w-6 h-6 text-gray-600" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-normal text-gray-700">Вход в админ панель</CardTitle>
-            <p className="text-gray-500 text-sm">Система управления MedSIP-Protez</p>
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">Вход в админ панель</CardTitle>
+            <p className="text-slate-600 text-sm">Админ-панель Venorus</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="username">Имя пользователя</Label>
+                <Label htmlFor="username" className="text-slate-700">Имя пользователя</Label>
                 <Input
                   id="username"
                   type="text"
@@ -255,12 +255,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
                   placeholder="Введите имя пользователя"
                   required
                   disabled={isSubmitting}
-                  className="transition-colors"
+                  className="w-full rounded-xl border border-blue-200/50 bg-white/60 px-4 py-3 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-300/60 focus:border-blue-300 transition"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Пароль</Label>
+                <Label htmlFor="password" className="text-slate-700">Пароль</Label>
                 <Input
                   id="password"
                   type="password"
@@ -269,7 +269,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
                   placeholder="Введите пароль"
                   required
                   disabled={isSubmitting}
-                  className="transition-colors"
+                  className="w-full rounded-xl border border-blue-200/50 bg-white/60 px-4 py-3 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-300/60 focus:border-blue-300 transition"
                 />
               </div>
 
@@ -280,7 +280,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
                   onCheckedChange={setRememberMe}
                   disabled={isSubmitting}
                 />
-                <Label htmlFor="remember-me" className="text-sm text-gray-600">
+                <Label htmlFor="remember-me" className="text-sm text-slate-600">
                   Запомнить меня
                 </Label>
               </div>
@@ -293,7 +293,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
               <Button
                 type="submit"
-                className="w-full bg-gray-700 hover:bg-gray-800 text-white py-2.5 transition-colors"
+                className="w-full rounded-xl bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white py-2.5 font-semibold shadow-md hover:shadow-lg transition"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

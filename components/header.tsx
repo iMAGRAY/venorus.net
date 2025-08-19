@@ -59,7 +59,11 @@ export default function Header() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [lang, setLang] = useState<'ru' | 'es'>(language)
-  const [currency, setCurrency] = useState<'RUB' | 'VES' | 'USD'>(() => (typeof window !== 'undefined' ? (localStorage.getItem('venorus_currency') as 'RUB' | 'VES' | 'USD') || 'RUB' : 'RUB'))
+  const [currency, setCurrency] = useState<'RUB' | 'USD'>(() => {
+    if (typeof window === 'undefined') return 'RUB'
+    const saved = localStorage.getItem('venorus_currency')
+    return saved === 'USD' ? 'USD' : 'RUB'
+  })
 
   // Сохраняем выбор пользователя
   useEffect(() => {
@@ -161,12 +165,11 @@ export default function Header() {
               <Banknote className="w-3.5 h-3.5" />
               <select
                 value={currency}
-                onChange={(e) => setCurrency(e.target.value as 'RUB' | 'VES' | 'USD')}
+                onChange={(e) => setCurrency(e.target.value as 'RUB' | 'USD')}
                 className="bg-transparent text-xs focus:outline-none"
                 aria-label="Выбор валюты"
               >
                 <option value="RUB">RUB ₽</option>
-                <option value="VES">VES Bs.</option>
                 <option value="USD">USD $</option>
               </select>
             </div>
@@ -219,12 +222,11 @@ export default function Header() {
                     <Banknote className="w-3.5 h-3.5" />
                     <select
                       value={currency}
-                      onChange={(e) => setCurrency(e.target.value as 'RUB' | 'VES' | 'USD')}
+                      onChange={(e) => setCurrency(e.target.value as 'RUB' | 'USD')}
                       className="bg-transparent text-xs focus:outline-none"
                       aria-label="Выбор валюты"
                     >
                       <option value="RUB">RUB ₽</option>
-                      <option value="VES">VES Bs.</option>
                       <option value="USD">USD $</option>
                     </select>
                   </div>

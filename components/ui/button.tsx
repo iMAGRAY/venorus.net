@@ -17,4 +17,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
+export function buttonVariants({ variant = "default" }: { variant?: ButtonProps["variant"] } = {}) {
+  switch (variant) {
+    case "destructive":
+      return "inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+    case "outline":
+      return "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50"
+    case "secondary":
+      return "inline-flex items-center justify-center rounded-md bg-slate-700 px-4 py-2 text-white hover:bg-slate-800"
+    case "ghost":
+      return "inline-flex items-center justify-center rounded-md px-4 py-2 text-slate-700 hover:bg-slate-100"
+    case "link":
+      return "inline-flex items-center justify-center px-0 py-0 text-blue-700 hover:underline"
+    default:
+      return "inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+  }
+}
+
 export { Button }

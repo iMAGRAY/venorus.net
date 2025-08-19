@@ -36,3 +36,13 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 CardFooter.displayName = "CardFooter"
 
 export { Card, CardHeader, CardTitle, CardContent, CardFooter }
+ 
+// Дополнительные элементы для совместимости
+const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <p ref={ref} className={className} {...props} />
+  )
+)
+CardDescription.displayName = "CardDescription"
+
+export { CardDescription }

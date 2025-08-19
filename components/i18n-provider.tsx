@@ -33,6 +33,11 @@ const ru: Dictionary = {
     timeTested: "Проверено временем",
     sortBy: "Сортировать по...",
     searchSortOptions: "Поиск вариантов сортировки...",
+    qualityAndReliability: "Качество и надёжность",
+    deliveryAcrossVenezuela: "Доставка по всей Венесуэле",
+    guaranteeAndSupport: "Гарантия и поддержка",
+    certifiedInRussia: "Сертифицировано в России",
+    allRightsReserved: "Все права защищены",
   },
   sort: {
     nameAsc: "По названию А-Я",
@@ -74,7 +79,7 @@ const ru: Dictionary = {
     directFromManufacturers: "Напрямую от производителей",
     deliveryToVenezuela: "Доставка в Венесуэлу",
     shipNationwide: "Отправка по всей стране",
-    paymentInCurrencies: "Оплата в RUB/VES/USD",
+    paymentInCurrencies: "Оплата в RUB/USD",
     flexibleTerms: "Гибкие условия для клиентов",
   },
   product: {
@@ -145,6 +150,11 @@ const es: Dictionary = {
     timeTested: "Probado por el tiempo",
     sortBy: "Ordenar por...",
     searchSortOptions: "Buscar opciones de ordenación...",
+    qualityAndReliability: "Calidad y fiabilidad",
+    deliveryAcrossVenezuela: "Entrega en toda Venezuela",
+    guaranteeAndSupport: "Garantía y soporte",
+    certifiedInRussia: "Certificado en Rusia",
+    allRightsReserved: "Todos los derechos reservados",
   },
   sort: {
     nameAsc: "Por nombre A-Z",
@@ -186,7 +196,7 @@ const es: Dictionary = {
     directFromManufacturers: "Directo de los fabricantes",
     deliveryToVenezuela: "Envío a Venezuela",
     shipNationwide: "Envíos a todo el país",
-    paymentInCurrencies: "Pago en RUB/VES/USD",
+    paymentInCurrencies: "Pago en RUB/USD",
     flexibleTerms: "Condiciones flexibles para clientes",
   },
   product: {

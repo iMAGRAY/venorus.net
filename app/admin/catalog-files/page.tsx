@@ -280,7 +280,7 @@ export default function CatalogFilesPage() {
           <p className="text-gray-600">Загрузка и управление файлами каталогов</p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        <Dialog open={isDialogOpen} onOpenChange={(open: boolean) => {
           setIsDialogOpen(open)
           if (!open) resetForm()
         }}>
@@ -347,7 +347,7 @@ export default function CatalogFilesPage() {
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                     className="col-span-3"
                     placeholder="Описание каталога..."
                     rows={3}
