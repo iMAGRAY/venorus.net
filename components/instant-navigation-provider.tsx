@@ -20,6 +20,7 @@ export function InstantNavigationProvider({ children }: InstantNavigationProvide
   const pathname = usePathname()
   const [isNavigating, setIsNavigating] = useState(false)
   const [targetPath, setTargetPath] = useState<string | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
 
   // Мгновенная навигация без моргания
   const _navigate = useCallback((path: string, options?: { replace?: boolean }) => {
@@ -35,6 +36,11 @@ export function InstantNavigationProvider({ children }: InstantNavigationProvide
       router.push(path)
     }
   }, [router, pathname])
+
+  // Установка флага монтирования для предотвращения hydration мismatch
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Сброс состояния при завершении навигации
   useEffect(() => {
@@ -52,8 +58,8 @@ export function InstantNavigationProvider({ children }: InstantNavigationProvide
     <InstantNavigationContext.Provider value={value}>
       {children}
 
-      {/* Глобальный индикатор загрузки */}
-      {isNavigating && (
+      {/* Глобальный индикатор загрузки - только после монтирования для предотвращения hydration mismatch */}
+      {isMounted && isNavigating && (
         <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
           <div className="h-full bg-gray-600 animate-pulse" style={{ width: '30%' }}>
             <div className="h-full bg-gradient-to-r from-transparent to-gray-800 animate-[loading_1s_ease-in-out_infinite]"></div>
