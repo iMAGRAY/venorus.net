@@ -49,8 +49,8 @@ interface WarehouseDialogsProps {
   onCloseArticleDialog: () => void
   onCloseZoneDialog: () => void
   onCloseSectionDialog: () => void
-  onCloseEditDialog?: () => void
-  onCloseDeleteDialog?: () => void
+  onCloseEditDialog: () => void
+  onCloseDeleteDialog: () => void
 
   // Обработчики создания
   onCreateRegion: (data: FormData) => Promise<void>
@@ -60,7 +60,7 @@ interface WarehouseDialogsProps {
   onCreateZone: (data: FormData) => Promise<void>
   onCreateSection: (data: FormData) => Promise<void>
 
-  // Обработчики редактирования и удаления
+  // Обработчики редактирования и удаления  
   onEditItem?: (type: string, data: FormData) => Promise<void>
   onDeleteItem?: (type: string, id: number) => Promise<void>
   editingItem?: EditableItem | null
@@ -97,16 +97,16 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
   onCloseArticleDialog,
   onCloseZoneDialog,
   onCloseSectionDialog,
-  onCloseEditDialog = () => {},
-  onCloseDeleteDialog = () => {},
+  onCloseEditDialog,
+  onCloseDeleteDialog,
   onCreateRegion,
   onCreateCity,
   onCreateWarehouse,
   onCreateArticle,
   onCreateZone,
   onCreateSection,
-  onEditItem = async () => {},
-  onDeleteItem = async () => {},
+  onEditItem,
+  onDeleteItem,
   editingItem = null,
   regions,
   cities,
@@ -161,6 +161,10 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
   }
 
   const handleEdit = async (type: string, formData: FormData) => {
+    if (!onEditItem) {
+      console.error('onEditItem не реализован - требуется обработчик от родительского компонента')
+      return
+    }
     setLoading(true)
     try {
       await onEditItem(type, formData)
@@ -173,6 +177,10 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
 
   const handleDelete = async () => {
     if (!deleteTarget) return
+    if (!onDeleteItem) {
+      console.error('onDeleteItem не реализован - требуется обработчик от родительского компонента')
+      return
+    }
 
     setLoading(true)
     try {
@@ -311,8 +319,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
                   <Label htmlFor="region-description">Описание (автозаполнение)</Label>
                   <Textarea
                     id="region-description"
+                    className="min-h-[80px]"
                     value={regionForm.description}
-                    onChange={(e) => setRegionForm({...regionForm, description: e.target.value})}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRegionForm({...regionForm, description: e.target.value})}
                     placeholder="Описание региона"
                   />
                 </div>
@@ -370,8 +379,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="edit-region-description">Описание</Label>
               <Textarea
                 id="edit-region-description"
+                className="min-h-[80px]"
                 value={editForm.description || ''}
-                onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditForm({...editForm, description: e.target.value})}
                 placeholder="Описание региона"
               />
             </div>
@@ -508,8 +518,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="edit-city-description">Описание</Label>
               <Textarea
                 id="edit-city-description"
+                className="min-h-[80px]"
                 value={editForm.description || ''}
-                onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditForm({...editForm, description: e.target.value})}
                 placeholder="Описание города"
               />
             </div>
@@ -660,8 +671,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="edit-warehouse-address">Адрес</Label>
               <Textarea
                 id="edit-warehouse-address"
+                className="min-h-[80px]"
                 value={editForm.address || ''}
-                onChange={(e) => setEditForm({...editForm, address: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditForm({...editForm, address: e.target.value})}
                 placeholder="Полный адрес склада"
               />
             </div>
@@ -746,10 +758,7 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
             <DialogDescription>
               Добавление новой логической зоны внутри склада для организации товаров по типам или условиям хранения.
             </DialogDescription>
-                      <DialogDescription>
-              Добавление новой логической зоны внутри склада для организации товаров по типам или условиям хранения.
-            </DialogDescription>
-</DialogHeader>
+          </DialogHeader>
           <div className="space-y-4 max-h-96 overflow-y-auto">
             <div>
               <Label htmlFor="zone-warehouse">Склад</Label>
@@ -799,8 +808,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="zone-description">Описание</Label>
               <Textarea
                 id="zone-description"
+                className="min-h-[80px]"
                 value={zoneForm.description}
-                onChange={(e) => setZoneForm({...zoneForm, description: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setZoneForm({...zoneForm, description: e.target.value})}
                 placeholder="Описание зоны"
               />
             </div>
@@ -883,10 +893,7 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
             <DialogDescription>
               Создание новой секции внутри зоны для детального позиционирования товаров с указанием ряда и полки.
             </DialogDescription>
-                      <DialogDescription>
-              Создание новой секции внутри зоны для детального позиционирования товаров с указанием ряда и полки.
-            </DialogDescription>
-</DialogHeader>
+          </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label htmlFor="section-zone">Зона</Label>
@@ -919,8 +926,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="section-description">Описание</Label>
               <Textarea
                 id="section-description"
+                className="min-h-[80px]"
                 value={sectionForm.description}
-                onChange={(e) => setSectionForm({...sectionForm, description: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSectionForm({...sectionForm, description: e.target.value})}
                 placeholder="Описание секции"
               />
             </div>
@@ -1007,8 +1015,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="article-description">Описание</Label>
               <Textarea
                 id="article-description"
+                className="min-h-[80px]"
                 value={articleForm.description}
-                onChange={(e) => setArticleForm({...articleForm, description: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setArticleForm({...articleForm, description: e.target.value})}
                 placeholder="Описание товара"
               />
             </div>
@@ -1152,8 +1161,9 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
               <Label htmlFor="edit-article-description">Описание</Label>
               <Textarea
                 id="edit-article-description"
+                className="min-h-[80px]"
                 value={editForm.description || ''}
-                onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditForm({...editForm, description: e.target.value})}
                 placeholder="Описание товара"
               />
             </div>
@@ -1253,387 +1263,6 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
             >
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               Сохранить
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Остальные диалоги можно добавить аналогично... */}
-
-      {/* Диалог создания зоны */}
-      <Dialog open={isZoneDialogOpen} onOpenChange={onCloseZoneDialog}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Создать новую зону</DialogTitle>
-            <DialogDescription>
-              Добавление новой логической зоны внутри склада для организации товаров по типам или условиям хранения.
-            </DialogDescription>
-                      <DialogDescription>
-              Добавление новой логической зоны внутри склада для организации товаров по типам или условиям хранения.
-            </DialogDescription>
-</DialogHeader>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            <div>
-              <Label htmlFor="zone-warehouse">Склад</Label>
-              <Select
-                value={zoneForm.warehouse_id?.toString()}
-                onValueChange={(value) => setZoneForm({...zoneForm, warehouse_id: parseInt(value)})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите склад" />
-                </SelectTrigger>
-                <SelectContent>
-                  {warehouses.map(warehouse => (
-                    <SelectItem key={warehouse.id} value={warehouse.id.toString()}>
-                      {warehouse.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="zone-name">Название</Label>
-                <Input
-                  id="zone-name"
-                  value={zoneForm.name}
-                  onChange={(e) => setZoneForm({...zoneForm, name: e.target.value})}
-                  placeholder="Название зоны"
-                />
-              </div>
-              <div>
-                <Label htmlFor="zone-location">Расположение</Label>
-                <Select
-                  value={zoneForm.location}
-                  onValueChange={(value) => setZoneForm({...zoneForm, location: value as 'near' | 'far'})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите расположение" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="near">Ближняя</SelectItem>
-                    <SelectItem value="far">Дальняя</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="zone-description">Описание</Label>
-              <Textarea
-                id="zone-description"
-                value={zoneForm.description}
-                onChange={(e) => setZoneForm({...zoneForm, description: e.target.value})}
-                placeholder="Описание зоны"
-              />
-            </div>
-            <div>
-              <Label htmlFor="zone-capacity">Вместимость</Label>
-              <Input
-                id="zone-capacity"
-                type="number"
-                value={zoneForm.capacity}
-                onChange={(e) => setZoneForm({...zoneForm, capacity: parseInt(e.target.value) || 0})}
-                placeholder="100"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="zone-temp-min">Мин. температура (°C)</Label>
-                <Input
-                  id="zone-temp-min"
-                  type="number"
-                  value={zoneForm.temperature_min}
-                  onChange={(e) => setZoneForm({...zoneForm, temperature_min: parseInt(e.target.value) || -10})}
-                  placeholder="-10"
-                />
-              </div>
-              <div>
-                <Label htmlFor="zone-temp-max">Макс. температура (°C)</Label>
-                <Input
-                  id="zone-temp-max"
-                  type="number"
-                  value={zoneForm.temperature_max}
-                  onChange={(e) => setZoneForm({...zoneForm, temperature_max: parseInt(e.target.value) || 25})}
-                  placeholder="25"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="zone-humidity-min">Мин. влажность (%)</Label>
-                <Input
-                  id="zone-humidity-min"
-                  type="number"
-                  value={zoneForm.humidity_min}
-                  onChange={(e) => setZoneForm({...zoneForm, humidity_min: parseInt(e.target.value) || 30})}
-                  placeholder="30"
-                />
-              </div>
-              <div>
-                <Label htmlFor="zone-humidity-max">Макс. влажность (%)</Label>
-                <Input
-                  id="zone-humidity-max"
-                  type="number"
-                  value={zoneForm.humidity_max}
-                  onChange={(e) => setZoneForm({...zoneForm, humidity_max: parseInt(e.target.value) || 70})}
-                  placeholder="70"
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={onCloseZoneDialog}>
-              <X className="w-4 h-4 mr-2" />
-              Отмена
-            </Button>
-            <Button
-              onClick={() => handleSubmit('зоны', zoneForm, onCreateZone)}
-              disabled={loading || !zoneForm.name || !zoneForm.warehouse_id}
-            >
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Создать
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Диалог создания секции */}
-      <Dialog open={isSectionDialogOpen} onOpenChange={onCloseSectionDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Создать новую секцию</DialogTitle>
-            <DialogDescription>
-              Создание новой секции внутри зоны для детального позиционирования товаров с указанием ряда и полки.
-            </DialogDescription>
-                      <DialogDescription>
-              Создание новой секции внутри зоны для детального позиционирования товаров с указанием ряда и полки.
-            </DialogDescription>
-</DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="section-zone">Зона</Label>
-              <Select
-                value={sectionForm.zone_id?.toString()}
-                onValueChange={(value) => setSectionForm({...sectionForm, zone_id: parseInt(value)})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите зону" />
-                </SelectTrigger>
-                <SelectContent>
-                  {zones.map(zone => (
-                    <SelectItem key={zone.id} value={zone.id.toString()}>
-                      {zone.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="section-name">Название</Label>
-              <Input
-                id="section-name"
-                value={sectionForm.name}
-                onChange={(e) => setSectionForm({...sectionForm, name: e.target.value})}
-                placeholder="Название секции"
-              />
-            </div>
-            <div>
-              <Label htmlFor="section-description">Описание</Label>
-              <Textarea
-                id="section-description"
-                value={sectionForm.description}
-                onChange={(e) => setSectionForm({...sectionForm, description: e.target.value})}
-                placeholder="Описание секции"
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="section-capacity">Вместимость</Label>
-                <Input
-                  id="section-capacity"
-                  type="number"
-                  value={sectionForm.capacity}
-                  onChange={(e) => setSectionForm({...sectionForm, capacity: parseInt(e.target.value) || 0})}
-                  placeholder="50"
-                />
-              </div>
-              <div>
-                <Label htmlFor="section-row">Ряд</Label>
-                <Input
-                  id="section-row"
-                  type="number"
-                  value={sectionForm.row_number}
-                  onChange={(e) => setSectionForm({...sectionForm, row_number: parseInt(e.target.value) || 1})}
-                  placeholder="1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="section-shelf">Полка</Label>
-                <Input
-                  id="section-shelf"
-                  type="number"
-                  value={sectionForm.shelf_number}
-                  onChange={(e) => setSectionForm({...sectionForm, shelf_number: parseInt(e.target.value) || 1})}
-                  placeholder="1"
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={onCloseSectionDialog}>
-              <X className="w-4 h-4 mr-2" />
-              Отмена
-            </Button>
-            <Button
-              onClick={() => handleSubmit('секции', sectionForm, onCreateSection)}
-              disabled={loading || !sectionForm.name || !sectionForm.zone_id}
-            >
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Создать
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Диалог создания артикула */}
-      <Dialog open={isArticleDialogOpen} onOpenChange={onCloseArticleDialog}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Создать новый артикул</DialogTitle>
-            <DialogDescription>
-              Создание нового складского артикула с уникальным кодом и описанием для учета товаров.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="article-code">Код артикула</Label>
-                <Input
-                  id="article-code"
-                  value={articleForm.article_code}
-                  onChange={(e) => setArticleForm({...articleForm, article_code: e.target.value})}
-                  placeholder="ART001"
-                />
-              </div>
-              <div>
-                <Label htmlFor="article-name">Название</Label>
-                <Input
-                  id="article-name"
-                  value={articleForm.name}
-                  onChange={(e) => setArticleForm({...articleForm, name: e.target.value})}
-                  placeholder="Название товара"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="article-description">Описание</Label>
-              <Textarea
-                id="article-description"
-                value={articleForm.description}
-                onChange={(e) => setArticleForm({...articleForm, description: e.target.value})}
-                placeholder="Описание товара"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="article-category">Категория</Label>
-                <Input
-                  id="article-category"
-                  value={articleForm.category}
-                  onChange={(e) => setArticleForm({...articleForm, category: e.target.value})}
-                  placeholder="Протезы"
-                />
-              </div>
-              <div>
-                <Label htmlFor="article-subcategory">Подкатегория</Label>
-                <Input
-                  id="article-subcategory"
-                  value={articleForm.subcategory}
-                  onChange={(e) => setArticleForm({...articleForm, subcategory: e.target.value})}
-                  placeholder="Руки"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="article-brand">Бренд</Label>
-                <Input
-                  id="article-brand"
-                  value={articleForm.brand}
-                  onChange={(e) => setArticleForm({...articleForm, brand: e.target.value})}
-                  placeholder="Название бренда"
-                />
-              </div>
-              <div>
-                <Label htmlFor="article-model">Модель</Label>
-                <Input
-                  id="article-model"
-                  value={articleForm.model}
-                  onChange={(e) => setArticleForm({...articleForm, model: e.target.value})}
-                  placeholder="Модель"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="article-unit">Ед. измерения</Label>
-                <Select
-                  value={articleForm.unit_of_measure}
-                  onValueChange={(value) => setArticleForm({...articleForm, unit_of_measure: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="шт" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="шт">шт</SelectItem>
-                    <SelectItem value="пара">пара</SelectItem>
-                    <SelectItem value="комплект">комплект</SelectItem>
-                    <SelectItem value="кг">кг</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="article-weight">Вес (кг)</Label>
-                <Input
-                  id="article-weight"
-                  type="number"
-                  step="0.1"
-                  value={articleForm.weight_kg}
-                  onChange={(e) => setArticleForm({...articleForm, weight_kg: parseFloat(e.target.value) || 0})}
-                  placeholder="1.5"
-                />
-              </div>
-              <div>
-                <Label htmlFor="article-dimensions">Размеры (см)</Label>
-                <Input
-                  id="article-dimensions"
-                  value={articleForm.dimensions_cm}
-                  onChange={(e) => setArticleForm({...articleForm, dimensions_cm: e.target.value})}
-                  placeholder="30x20x10"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="article-barcode">Штрихкод</Label>
-              <Input
-                id="article-barcode"
-                value={articleForm.barcode}
-                onChange={(e) => setArticleForm({...articleForm, barcode: e.target.value})}
-                placeholder="1234567890123"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={onCloseArticleDialog}>
-              <X className="w-4 h-4 mr-2" />
-              Отмена
-            </Button>
-            <Button
-              onClick={() => handleSubmit('артикула', articleForm, onCreateArticle)}
-              disabled={loading || !articleForm.article_code || !articleForm.name}
-            >
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Создать
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -668,10 +668,10 @@ function RoleForm({
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Описание роли и её назначение"
                   disabled={isSuperAdmin}
-                  className={`mt-1 resize-none h-16 ${isSuperAdmin ? "bg-gray-100 border-gray-200" : ""}`}
+                  className={`mt-1 resize-none min-h-[80px] ${isSuperAdmin ? "bg-gray-100 border-gray-200" : ""}`}
                   rows={2}
                 />
               </div>

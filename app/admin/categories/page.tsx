@@ -456,9 +456,10 @@ export default function CategoriesAdmin() {
                 <div className="space-y-2">
                   <Label htmlFor="description">Описание</Label>
                   <Textarea
+                    className="min-h-[80px]"
                     id="description"
                     value={categoryFormData.description}
-                    onChange={(e) => setCategoryFormData(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCategoryFormData(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Введите описание категории"
                     rows={3}
                   />

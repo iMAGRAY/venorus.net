@@ -842,9 +842,10 @@ export default function CatalogMenuPage() {
               <div className="space-y-2">
                 <Label htmlFor="description">Описание</Label>
                 <Textarea
+                  className="min-h-[80px]"
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Опциональное описание..."
                   rows={3}
                 />

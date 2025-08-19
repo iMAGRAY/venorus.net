@@ -18,7 +18,7 @@ export default function EditProductPage() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { loadProducts } = useAdminStore()
+  const { initializeData } = useAdminStore()
 
   const productId = params?.id as string
 
@@ -72,7 +72,7 @@ export default function EditProductPage() {
     if (isManualSave !== false) {
     try {
 
-      await loadProducts()
+      await initializeData()
 
     } catch (err) {
       console.error('⚠️ Failed to refresh admin store:', err)

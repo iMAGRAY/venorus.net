@@ -586,8 +586,9 @@ export default function CharacteristicTemplatesAdmin() {
                     <Label htmlFor="description">Описание</Label>
                     <Textarea
                       id="description"
+                      className="min-h-[80px]"
                       value={templateForm.description || ''}
-                      onChange={(e) => setTemplateForm({...templateForm, description: e.target.value})}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTemplateForm({...templateForm, description: e.target.value})}
                       placeholder="Краткое описание характеристики"
                     />
                   </div>

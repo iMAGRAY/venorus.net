@@ -992,8 +992,8 @@ export function ProductSpecificationsManagerNew({
                     )}
                     {char.characteristic_type === 'select' && (
                       <SearchableSelect
-                        options={(specGroups.find(g => g.id === char.group_id)?.enums || []).map(ev => ({ value: ev.id, label: ev.value }))}
-                        value={char.selected_enum_id || ''}
+                        options={(specGroups.find(g => g.id === char.group_id)?.enums || []).map(ev => ({ value: ev.id.toString(), label: ev.value }))}
+                        value={char.selected_enum_id?.toString() || ''}
                         onValueChange={(val) => handleUpdateCharacteristic(char.id!, { selected_enum_id: Number(val) })}
                         placeholder="Выберите"/>
                     )}
@@ -1151,8 +1151,8 @@ export function ProductSpecificationsManagerNew({
                             )}
                             {char.characteristic_type === 'select' && (
                               <SearchableSelect
-                                options={(specGroups.find(g => g.id === char.group_id)?.enums || []).map(ev => ({ value: ev.id, label: ev.value }))}
-                                value={char.selected_enum_id || ''}
+                                options={(specGroups.find(g => g.id === char.group_id)?.enums || []).map(ev => ({ value: ev.id.toString(), label: ev.value }))}
+                                value={char.selected_enum_id?.toString() || ''}
                                 onValueChange={(val) => handleUpdateCharacteristic(char.id!, { selected_enum_id: Number(val) })}
                                 placeholder="Выберите"/>
                             )}
@@ -1412,8 +1412,9 @@ export function ProductSpecificationsManagerNew({
               <div>
                 <Label>Описание</Label>
                 <Textarea
+                  className="min-h-[80px]"
                   value={templateForm.description}
-                  onChange={(e) => setTemplateForm(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTemplateForm(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Описание шаблона"
                   rows={3}
                 />

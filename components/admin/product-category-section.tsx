@@ -117,9 +117,6 @@ export function ProductCategorySection({
           onValueChange={handleManufacturerChange}
           placeholder="Выберите производителя"
           className={`h-10 sm:h-9 ${validationErrors.manufacturer ? 'border-red-500' : ''}`}
-          includeNoneOption={true}
-          noneOptionText="Не выбран"
-          noneValue="none"
         />
         {validationErrors.manufacturer && (
           <p className="text-sm text-red-600 mt-1">Производитель обязателен для выбора</p>
@@ -142,9 +139,6 @@ export function ProductCategorySection({
                 : "Сначала выберите производителя"
           }
           className={`h-10 sm:h-9 ${validationErrors.model_line ? 'border-red-500' : ''}`}
-          includeNoneOption={true}
-          noneOptionText="Не выбрана"
-          noneValue="none"
         />
         {validationErrors.model_line && (
           <p className="text-sm text-red-600 mt-1">Линейка модели обязательна для выбора</p>

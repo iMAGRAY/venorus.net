@@ -255,8 +255,9 @@ export default function ManufacturersAdminPage() {
                   <Label htmlFor="description">Описание</Label>
                   <Textarea
                     id="description"
+                    className="min-h-[80px]"
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Описание производителя"
                     rows={3}
                   />

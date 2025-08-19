@@ -397,9 +397,10 @@ export function ModelLinesManager({ manufacturerId, onModelLineSelect, selectedM
                 <div className="space-y-2">
                   <Label htmlFor="modelline-description">Описание</Label>
                   <Textarea
+                    className="min-h-[80px]"
                     id="modelline-description"
                     value={modelLineForm.description}
-                    onChange={(e) => setModelLineForm({...modelLineForm, description: e.target.value})}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setModelLineForm({...modelLineForm, description: e.target.value})}
                     placeholder="Описание линейки моделей..."
                     rows={3}
                   />

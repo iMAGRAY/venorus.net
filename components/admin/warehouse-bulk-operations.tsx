@@ -593,9 +593,10 @@ export const WarehouseBulkOperations: React.FC<WarehouseBulkOperationsProps> = (
               <Label htmlFor="description">Описание</Label>
               <Textarea
                 id="description"
+                className="min-h-[80px]"
                 placeholder="Новое описание (оставьте пустым, чтобы не изменять)"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                 rows={3}
               />
             </div>

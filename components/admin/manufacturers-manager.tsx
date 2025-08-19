@@ -305,9 +305,10 @@ export function ManufacturersManager({ onManufacturerSelect, selectedManufacture
                 <div className="space-y-2">
                   <Label htmlFor="manufacturer-description">Описание</Label>
                   <Textarea
+                    className="min-h-[80px]"
                     id="manufacturer-description"
                     value={manufacturerForm.description}
-                    onChange={(e) => setManufacturerForm({...manufacturerForm, description: e.target.value})}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setManufacturerForm({...manufacturerForm, description: e.target.value})}
                     placeholder="Описание производителя..."
                     rows={3}
                   />

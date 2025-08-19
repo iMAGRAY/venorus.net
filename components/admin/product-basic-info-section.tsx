@@ -146,7 +146,7 @@ export function ProductBasicInfoSection({
         <Textarea
           id="description"
           value={formData.description}
-          onChange={(e) => onChange({ description: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange({ description: e.target.value })}
           className={`min-h-[100px] sm:min-h-[80px] ${validationErrors.description ? 'border-red-500' : ''}`}
           placeholder="Введите описание товара"
           rows={4}

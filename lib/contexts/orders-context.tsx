@@ -66,7 +66,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         console.warn('⚠️ API вернул success: false:', data.error)
         setOrdersCount(0)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Ошибка загрузки количества заказов:', {
         message: error.message,
         type: error.constructor.name,

@@ -589,7 +589,7 @@ export function ProductsManager({
                     <Textarea
                       id="product-description"
                       value={productForm.description}
-                      onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setProductForm({...productForm, description: e.target.value})}
                       placeholder="Описание товара..."
                       rows={4}
                       className="min-h-[100px] sm:min-h-[80px]"

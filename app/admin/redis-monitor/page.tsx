@@ -566,8 +566,9 @@ export default function RedisMonitorPage() {
                   <Label htmlFor="data">Данные (JSON)</Label>
                   <Textarea
                     id="data"
+                    className="min-h-[80px]"
                     value={data}
-                    onChange={(e) => setData(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData(e.target.value)}
                     placeholder='{"key": "value"}'
                     rows={6}
                   />

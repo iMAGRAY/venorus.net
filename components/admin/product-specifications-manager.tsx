@@ -865,7 +865,7 @@ export function ProductSpecificationsManager({
                     <Database className="w-5 h-5"/>
                     Группы характеристик ({filteredGroups.length})
                   </CardTitle>
-                  <Dialog open={isGroupDialogOpen} onOpenChange={(open) => {
+                  <Dialog open={isGroupDialogOpen} onOpenChange={(open: boolean) => {
                     setIsGroupDialogOpen(open)
                     if (!open) resetGroupForm()
                   }}>
@@ -897,9 +897,10 @@ export function ProductSpecificationsManager({
             <div>
                           <Label htmlFor="groupDescription">Описание</Label>
                           <Textarea
+                            className="min-h-[80px]"
                             id="groupDescription"
                             value={groupFormData.description}
-                            onChange={(e) => setGroupFormData(prev => ({ ...prev, description: e.target.value }))}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setGroupFormData(prev => ({ ...prev, description: e.target.value }))}
                             placeholder="Описание группы характеристик"
                             rows={3}
               />
@@ -1094,7 +1095,7 @@ export function ProductSpecificationsManager({
         </Tabs>
 
         {/* Диалог создания/редактирования характеристики */}
-        <Dialog open={isEnumDialogOpen} onOpenChange={(open) => {
+        <Dialog open={isEnumDialogOpen} onOpenChange={(open: boolean) => {
           setIsEnumDialogOpen(open)
           if (!open) resetEnumForm()
         }}>

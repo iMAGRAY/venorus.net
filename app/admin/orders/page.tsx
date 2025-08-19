@@ -1053,9 +1053,9 @@ ${order.items?.map(item => {
                 </Label>
                 <Textarea
                   value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
                   placeholder="Заметки к заказу..."
-                  className="min-h-[60px] text-sm"
+                  className="min-h-[80px] text-sm"
                 />
             </div>
             </div>

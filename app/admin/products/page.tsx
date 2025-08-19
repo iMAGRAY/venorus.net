@@ -22,7 +22,6 @@ export default function ProductsAdmin() {
   const { authStatus: _authStatus, hasPermission } = useAuth()
   const {
     products,
-    addProduct: _addProduct,
     updateProduct,
     deleteProduct,
     initializeData,

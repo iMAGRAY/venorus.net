@@ -77,7 +77,7 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
-  const { products, modelLines, initializeData, isLoading } = useAdminStore()
+  const { products, initializeData, isLoading } = useAdminStore()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loadingStats, setLoadingStats] = useState(true)
 
@@ -182,7 +182,7 @@ return {
     setLoadingStats(true)
     try {
       // Загружаем основные данные только если они еще не загружены и мы не находимся в процессе загрузки
-      if ((!products.length || !modelLines?.length) && !isLoading) {
+      if (!products.length && !isLoading) {
 
         await initializeData()
       }
@@ -211,7 +211,7 @@ return {
     } finally {
       setLoadingStats(false)
     }
-  }, [products.length, modelLines?.length, isLoading, initializeData, generateFallbackStats])
+  }, [products.length, isLoading, initializeData, generateFallbackStats])
 
   // Инициализация дашборда (перемещен после объявления loadDashboardData)
   useEffect(() => {

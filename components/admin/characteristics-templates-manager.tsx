@@ -292,9 +292,10 @@ export function CharacteristicsTemplatesManager({
                 disabled={isLoading}
               />
               <Textarea
+                className="min-h-[80px]"
                 placeholder="Описание (опционально)"
                 value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewDescription(e.target.value)}
                 disabled={isLoading}
                 rows={2}
               />

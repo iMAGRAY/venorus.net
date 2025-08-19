@@ -1272,7 +1272,7 @@ allGroups.push({
                     <Database className="w-5 h-5"/>
                     Разделы характеристик ({filteredGroups.length})
                   </CardTitle>
-                  <Dialog open={isGroupDialogOpen} onOpenChange={(open) => {
+                  <Dialog open={isGroupDialogOpen} onOpenChange={(open: boolean) => {
                     setIsGroupDialogOpen(open)
                     if (!open) resetGroupForm()
                   }}>
@@ -1317,8 +1317,9 @@ allGroups.push({
                           <Label htmlFor="groupDescription">Описание</Label>
                           <Textarea
                             id="groupDescription"
+                            className="min-h-[80px]"
                             value={groupFormData.description}
-                            onChange={(e) => setGroupFormData(prev => ({ ...prev, description: e.target.value }))}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setGroupFormData(prev => ({ ...prev, description: e.target.value }))}
                             placeholder={groupFormData.is_section
                               ? "Описание раздела характеристик"
                               : "Описание группы характеристик"
@@ -1430,7 +1431,7 @@ allGroups.push({
             </Card>
 
         {/* Диалог создания/редактирования характеристики */}
-        <Dialog open={isEnumDialogOpen} onOpenChange={(open) => {
+        <Dialog open={isEnumDialogOpen} onOpenChange={(open: boolean) => {
           setIsEnumDialogOpen(open)
           if (!open) resetEnumForm()
         }}>

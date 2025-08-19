@@ -316,7 +316,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
                 id="notes"
                 placeholder="Дополнительные пожелания или вопросы..."
                 value={formData.notes}
-                onChange={(e) => handleInputChange('notes', e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleInputChange('notes', e.target.value)}
                 className="bg-white/80 border-blue-200/50 focus:border-blue-400 focus:ring-blue-400/20 min-h-[80px]"
               />
             </div>

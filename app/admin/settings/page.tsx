@@ -366,8 +366,9 @@ export default function SettingsAdmin() {
                   <Label htmlFor="siteDescription">Описание сайта</Label>
                   <Textarea
                     id="siteDescription"
+                    className="min-h-[80px]"
                     value={settings?.siteDescription || ""}
-                    onChange={(e) => updateSetting("siteDescription", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateSetting("siteDescription", e.target.value)}
                     rows={3}
                     placeholder="Краткое описание вашего сайта"
                   />
@@ -395,8 +396,9 @@ export default function SettingsAdmin() {
                   <Label htmlFor="heroSubtitle">Подзаголовок главной секции</Label>
                   <Textarea
                     id="heroSubtitle"
+                    className="min-h-[80px]"
                     value={settings?.heroSubtitle || ""}
-                    onChange={(e) => updateSetting("heroSubtitle", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateSetting("heroSubtitle", e.target.value)}
                     rows={3}
                     placeholder="Описание ваших услуг и преимуществ"
                   />
@@ -446,8 +448,9 @@ export default function SettingsAdmin() {
                   </Label>
                   <Textarea
                     id="address"
+                    className="min-h-[80px]"
                     value={settings?.address || ""}
-                    onChange={(e) => updateSetting("address", e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateSetting("address", e.target.value)}
                     rows={2}
                     placeholder="ул. Медицинская, 15, Москва, 119991"
                   />
@@ -568,8 +571,9 @@ export default function SettingsAdmin() {
                           <Label htmlFor="catalogDescription">Описание (необязательно)</Label>
                           <Textarea
                             id="catalogDescription"
+                            className="min-h-[80px]"
                             value={formData.description}
-                            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                             placeholder="Описание каталога..."
                             rows={3}
                           />

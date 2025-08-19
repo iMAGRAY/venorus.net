@@ -29,9 +29,10 @@ interface SearchableSelectProps extends React.HTMLAttributes<HTMLButtonElement> 
   onValueChange: (value: string) => void
   placeholder?: string
   searchPlaceholder?: string
+  disabled?: boolean
 }
 
-export function SearchableSelect({ options, value, onValueChange, placeholder = "Select...", searchPlaceholder = "Search...", className }: SearchableSelectProps) {
+export function SearchableSelect({ options, value, onValueChange, placeholder = "Select...", searchPlaceholder = "Search...", className, disabled = false, ...props }: SearchableSelectProps) {
   const { t } = useI18n()
   const [open, setOpen] = React.useState(false)
 
@@ -50,6 +51,8 @@ export function SearchableSelect({ options, value, onValueChange, placeholder = 
           role="combobox"
           aria-expanded={open}
           className={cn("w-full justify-between", className)}
+          disabled={disabled}
+          {...props}
         >
           {selected ? renderLabel(selected.label) : (placeholder || 'Select...')}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -57,7 +60,7 @@ export function SearchableSelect({ options, value, onValueChange, placeholder = 
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder={searchPlaceholder} icon={<Search className="h-4 w-4" />} />
+          <CommandInput placeholder={searchPlaceholder} />
           <CommandEmpty>No results.</CommandEmpty>
           <CommandGroup>
             {options.map((opt) => (

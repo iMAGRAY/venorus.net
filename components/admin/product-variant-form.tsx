@@ -425,8 +425,9 @@ export function ProductVariantForm({
                       <Label htmlFor="description">Описание</Label>
                       <Textarea
                         id="description"
+                        className="min-h-[80px]"
                         value={formData.description || ''}
-                        onChange={(e) => updateField('description', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField('description', e.target.value)}
                         placeholder="Подробное описание варианта"
                         rows={4}
                       />
@@ -726,8 +727,9 @@ export function ProductVariantForm({
                       <Label htmlFor="metaDescription">Meta описание</Label>
                       <Textarea
                         id="metaDescription"
+                        className="min-h-[80px]"
                         value={formData.metaDescription || ''}
-                        onChange={(e) => updateField('metaDescription', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField('metaDescription', e.target.value)}
                         placeholder="SEO описание страницы"
                         rows={3}
                       />

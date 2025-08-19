@@ -348,7 +348,7 @@ export default function CatalogFilesPage() {
                     id="description"
                     value={formData.description}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    className="col-span-3"
+                    className="col-span-3 min-h-[80px]"
                     placeholder="Описание каталога..."
                     rows={3}
                   />

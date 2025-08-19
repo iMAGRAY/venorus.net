@@ -4,11 +4,25 @@ interface Product {
   id: number
   name: string
   price: number
+  discount_price?: number
   image_url: string
+  imageUrl?: string
+  images?: string[]
+  inStock?: boolean
+  stock_status?: string
+  sku?: string
+  weight?: string
+  created_at?: string
+  updated_at?: string
   category_id: number
   manufacturer_id: number
   category?: string
   category_name?: string
+  manufacturer?: string
+  manufacturer_name?: string
+  modelLine?: string
+  model_line_name?: string
+  [key: string]: any
 }
 
 interface Category {
@@ -28,6 +42,12 @@ interface AdminStoreState {
   isLoading: boolean
   initializeData: () => void
   forceRefresh: () => void
+  updateProduct: (id: string, product: any) => Promise<void>
+  deleteProduct: (id: string) => Promise<void>
+  updateCategory: (id: string, category: any) => Promise<void>
+  deleteCategory: (id: string) => Promise<void>
+  updateSiteSettings: (settings: any) => Promise<void>
+  loadSiteSettings: () => Promise<void>
 }
 
 // Глобальный кеш для предотвращения повторных запросов
@@ -71,7 +91,7 @@ export function useAdminStore(): AdminStoreState {
         const productsData = await productsRes.json()
         if (productsData.success) {
           globalCache.products = productsData.data || []
-          setProducts(globalCache.products)
+          setProducts(globalCache.products || [])
         }
       }
 
@@ -81,7 +101,7 @@ export function useAdminStore(): AdminStoreState {
         const categoriesData = await categoriesRes.json()
         if (categoriesData.success) {
           globalCache.categories = categoriesData.data || []
-          setCategories(globalCache.categories)
+          setCategories(globalCache.categories || [])
         }
       }
       
@@ -101,14 +121,104 @@ export function useAdminStore(): AdminStoreState {
     initializeData()
   }
 
+  const updateProduct = async (id: string, product: any) => {
+    try {
+      const response = await fetch(`/api/admin/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      })
+      if (!response.ok) throw new Error('Failed to update product')
+      forceRefresh()
+    } catch (error) {
+      console.error('Error updating product:', error)
+      throw error
+    }
+  }
+
+  const deleteProduct = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/products/${id}`, {
+        method: 'DELETE'
+      })
+      if (!response.ok) throw new Error('Failed to delete product')
+      forceRefresh()
+    } catch (error) {
+      console.error('Error deleting product:', error)
+      throw error
+    }
+  }
+
+  const updateSiteSettings = async (settings: any) => {
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      })
+      if (!response.ok) throw new Error('Failed to update settings')
+      setSiteSettings(settings)
+    } catch (error) {
+      console.error('Error updating settings:', error)
+      throw error
+    }
+  }
+
+  const loadSiteSettings = async () => {
+    try {
+      const response = await fetch('/api/admin/settings')
+      if (!response.ok) throw new Error('Failed to load settings')
+      const settings = await response.json()
+      setSiteSettings(settings)
+    } catch (error) {
+      console.error('Error loading settings:', error)
+      throw error
+    }
+  }
+
+  const updateCategory = async (id: string, category: any) => {
+    try {
+      const response = await fetch(`/api/admin/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(category)
+      })
+      if (!response.ok) throw new Error('Failed to update category')
+      forceRefresh()
+    } catch (error) {
+      console.error('Error updating category:', error)
+      throw error
+    }
+  }
+
+  const deleteCategory = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/categories/${id}`, {
+        method: 'DELETE'
+      })
+      if (!response.ok) throw new Error('Failed to delete category')
+      forceRefresh()
+    } catch (error) {
+      console.error('Error deleting category:', error)
+      throw error
+    }
+  }
+
   return {
     products,
     categories,
     siteSettings,
     isLoading,
     initializeData,
-    forceRefresh
+    forceRefresh,
+    updateProduct,
+    deleteProduct,
+    updateCategory,
+    deleteCategory,
+    updateSiteSettings,
+    loadSiteSettings
   }
 }
 
-export const adminStore = { getSettings: () => ({}) };
+// TODO: Implement real adminStore.getSettings
+// export const adminStore = { getSettings: () => ({}) };

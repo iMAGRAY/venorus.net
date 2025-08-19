@@ -320,7 +320,7 @@ export const WarehouseTreeManager: React.FC<WarehouseTreeManagerProps> = ({
 
           {/* Контекстное меню */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuTrigger asChild onClick={(e: React.MouseEvent) => e.stopPropagation()}>
               <Button variant="ghost" size="sm" className="w-6 h-6 p-0 opacity-0 group-hover:opacity-100">
                 <MoreHorizontal className="w-3 h-3" />
               </Button>

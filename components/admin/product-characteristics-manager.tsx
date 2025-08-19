@@ -1271,7 +1271,7 @@ export function ProductCharacteristicsManager({
       </CardContent>
 
       {/* Диалог создания/редактирования характеристики */}
-      <Dialog open={isCharacteristicDialogOpen} onOpenChange={(open) => {
+      <Dialog open={isCharacteristicDialogOpen} onOpenChange={(open: boolean) => {
         setIsCharacteristicDialogOpen(open)
         if (!open) resetCharacteristicForm()
       }}>

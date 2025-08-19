@@ -415,8 +415,9 @@ export default function ManufacturerModelLinesPage() {
                 <Label htmlFor="description">Описание</Label>
                 <Textarea
                   id="description"
+                  className="min-h-[80px]"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Описание модельного ряда (необязательно)"
                   rows={3}
                 />
