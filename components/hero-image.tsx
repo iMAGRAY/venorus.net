@@ -27,15 +27,12 @@ const HeroImage = () => {
         }}
       />
 
-      {/* Основное фоновое изображение hero.png (среднее движение) */}
-      <Image
-        src="/hero.png"
-        alt="Hero background"
-        fill
-        priority
-        className="absolute inset-0 w-full h-full object-cover"
+      {/* Основное фоновое изображение - используем градиент вместо изображения */}
+      <div
+        className="absolute inset-0 w-full h-full"
         style={{
           transform: `translateY(${scrollY * 0.15}px)`,
+          background: "linear-gradient(145deg, rgba(59,130,246,0.1) 0%, rgba(239,68,68,0.1) 50%, rgba(16,185,129,0.1) 100%)"
         }}
       />
 

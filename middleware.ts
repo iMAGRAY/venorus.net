@@ -48,21 +48,21 @@ export function middleware(request: NextRequest) {
   // Создаем response с security headers
   let response = NextResponse.next()
   
-  // Проверяем запросы на изображения логотипов с неправильным регистром
-  if (url.pathname === '/logo.webp' && request.method === 'GET') {
-    // Перенаправляем на существующий файл Logo.webp
-    response = NextResponse.rewrite(new URL('/Logo.webp', request.url))
+  // Проверяем запросы на логотипы с неправильным регистром - приводим к logo.webp
+  if ((url.pathname === '/Logo.webp' || url.pathname === '/dark_logo.webp') && request.method === 'GET') {
+    // Перенаправляем на существующий файл logo.webp
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
   }
   
-  // Перенаправляем запросы на logo.svg на Logo.webp
+  // Перенаправляем запросы на logo.svg на logo.webp
   if (url.pathname === '/logo.svg' && request.method === 'GET') {
-    response = NextResponse.rewrite(new URL('/Logo.webp', request.url))
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
   }
   
   // Логируем 404 для изображений производителей и возвращаем заглушку
   if (url.pathname.startsWith('/images/manufacturers/') && request.method === 'GET') {
     // Возвращаем логотип по умолчанию для производителей
-    response = NextResponse.rewrite(new URL('/Logo.webp', request.url))
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
   }
   
   // Защита от DOM XSS через URL параметры - блокируем опасные запросы

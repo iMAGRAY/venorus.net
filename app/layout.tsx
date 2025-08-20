@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/Logo.webp',
+        url: '/logo.webp',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/dark_logo.webp',
+        url: '/logo.webp',
         media: '(prefers-color-scheme: dark)',
       },
     ],
