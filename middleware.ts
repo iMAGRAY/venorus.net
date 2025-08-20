@@ -48,21 +48,26 @@ export function middleware(request: NextRequest) {
   // Создаем response с security headers
   let response = NextResponse.next()
   
-  // Проверяем запросы на логотипы с неправильным регистром - приводим к Logo-main.webp
-  if ((url.pathname === '/Logo.webp' || url.pathname === '/logo.webp' || url.pathname === '/dark_logo.webp') && request.method === 'GET') {
-    // Перенаправляем на существующий файл Logo-main.webp
-    response = NextResponse.rewrite(new URL('/Logo-main.webp', request.url))
+  // Проверяем запросы на логотипы с неправильным регистром - используем доступный logo.webp
+  if ((url.pathname === '/Logo.webp' || url.pathname === '/Logo-main.webp' || url.pathname === '/dark_logo.webp') && request.method === 'GET') {
+    // Перенаправляем на существующий работающий файл logo.webp (в нижнем регистре)
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
   }
   
-  // Перенаправляем запросы на logo.svg на Logo-main.webp
+  // Перенаправляем запросы на logo.svg на logo.webp
   if (url.pathname === '/logo.svg' && request.method === 'GET') {
-    response = NextResponse.rewrite(new URL('/Logo-main.webp', request.url))
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
+  }
+  
+  // Fallback для hero.png если файл не найден - используем logo как заглушку
+  if (url.pathname === '/hero.png' && request.method === 'GET') {
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
   }
   
   // Логируем 404 для изображений производителей и возвращаем заглушку
   if (url.pathname.startsWith('/images/manufacturers/') && request.method === 'GET') {
     // Возвращаем логотип по умолчанию для производителей
-    response = NextResponse.rewrite(new URL('/Logo-main.webp', request.url))
+    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
   }
   
   // Защита от DOM XSS через URL параметры - блокируем опасные запросы
