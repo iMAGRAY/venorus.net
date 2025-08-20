@@ -2,10 +2,14 @@
 uploads/
 *.jpg
 *.jpeg
-*.png
 *.gif
-*.webp
 *.svg
 *.mp4
 *.mov
-*.avi 
+*.avi
+
+# Исключения для критически важных файлов - разрешены
+!hero.png
+!Logo.webp
+!dark_logo.webp
+!logo.webp 
