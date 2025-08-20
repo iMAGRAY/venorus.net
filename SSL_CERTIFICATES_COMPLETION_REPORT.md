@@ -9,10 +9,10 @@
 ## 🎯 Что Было Достигнуто
 
 ### 1. ✅ HTTPS Сертификат Установлен
-- **Let's Encrypt SSL**: Получен и активен для venorus.com
+- **Let's Encrypt SSL**: Получен и активен для venorus.net
 - **Срок действия**: до 2025-11-15 (3 месяца)
 - **Автообновление**: Настроено через crontab (2 раза в день)
-- **Проверка**: https://venorus.com доступен
+- **Проверка**: https://venorus.net доступен
 
 ### 2. ✅ Nginx HTTPS Конфигурация
 - **HTTP → HTTPS редирект**: Настроен автоматический редирект
@@ -26,7 +26,7 @@
 - **Тестирование**: Подтверждено через psql
 
 ### 4. ✅ Инфраструктура SSL
-- **Сертификаты**: Сохранены в `/etc/letsencrypt/live/venorus.com/`
+- **Сертификаты**: Сохранены в `/etc/letsencrypt/live/venorus.net/`
 - **Backup SSL**: Включен в ежедневные backup'ы
 - **Мониторинг**: SSL статус отслеживается в health checks
 
@@ -34,7 +34,7 @@
 
 ### SSL Сертификат
 ```
-Домен: venorus.com
+Домен: venorus.net
 Издатель: Let's Encrypt Authority X3
 Алгоритм: RSA 2048 bit
 Срок: 90 дней (авто-продление)
@@ -43,8 +43,8 @@
 ### Nginx SSL Конфигурация
 ```nginx
 listen 443 ssl http2;
-ssl_certificate /etc/letsencrypt/live/venorus.com/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/venorus.com/privkey.pem;
+ssl_certificate /etc/letsencrypt/live/venorus.net/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/venorus.net/privkey.pem;
 ssl_protocols TLSv1.2 TLSv1.3;
 ```
 
@@ -60,10 +60,10 @@ SSL режим: require (совместимый)
 ### Проверка SSL
 ```bash
 # Проверить HTTPS
-curl -I https://venorus.com
+curl -I https://venorus.net
 
 # Проверить сертификат
-openssl s_client -servername venorus.com -connect venorus.com:443
+openssl s_client -servername venorus.net -connect venorus.net:443
 
 # Статус автообновления
 systemctl status certbot.timer
@@ -87,7 +87,7 @@ psql "postgresql://user:pass@host:5432/db?sslmode=require" -c "SELECT 1"
 
 ## ⚠️ Известные Ограничения
 
-### 1. www.venorus.com
+### 1. www.venorus.net
 - **Статус**: Не настроен в DNS
 - **Сертификат**: Только для основного домена
 - **Решение**: Добавить CNAME запись в DNS
@@ -105,7 +105,7 @@ psql "postgresql://user:pass@host:5432/db?sslmode=require" -c "SELECT 1"
 ## 🚀 Статус Развертывания
 
 ### ✅ Работающие Компоненты
-- HTTPS доступ: https://venorus.com ✅
+- HTTPS доступ: https://venorus.net ✅
 - SSL сертификат: Действителен до 2025-11-15 ✅
 - Nginx proxy: Работает с SSL ✅
 - PostgreSQL SSL: Сертификат готов ✅
@@ -124,10 +124,10 @@ psql "postgresql://user:pass@host:5432/db?sslmode=require" -c "SELECT 1"
    npm run build
    ```
 
-2. **Настроить www.venorus.com**:
+2. **Настроить www.venorus.net**:
    ```
-   DNS: www.venorus.com CNAME venorus.com
-   SSL: certbot --expand -d venorus.com -d www.venorus.com
+   DNS: www.venorus.net CNAME venorus.net
+   SSL: certbot --expand -d venorus.net -d www.venorus.net
    ```
 
 3. **Восстановить rate limiting**:
@@ -140,7 +140,7 @@ psql "postgresql://user:pass@host:5432/db?sslmode=require" -c "SELECT 1"
 **SSL СЕРТИФИКАТЫ УСПЕШНО УСТАНОВЛЕНЫ И РАБОТАЮТ**
 
 Основная задача "нужно сделать чтобы был сертификат" полностью выполнена:
-- ✅ HTTPS работает на https://venorus.com
+- ✅ HTTPS работает на https://venorus.net
 - ✅ Let's Encrypt сертификат активен
 - ✅ PostgreSQL SSL сертификат настроен  
 - ✅ Автообновление работает

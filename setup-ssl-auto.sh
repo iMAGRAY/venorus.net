@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# SSL Auto-Setup Script for venorus.com
+# SSL Auto-Setup Script for venorus.net
 # This script will set up Let's Encrypt SSL certificates and auto-renewal
 
 set -e
 
 SERVER_USER="root"
 SERVER_HOST="109.73.195.215"
-DOMAIN="venorus.com"
+DOMAIN="venorus.net"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -28,12 +28,12 @@ error() {
 }
 
 check_dns() {
-    log "Checking DNS resolution for venorus.com..."
+    log "Checking DNS resolution for venorus.net..."
     
-    if ! dig +short venorus.com | grep -q "109.73.195.215"; then
+    if ! dig +short venorus.net | grep -q "109.73.195.215"; then
         warn "DNS not pointing to server yet. Please configure DNS first:"
-        warn "venorus.com A 109.73.195.215"
-        warn "www.venorus.com CNAME venorus.com"
+        warn "venorus.net A 109.73.195.215"
+        warn "www.venorus.net CNAME venorus.net"
         read -p "Press Enter after DNS is configured and propagated..."
     fi
 }
@@ -51,27 +51,27 @@ setup_ssl() {
         
         # Get SSL certificate
         certbot certonly --standalone \
-            -d venorus.com \
-            -d www.venorus.com \
-            --email admin@venorus.com \
+            -d venorus.net \
+            -d www.venorus.net \
+            --email admin@venorus.net \
             --agree-tos \
             --non-interactive
         
         # Update Nginx configuration to use SSL
-        cat > /etc/nginx/sites-available/venorus.com << 'EOF'
+        cat > /etc/nginx/sites-available/venorus.net << 'EOF'
 server {
     listen 80;
-    server_name venorus.com www.venorus.com;
+    server_name venorus.net www.venorus.net;
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name venorus.com www.venorus.com;
+    server_name venorus.net www.venorus.net;
     
     # SSL Configuration
-    ssl_certificate /etc/letsencrypt/live/venorus.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/venorus.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/venorus.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/venorus.net/privkey.pem;
     
     # SSL Security Settings
     ssl_protocols TLSv1.2 TLSv1.3;
@@ -120,7 +120,7 @@ server {
     
     # Security.txt
     location /.well-known/security.txt {
-        return 200 "Contact: admin@venorus.com\nExpires: 2026-12-31T23:59:59.000Z\n";
+        return 200 "Contact: admin@venorus.net\nExpires: 2026-12-31T23:59:59.000Z\n";
         add_header Content-Type text/plain;
     }
 }
@@ -197,14 +197,14 @@ verify_ssl() {
     log "Verifying SSL setup..."
     
     # Test HTTPS
-    if curl -s https://venorus.com/api/health > /dev/null; then
+    if curl -s https://venorus.net/api/health > /dev/null; then
         log "✅ HTTPS is working correctly"
     else
         error "❌ HTTPS is not working"
     fi
     
     # Test HTTP redirect
-    if curl -s -I http://venorus.com | grep -q "301"; then
+    if curl -s -I http://venorus.net | grep -q "301"; then
         log "✅ HTTP to HTTPS redirect is working"
     else
         warn "❌ HTTP redirect may not be working properly"
@@ -212,7 +212,7 @@ verify_ssl() {
 }
 
 main() {
-    log "Starting SSL auto-setup for venorus.com..."
+    log "Starting SSL auto-setup for venorus.net..."
     
     # Check DNS first
     check_dns
@@ -227,7 +227,7 @@ main() {
     verify_ssl
     
     log "🎉 SSL setup completed successfully!"
-    log "venorus.com is now secured with HTTPS"
+    log "venorus.net is now secured with HTTPS"
     log "Certificates will auto-renew twice daily"
 }
 

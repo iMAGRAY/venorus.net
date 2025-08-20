@@ -3,7 +3,7 @@
 ## ✅ Статус развертывания: УСПЕШНО
 
 **Сервер**: `109.73.195.215`  
-**Домен**: `venorus.com` (пока не настроен DNS)  
+**Домен**: `venorus.net` (пока не настроен DNS)  
 **Приложение**: Запущено и доступно по HTTP  
 **Статус**: Работает с ограничениями (нет SSL сертификата PostgreSQL)
 
@@ -11,12 +11,12 @@
 
 - **По IP**: http://109.73.195.215
 - **Health Check**: http://109.73.195.215/api/health
-- **После DNS**: http://venorus.com
+- **После DNS**: http://venorus.net
 
 ## ✅ Что успешно развернуто
 
 1. ✅ **Next.js приложение** - собрано и запущено в production режиме
-2. ✅ **Nginx** - настроен reverse proxy для venorus.com
+2. ✅ **Nginx** - настроен reverse proxy для venorus.net
 3. ✅ **Systemd service** - автозапуск приложения настроен
 4. ✅ **Redis подключение** - работает успешно
 5. ✅ **Environment** - production переменные настроены
@@ -28,15 +28,15 @@
 ### 1. DNS Configuration
 ```bash
 # Направить венозность.com на сервер
-venorus.com A 109.73.195.215
-www.venorus.com CNAME venorus.com
+venorus.net A 109.73.195.215
+www.venorus.net CNAME venorus.net
 ```
 
 ### 2. SSL Certificate (Let's Encrypt)
 ```bash
 # Установить после настройки DNS
 ssh root@109.73.195.215
-certbot --nginx -d venorus.com -d www.venorus.com
+certbot --nginx -d venorus.net -d www.venorus.net
 ```
 
 ### 3. PostgreSQL SSL Certificate
@@ -93,7 +93,7 @@ systemctl restart medsip
 
 ## 📋 Следующие шаги
 
-1. **Настроить DNS** venorus.com → 109.73.195.215
+1. **Настроить DNS** venorus.net → 109.73.195.215
 2. **Установить SSL** с Let's Encrypt
 3. **Получить PostgreSQL SSL certificate** от TWC Cloud
 4. **Протестировать** полную функциональность
@@ -102,7 +102,7 @@ systemctl restart medsip
 ## 🔑 Конфигурация
 
 - **App Directory**: `/opt/medsip`
-- **Nginx Config**: `/etc/nginx/sites-available/venorus.com`
+- **Nginx Config**: `/etc/nginx/sites-available/venorus.net`
 - **Systemd Service**: `/etc/systemd/system/medsip.service`
 - **Environment**: `/opt/medsip/.env`
 

@@ -1,12 +1,12 @@
-# DNS Setup Instructions for venorus.com
+# DNS Setup Instructions for venorus.net
 
 ## Overview
-Complete DNS configuration instructions to point venorus.com to your MedSIP production server.
+Complete DNS configuration instructions to point venorus.net to your MedSIP production server.
 
 ## Server Information
 - **Production Server IP**: `109.73.195.215`
-- **Domain**: `venorus.com`
-- **Subdomain**: `www.venorus.com`
+- **Domain**: `venorus.net`
+- **Subdomain**: `www.venorus.net`
 
 ## DNS Records Required
 
@@ -22,7 +22,7 @@ TTL: 3600 (1 hour)
 ```
 Type: CNAME
 Name: www
-Value: venorus.com
+Value: venorus.net
 TTL: 3600 (1 hour)
 ```
 
@@ -30,7 +30,7 @@ TTL: 3600 (1 hour)
 ```
 Type: MX
 Name: @
-Value: mail.venorus.com
+Value: mail.venorus.net
 Priority: 10
 TTL: 3600
 ```
@@ -41,7 +41,7 @@ TTL: 3600
 
 #### Cloudflare
 1. Log into Cloudflare dashboard
-2. Select your domain `venorus.com`
+2. Select your domain `venorus.net`
 3. Go to DNS > Records
 4. Add A record:
    - Type: A
@@ -52,13 +52,13 @@ TTL: 3600
 5. Add CNAME record:
    - Type: CNAME
    - Name: www
-   - Target: venorus.com
+   - Target: venorus.net
    - Proxy status: DNS only (gray cloud)
    - TTL: Auto
 
 #### Route 53 (AWS)
 1. Open Route 53 console
-2. Select hosted zone for `venorus.com`
+2. Select hosted zone for `venorus.net`
 3. Create record:
    - Record name: (leave blank)
    - Record type: A
@@ -67,12 +67,12 @@ TTL: 3600
 4. Create record:
    - Record name: www
    - Record type: CNAME
-   - Value: venorus.com
+   - Value: venorus.net
    - TTL: 300
 
 #### GoDaddy
 1. Log into GoDaddy account
-2. Go to DNS Management for venorus.com
+2. Go to DNS Management for venorus.net
 3. Add A record:
    - Type: A
    - Host: @
@@ -81,7 +81,7 @@ TTL: 3600
 4. Add CNAME record:
    - Type: CNAME
    - Host: www
-   - Points to: venorus.com
+   - Points to: venorus.net
    - TTL: 1 Hour
 
 #### Namecheap
@@ -96,7 +96,7 @@ TTL: 3600
 5. Add CNAME record:
    - Type: CNAME Record
    - Host: www
-   - Value: venorus.com
+   - Value: venorus.net
    - TTL: Automatic
 
 ## Verification Steps
@@ -106,21 +106,21 @@ Wait 10-30 minutes after making changes, then verify:
 
 ```bash
 # Check A record
-dig venorus.com A
+dig venorus.net A
 # Should return: 109.73.195.215
 
 # Check WWW CNAME
-dig www.venorus.com CNAME
-# Should return: venorus.com
+dig www.venorus.net CNAME
+# Should return: venorus.net
 
 # Check from multiple locations
-nslookup venorus.com 8.8.8.8
-nslookup venorus.com 1.1.1.1
+nslookup venorus.net 8.8.8.8
+nslookup venorus.net 1.1.1.1
 ```
 
 ### 2. Online DNS Checker
 Use online tools to verify DNS propagation:
-- https://www.whatsmydns.net/#A/venorus.com
+- https://www.whatsmydns.net/#A/venorus.net
 - https://dnschecker.org/
 - https://www.dnswatch.info/
 
@@ -128,8 +128,8 @@ Use online tools to verify DNS propagation:
 Once DNS propagates:
 ```bash
 # Test HTTP access
-curl -I http://venorus.com
-curl -I http://www.venorus.com
+curl -I http://venorus.net
+curl -I http://www.venorus.net
 
 # Should return HTTP 200 or 301 redirect
 ```
@@ -152,7 +152,7 @@ curl -I http://www.venorus.com
 
 3. **Or manual SSL setup**:
    ```bash
-   certbot --nginx -d venorus.com -d www.venorus.com
+   certbot --nginx -d venorus.net -d www.venorus.net
    ```
 
 ## Troubleshooting
@@ -166,7 +166,7 @@ curl -I http://www.venorus.com
 
 #### SSL Certificate Fails
 - Ensure DNS is fully propagated first
-- Check that port 80 is accessible: `telnet venorus.com 80`
+- Check that port 80 is accessible: `telnet venorus.net 80`
 - Verify Nginx is running: `systemctl status nginx`
 
 #### Connection Refused
@@ -188,11 +188,11 @@ curl -I http://www.venorus.com
 After DNS is configured and propagated:
 
 - [ ] DNS records point to 109.73.195.215
-- [ ] Both venorus.com and www.venorus.com resolve correctly
-- [ ] HTTP access works: http://venorus.com
-- [ ] SSL certificates installed: https://venorus.com
+- [ ] Both venorus.net and www.venorus.net resolve correctly
+- [ ] HTTP access works: http://venorus.net
+- [ ] SSL certificates installed: https://venorus.net
 - [ ] Application accessible via domain
-- [ ] Health check responds: https://venorus.com/health
+- [ ] Health check responds: https://venorus.net/health
 - [ ] Monitoring dashboard shows all green
 - [ ] Backup system tested
 
@@ -202,16 +202,16 @@ Run these on the server after DNS setup:
 
 ```bash
 # Check DNS resolution from server
-nslookup venorus.com
+nslookup venorus.net
 
 # Test local access
 curl http://localhost:3000/api/health
 
 # Test domain access
-curl http://venorus.com/api/health
+curl http://venorus.net/api/health
 
 # Check SSL (after certificate installation)
-curl https://venorus.com/api/health
+curl https://venorus.net/api/health
 
 # Monitor logs
 tail -f /opt/monitoring/logs/health-check.log

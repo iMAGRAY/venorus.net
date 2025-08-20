@@ -2,17 +2,17 @@
 
 # MedSIP Production Deployment Script - Fixed version
 # Target: root@109.73.195.215
-# Domain: venorus.com
+# Domain: venorus.net
 
 set -e
 
 echo "=== MedSIP Production Deployment (Fixed) ==="
-echo "Domain: venorus.com"
+echo "Domain: venorus.net"
 echo "Server: 109.73.195.215"
 
 SERVER_USER="root"
 SERVER_HOST="109.73.195.215"
-DOMAIN="venorus.com"
+DOMAIN="venorus.net"
 APP_DIR="/opt/medsip"
 REPO_URL="https://github.com/iMAGRAY/medsip.protez/"
 
@@ -97,10 +97,10 @@ setup_nginx() {
     
     ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
         # Create Nginx configuration
-        cat > /etc/nginx/sites-available/venorus.com << 'EOF'
+        cat > /etc/nginx/sites-available/venorus.net << 'EOF'
 server {
     listen 80;
-    server_name venorus.com www.venorus.com;
+    server_name venorus.net www.venorus.net;
     
     location / {
         proxy_pass http://localhost:3000;
@@ -132,7 +132,7 @@ server {
 EOF
 
         # Enable site
-        ln -sf /etc/nginx/sites-available/venorus.com /etc/nginx/sites-enabled/
+        ln -sf /etc/nginx/sites-available/venorus.net /etc/nginx/sites-enabled/
         rm -f /etc/nginx/sites-enabled/default
         
         # Test and restart Nginx
@@ -206,11 +206,11 @@ main() {
     setup_systemd
     
     log "Deployment completed successfully!"
-    log "Application should be accessible at: http://venorus.com"
+    log "Application should be accessible at: http://venorus.net"
     log "Check application status: systemctl status medsip"
     
     warn "Next steps:"
-    warn "1. Point venorus.com DNS to 109.73.195.215"
+    warn "1. Point venorus.net DNS to 109.73.195.215"
     warn "2. Setup SSL certificate with certbot"
     warn "3. Get PostgreSQL SSL certificate from TWC Cloud"
 }

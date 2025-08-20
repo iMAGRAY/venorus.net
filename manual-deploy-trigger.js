@@ -9,7 +9,7 @@ const https = require('https');
 const crypto = require('crypto');
 
 // Конфигурация сервера
-const SERVER_HOST = 'venorus.com';
+const SERVER_HOST = 'venorus.net';
 const WEBHOOK_PATH = '/api/webhook/github';
 const WEBHOOK_SECRET = 'your-webhook-secret'; // Из кода webhook
 
@@ -25,8 +25,8 @@ const mockPayload = {
     }
   },
   repository: {
-    name: 'venorus.com',
-    full_name: 'user/venorus.com'
+    name: 'venorus.net',
+    full_name: 'user/venorus.net'
   }
 };
 
@@ -115,7 +115,7 @@ function sendWebhookToIP() {
       'X-Hub-Signature-256': signature,
       'X-GitHub-Event': 'push',
       'User-Agent': 'GitHub-Hookshot/12345',
-      'Host': 'venorus.com'
+      'Host': 'venorus.net'
     },
     rejectUnauthorized: false
   };
@@ -152,7 +152,7 @@ function testWebhookEndpoint() {
     path: WEBHOOK_PATH,
     method: 'GET',
     headers: {
-      'Host': 'venorus.com'
+      'Host': 'venorus.net'
     },
     rejectUnauthorized: false
   };
@@ -185,7 +185,7 @@ function testWebhookEndpoint() {
   req.end();
 }
 
-console.log('🇷🇺 MANUAL DEPLOY TRIGGER для venorus.com');
+console.log('🇷🇺 MANUAL DEPLOY TRIGGER для venorus.net');
 console.log('============================================');
 console.log('Запускаем обновление сервера российскими товарами...');
 

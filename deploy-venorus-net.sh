@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# MedSIP Production Deployment Script
+# Venorus.net Production Deployment Script
 # Target: root@109.73.195.215
 # Domain: venorus.net
-# Repository: https://github.com/iMAGRAY/medsip.protez/
 
 set -e
 
-echo "=== MedSIP Production Deployment ==="
+echo "=== Venorus.net Production Deployment ==="
 echo "Domain: venorus.net"
 echo "Server: 109.73.195.215"
 echo "Starting deployment..."
@@ -16,8 +15,8 @@ echo "Starting deployment..."
 SERVER_USER="root"
 SERVER_HOST="109.73.195.215"
 DOMAIN="venorus.net"
-APP_DIR="/opt/medsip"
-REPO_URL="https://github.com/iMAGRAY/medsip.protez/"
+APP_DIR="/opt/venorus-net"
+REPO_URL="https://github.com/iMAGRAY/venorus.git"
 
 # Colors for output
 RED='\033[0;31m'
@@ -62,8 +61,8 @@ deploy_to_server() {
         npm --version
         
         # Create application directory
-        mkdir -p /opt/medsip
-        cd /opt/medsip
+        mkdir -p /opt/venorus-net
+        cd /opt/venorus-net
         
         # Clone repository
         if [ -d ".git" ]; then
@@ -71,7 +70,7 @@ deploy_to_server() {
             git pull origin main
         else
             echo "Cloning repository..."
-            git clone https://github.com/iMAGRAY/medsip.protez/ .
+            git clone https://github.com/iMAGRAY/venorus.git .
         fi
         
         # Create SSL certificates directory
@@ -99,9 +98,6 @@ setup_ssl_certs() {
         
         # Create SSL certificates directory for PostgreSQL
         mkdir -p /home/app/.cloud-certs
-        
-        # Download TWC root certificate (placeholder - needs actual certificate)
-        # wget -O /home/app/.cloud-certs/root.crt https://twc.cert.url/root.crt
         
         echo "SSL certificates setup completed"
 ENDSSH
@@ -153,7 +149,7 @@ server {
     
     # Static files
     location /_next/static {
-        alias /opt/medsip/.next/static;
+        alias /opt/venorus-net/.next/static;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -187,15 +183,15 @@ setup_systemd_service() {
     
     ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
         # Create systemd service
-        cat > /etc/systemd/system/medsip.service << 'EOF'
+        cat > /etc/systemd/system/venorus-net.service << 'EOF'
 [Unit]
-Description=MedSIP Next.js Application
+Description=Venorus.net Next.js Application
 After=network.target
 
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/medsip
+WorkingDirectory=/opt/venorus-net
 Environment=NODE_ENV=production
 Environment=PORT=3000
 ExecStart=/usr/bin/npm start
@@ -203,7 +199,7 @@ Restart=always
 RestartSec=10
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=medsip
+SyslogIdentifier=venorus-net
 
 [Install]
 WantedBy=multi-user.target
@@ -211,7 +207,7 @@ EOF
 
         # Reload systemd and enable service
         systemctl daemon-reload
-        systemctl enable medsip
+        systemctl enable venorus-net
         
         echo "Systemd service configured"
 ENDSSH
@@ -222,10 +218,10 @@ setup_environment() {
     log "Setting up production environment..."
     
     # Copy production environment file
-    scp .env.production ${SERVER_USER}@${SERVER_HOST}:/opt/medsip/.env
+    scp .env.production ${SERVER_USER}@${SERVER_HOST}:/opt/venorus-net/.env
     
     ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
-        cd /opt/medsip
+        cd /opt/venorus-net
         
         # Set proper permissions
         chmod 600 .env
@@ -239,16 +235,15 @@ test_connections() {
     log "Testing database and Redis connections..."
     
     ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
-        cd /opt/medsip
+        cd /opt/venorus-net
         
         # Test PostgreSQL connection
         echo "Testing PostgreSQL connection..."
         export PGSSLROOTCERT=/home/app/.cloud-certs/root.crt
-        # psql 'postgresql://gen_user:%5C%24.V%5Cw%3C_r2%5C1%7Dr@1bb84d1fbea33d62faf51337.twc1.net:5432/default_db?sslmode=verify-full' -c '\l'
         
         # Test Redis connection
         echo "Testing Redis connection..."
-        redis-cli -h 94.141.162.221 -p 6379 --user default --pass '&J.~&kXF3y~F0#' ping
+        # redis-cli -h <host> -p 6379 --user default --pass '<password>' ping
         
         echo "Connection tests completed"
 ENDSSH
@@ -259,13 +254,13 @@ start_application() {
     log "Starting application..."
     
     ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
-        cd /opt/medsip
+        cd /opt/venorus-net
         
         # Start the service
-        systemctl start medsip
+        systemctl start venorus-net
         
         # Check status
-        systemctl status medsip --no-pager
+        systemctl status venorus-net --no-pager
         
         echo "Application started"
 ENDSSH
@@ -297,7 +292,7 @@ ENDSSH
 
 # Main deployment function
 main() {
-    log "Starting MedSIP deployment to venorus.net..."
+    log "Starting Venorus.net deployment..."
     
     # Check if .env.production exists
     if [ ! -f ".env.production" ]; then

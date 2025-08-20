@@ -2,17 +2,17 @@
 
 # MedSIP Production Deployment Script - Memory fix version
 # Target: root@109.73.195.215
-# Domain: venorus.com
+# Domain: venorus.net
 
 set -e
 
 echo "=== MedSIP Production Deployment (Memory Fix) ==="
-echo "Domain: venorus.com"
+echo "Domain: venorus.net"
 echo "Server: 109.73.195.215"
 
 SERVER_USER="root"
 SERVER_HOST="109.73.195.215"
-DOMAIN="venorus.com"
+DOMAIN="venorus.net"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -123,10 +123,10 @@ setup_nginx() {
     
     ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
         # Create Nginx configuration
-        cat > /etc/nginx/sites-available/venorus.com << 'EOF'
+        cat > /etc/nginx/sites-available/venorus.net << 'EOF'
 server {
     listen 80;
-    server_name venorus.com www.venorus.com;
+    server_name venorus.net www.venorus.net;
     
     # Security headers
     add_header X-Frame-Options DENY;
@@ -163,7 +163,7 @@ server {
 EOF
 
         # Enable site
-        ln -sf /etc/nginx/sites-available/venorus.com /etc/nginx/sites-enabled/
+        ln -sf /etc/nginx/sites-available/venorus.net /etc/nginx/sites-enabled/
         rm -f /etc/nginx/sites-enabled/default
         
         # Test and restart Nginx
@@ -270,13 +270,13 @@ main() {
     verify_deployment
     
     log "🎉 Deployment completed successfully!"
-    log "Application is accessible at: http://venorus.com"
+    log "Application is accessible at: http://venorus.net"
     log "Service status: systemctl status medsip"
     log "Logs: journalctl -u medsip -f"
     
     warn "⚠️  Next steps:"
-    warn "1. Point venorus.com DNS to 109.73.195.215"
-    warn "2. Setup SSL certificate: certbot --nginx -d venorus.com -d www.venorus.com"
+    warn "1. Point venorus.net DNS to 109.73.195.215"
+    warn "2. Setup SSL certificate: certbot --nginx -d venorus.net -d www.venorus.net"
     warn "3. Get PostgreSQL SSL certificate from TWC Cloud"
     warn "4. Test database connection after SSL cert setup"
 }

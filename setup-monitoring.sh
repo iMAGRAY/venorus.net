@@ -242,8 +242,8 @@ LOG_FILE="/opt/monitoring/logs/alerts.log"
 ALERT_STATE_FILE="/opt/monitoring/data/alert-state"
 
 # Email settings (configure as needed)
-ALERT_EMAIL="admin@venorus.com"
-FROM_EMAIL="monitoring@venorus.com"
+ALERT_EMAIL="admin@venorus.net"
+FROM_EMAIL="monitoring@venorus.net"
 
 log_alert() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"

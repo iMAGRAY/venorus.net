@@ -209,8 +209,8 @@ npm run build
 ### 3. Nginx Configuration
 ```bash
 # Restore Nginx configuration
-cp backup-YYYYMMDD_HHMMSS/nginx/venorus.com /etc/nginx/sites-available/
-ln -sf /etc/nginx/sites-available/venorus.com /etc/nginx/sites-enabled/
+cp backup-YYYYMMDD_HHMMSS/nginx/venorus.net /etc/nginx/sites-available/
+ln -sf /etc/nginx/sites-available/venorus.net /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
 # Test and restart
@@ -286,7 +286,7 @@ psql "postgresql://gen_user:PASSWORD@HOST:5432/default_db?sslmode=require" -c '\
 ```
 
 ## Contact Information
-- Technical Support: admin@venorus.com
+- Technical Support: admin@venorus.net
 - Emergency Contact: [Your emergency contact]
 - Documentation: https://github.com/iMAGRAY/medsip.protez/
 
@@ -382,8 +382,8 @@ if [ -f "$BACKUP_DIR/.env" ]; then
 fi
 
 # Restore Nginx configuration
-if [ -f "$BACKUP_DIR/nginx/venorus.com" ]; then
-    cp "$BACKUP_DIR/nginx/venorus.com" /etc/nginx/sites-available/
+if [ -f "$BACKUP_DIR/nginx/venorus.net" ]; then
+    cp "$BACKUP_DIR/nginx/venorus.net" /etc/nginx/sites-available/
     echo "✅ Nginx configuration restored"
 fi
 

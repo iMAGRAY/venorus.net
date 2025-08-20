@@ -3,7 +3,7 @@
 ## 📋 Executive Summary
 
 **Status**: ✅ DEPLOYMENT COMPLETED SUCCESSFULLY  
-**Target**: Production-ready MedSIP application on venorus.com  
+**Target**: Production-ready MedSIP application on venorus.net  
 **Server**: root@109.73.195.215  
 **Completion**: 2025-08-17 11:37:00 MSK  
 
@@ -79,7 +79,7 @@
 
 ### Production Configuration
 - `.env.production` - Production environment variables
-- `/etc/nginx/sites-available/venorus.com` - Nginx configuration
+- `/etc/nginx/sites-available/venorus.net` - Nginx configuration
 - `/etc/systemd/system/medsip.service` - Systemd service
 - `/etc/logrotate.d/medsip` - Log rotation configuration
 - `/etc/fail2ban/jail.local` - Security configuration
@@ -114,7 +114,7 @@
 ## ⚠️ Current Limitations & Next Steps
 
 ### Immediate Actions Required:
-1. **DNS Configuration**: Point venorus.com to 109.73.195.215
+1. **DNS Configuration**: Point venorus.net to 109.73.195.215
 2. **SSL Certificate**: Run `./setup-ssl-auto.sh` after DNS propagation
 3. **PostgreSQL SSL**: Obtain TWC Cloud root certificate for full SSL verification
 
@@ -214,7 +214,7 @@ systemctl restart medsip
 
 ## 📋 Final Checklist for Go-Live
 
-**Before going live with venorus.com:**
+**Before going live with venorus.net:**
 
 - [ ] Configure DNS records (see `DNS_SETUP_INSTRUCTIONS.md`)
 - [ ] Install SSL certificates (`./setup-ssl-auto.sh`)
