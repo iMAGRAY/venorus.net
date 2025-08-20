@@ -1,15 +1,19 @@
 # Запрещаем хранение медиафайлов локально - только S3
 uploads/
+
+# Сначала исключения - разрешаем критически важные файлы
+!hero.png
+!Logo.webp  
+!dark_logo.webp
+!logo.webp
+
+# Затем блокируем остальные медиафайлы
 *.jpg
 *.jpeg
+*.png
 *.gif
+*.webp
 *.svg
 *.mp4
 *.mov
-*.avi
-
-# Исключения для критически важных файлов - разрешены
-!hero.png
-!Logo.webp
-!dark_logo.webp
-!logo.webp 
+*.avi 
