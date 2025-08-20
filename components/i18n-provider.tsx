@@ -34,7 +34,7 @@ const ru: Dictionary = {
     sortBy: "Сортировать по...",
     searchSortOptions: "Поиск вариантов сортировки...",
     qualityAndReliability: "Качество и надёжность",
-    deliveryAcrossVenezuela: "Доставка по всей Венесуэле",
+    deliveryAcrossVenezuela: "Доставка по всей России",
     guaranteeAndSupport: "Гарантия и поддержка",
     certifiedInRussia: "Сертифицировано в России",
     allRightsReserved: "Все права защищены",
@@ -57,7 +57,7 @@ const ru: Dictionary = {
   },
   hero: {
     madeInRussia: "Сделано в России",
-    forVenezuela: "ДЛЯ ВЕНЕСУЭЛЫ",
+    forVenezuela: "ТОВАРЫ ИЗ РОССИИ",
     qualityTraditions: "Качество и Традиции",
     seeProducts: "Смотреть товары",
     catalogTitle: "Каталог российских товаров",
@@ -77,7 +77,7 @@ const ru: Dictionary = {
   trust: {
     originalProducts: "Оригинальные российские товары",
     directFromManufacturers: "Напрямую от производителей",
-    deliveryToVenezuela: "Доставка в Венесуэлу",
+    deliveryToVenezuela: "Доставка по России",
     shipNationwide: "Отправка по всей стране",
     paymentInCurrencies: "Оплата в RUB/USD",
     flexibleTerms: "Гибкие условия для клиентов",
@@ -151,7 +151,7 @@ const es: Dictionary = {
     sortBy: "Ordenar por...",
     searchSortOptions: "Buscar opciones de ordenación...",
     qualityAndReliability: "Calidad y fiabilidad",
-    deliveryAcrossVenezuela: "Entrega en toda Venezuela",
+    deliveryAcrossVenezuela: "Entrega en toda Rusia",
     guaranteeAndSupport: "Garantía y soporte",
     certifiedInRussia: "Certificado en Rusia",
     allRightsReserved: "Todos los derechos reservados",
@@ -174,7 +174,7 @@ const es: Dictionary = {
   },
   hero: {
     madeInRussia: "Hecho en Rusia",
-    forVenezuela: "PARA VENEZUELA",
+    forVenezuela: "PRODUCTOS DE RUSIA",
     qualityTraditions: "Calidad y Tradiciones",
     seeProducts: "Ver productos",
     catalogTitle: "Catálogo de productos rusos",
@@ -194,7 +194,7 @@ const es: Dictionary = {
   trust: {
     originalProducts: "Productos rusos originales",
     directFromManufacturers: "Directo de los fabricantes",
-    deliveryToVenezuela: "Envío a Venezuela",
+    deliveryToVenezuela: "Envío en Rusia",
     shipNationwide: "Envíos a todo el país",
     paymentInCurrencies: "Pago en RUB/USD",
     flexibleTerms: "Condiciones flexibles para clientes",
