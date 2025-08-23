@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
             success: true,
             data: result.rows[0]
         })
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка создания секции склада'
@@ -145,7 +145,7 @@ export async function PUT(request: NextRequest) {
             success: true,
             data: result.rows[0]
         });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка обновления секции склада'
@@ -197,7 +197,7 @@ export async function DELETE(request: NextRequest) {
             success: true,
             message: 'Секция успешно удалена'
         });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка удаления секции склада'

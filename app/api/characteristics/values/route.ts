@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast, tablesExist } from '@/lib/api-guards'
 
 export const dynamic = 'force-dynamic'
@@ -40,14 +40,14 @@ export async function GET(request: NextRequest) {
 
     query += ` ORDER BY cv.sort_order, cv.value LIMIT 500`
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(query, params)
 
     return NextResponse.json({
       success: true,
       data: result.rows
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Failed to fetch characteristic values' },
       { status: 500 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
 
     // Валидация: убеждаемся, что group_id указывает на группу, а не на раздел
     const groupCheck = await pool.query(
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       data: result.rows[0],
       message: 'Значение характеристики создано'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: "Ошибка создания значения характеристики" },
       { status: 500 }
@@ -131,7 +131,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(
       `UPDATE characteristics_values_simple
        SET value = $2,
@@ -157,7 +157,7 @@ export async function PUT(request: NextRequest) {
       message: "Значение характеристики обновлено"
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: "Ошибка обновления значения характеристики" },
       { status: 500 }
@@ -181,7 +181,7 @@ export async function DELETE(request: NextRequest) {
     const valueId = parseInt(id)
 
 // Проверяем, используется ли значение в товарах
-    const pool = getPool()
+    // Use imported pool instance
     const usageCheck = await pool.query(
       'SELECT COUNT(*) as count FROM product_characteristics_simple WHERE value_id = $1',
       [valueId]
@@ -229,7 +229,7 @@ export async function DELETE(request: NextRequest) {
       message: force ? "Значение характеристики и все связи удалены" : "Значение характеристики удалено"
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: "Ошибка удаления значения характеристики" },
       { status: 500 }

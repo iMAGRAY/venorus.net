@@ -48,89 +48,52 @@ export function middleware(request: NextRequest) {
   // Создаем response с security headers
   let response = NextResponse.next()
   
-  // Проверяем запросы на логотипы с неправильным регистром - используем доступный logo.webp
-  if ((url.pathname === '/Logo.webp' || url.pathname === '/Logo-main.webp' || url.pathname === '/dark_logo.webp') && request.method === 'GET') {
-    // Перенаправляем на существующий работающий файл logo.webp (в нижнем регистре)
-    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
+  // Оптимизированная обработка запросов на логотипы - объединяем все проверки
+  const logoPathsMap = {
+    '/logo.webp': '/Logo-main.webp',
+    '/Logo.webp': '/Logo-main.webp',
+    '/dark_logo.webp': '/Logo-main.webp',
+    '/logo.svg': '/Logo-main.webp'
+  } as const
+  
+  const logoRedirect = logoPathsMap[url.pathname as keyof typeof logoPathsMap]
+  if (logoRedirect && request.method === 'GET') {
+    response = NextResponse.rewrite(new URL(logoRedirect, request.url))
   }
   
-  // Перенаправляем запросы на logo.svg на logo.webp
-  if (url.pathname === '/logo.svg' && request.method === 'GET') {
-    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
-  }
-  
-  // Fallback для hero.png если файл не найден - используем logo как заглушку
-  if (url.pathname === '/hero.png' && request.method === 'GET') {
-    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
-  }
+  // Hero.png должен обслуживаться через nginx напрямую из public папки
   
   // Логируем 404 для изображений производителей и возвращаем заглушку
   if (url.pathname.startsWith('/images/manufacturers/') && request.method === 'GET') {
     // Возвращаем логотип по умолчанию для производителей
-    response = NextResponse.rewrite(new URL('/logo.webp', request.url))
+    response = NextResponse.rewrite(new URL('/Logo-main.webp', request.url))
   }
   
-  // Защита от DOM XSS через URL параметры - блокируем опасные запросы
-  const searchParams = url.searchParams
+  // Оптимизированная защита от XSS и SQL injection - проверяем только опасные пути
   let hasXSSAttempt = false
   
-  // Проверяем на XSS и SQL injection паттерны в параметрах
-  const maliciousPatterns = [
-    // XSS patterns
-    /<script[^>]*>.*?<\/script>/gi,
-    /javascript:/gi,
-    /data:text\/html/gi,
-    /data:image\/svg\+xml.*script/gi,
-    /vbscript:/gi,
-    /on\w+\s*=/gi,
-    /<iframe/gi,
-    /<embed/gi,
-    /<object/gi,
-    /<form/gi,
-    /<input/gi,
-    /alert\s*\(/gi,
-    /eval\s*\(/gi,
-    /prompt\s*\(/gi,
-    /confirm\s*\(/gi,
-    /document\./gi,
-    /window\./gi,
-    /expression\s*\(/gi,
-    /%3cscript/gi,
-    /%3ciframe/gi,
-    /&lt;script/gi,
-    /&lt;iframe/gi,
-    // SQL injection patterns
-    /(\s|^)union(\s|$)/gi,
-    /(\s|^)select(\s|$)/gi,
-    /(\s|^)insert(\s|$)/gi,
-    /(\s|^)update(\s|$)/gi,
-    /(\s|^)delete(\s|$)/gi,
-    /(\s|^)drop(\s|$)/gi,
-    /(\s|^)create(\s|$)/gi,
-    /(\s|^)alter(\s|$)/gi,
-    /(\s|^)exec(\s|$)/gi,
-    /(\s|^)execute(\s|$)/gi,
-    /'.*or.*'.*=/gi,
-    /'.*and.*'.*=/gi,
-    /'\s*or\s+\d+\s*=\s*\d+/gi,
-    /'\s*and\s+\d+\s*=\s*\d+/gi,
-    /'\s*;\s*drop/gi,
-    /'\s*;\s*delete/gi,
-    /'\s*;\s*update/gi,
-    /'\s*;\s*insert/gi,
-    /--/gi,
-    /\/\*/gi,
-    /\*\//gi
-  ]
-  
-  searchParams.forEach((value, key) => {
-    for (const pattern of maliciousPatterns) {
-      if (pattern.test(decodeURIComponent(value))) {
-        hasXSSAttempt = true
-        break
-      }
+  // Оптимизация: проверяем только API routes и пути с параметрами
+  if (url.search && (url.pathname.startsWith('/api/') || url.searchParams.size > 0)) {
+    // Компактные критичные паттерны для лучшей производительности
+    const criticalPatterns = [
+      /<script/gi, /javascript:/gi, /on\w+\s*=/gi, /<iframe/gi,
+      /alert\s*\(/gi, /eval\s*\(/gi, /document\./gi, /window\./gi,
+      /%3cscript/gi, /&lt;script/gi,
+      /'.*or.*'.*=/gi, /'\s*;\s*(drop|delete|update|insert)/gi,
+      /union.*select/gi, /--/gi, /\/\*/gi
+    ]
+    
+    // Оптимизация: объединяем все параметры в одну строку для единственной проверки
+    const allParams = Array.from(url.searchParams.values()).join(' ')
+    
+    try {
+      const decodedParams = decodeURIComponent(allParams)
+      hasXSSAttempt = criticalPatterns.some(pattern => pattern.test(decodedParams))
+    } catch {
+      // Если декодирование не удалось, считаем это подозрительным
+      hasXSSAttempt = true
     }
-  })
+  }
   
   // Если найден XSS паттерн, возвращаем 400 ошибку вместо продолжения
   if (hasXSSAttempt) {
@@ -174,7 +137,7 @@ export function middleware(request: NextRequest) {
   const dangerousParams = ['callback', 'redirect', 'return_url', 'goto', 'next']
   
   for (const param of dangerousParams) {
-    const value = searchParams.get(param)
+    const value = url.searchParams.get(param)
     if (value) {
       // Валидируем URL параметры
       try {

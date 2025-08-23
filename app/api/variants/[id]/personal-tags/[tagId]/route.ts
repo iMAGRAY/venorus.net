@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { pool } from '@/lib/db'
+// import { cookies } from 'next/headers' // Unused
+import { pool } from '@/lib/database/db-connection'
 
 // DELETE - удаление личного тега варианта
 export async function DELETE(
@@ -65,7 +65,7 @@ export async function DELETE(
       success: true,
       message: 'Личный тег варианта удален'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления личного тега варианта'

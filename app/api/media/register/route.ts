@@ -91,7 +91,7 @@ return NextResponse.json({
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Ошибка при регистрации медиафайла" },
       { status: 500 }
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Ошибка при получении информации о файле" },
       { status: 500 }

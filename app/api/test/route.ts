@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 
 export async function GET(_request: NextRequest) {
   try {
-    const pool = getPool();
+    // Use imported pool instance
 
     // Проверяем группы с названием "Материал"
     const materialGroupsQuery = `

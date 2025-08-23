@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: result.rows
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения регионов'
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка создания региона'
@@ -94,7 +94,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления региона'
@@ -146,7 +146,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления региона'

@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления вместимости зон склада'
@@ -71,7 +71,7 @@ export async function GET(_request: NextRequest) {
       data: zonesResult.rows
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения вместимости зон склада'

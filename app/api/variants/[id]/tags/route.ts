@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { pool } from '@/lib/db'
+// import { cookies } from 'next/headers' // Unused
+import { pool } from '@/lib/database/db-connection'
 
 // GET - получение тегов варианта
 export async function GET(

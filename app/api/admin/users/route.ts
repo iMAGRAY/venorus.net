@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/database-auth'
-import { Client } from 'pg'
+import { pool } from '@/lib/database/db-connection'
 import bcrypt from 'bcrypt'
 
 // Принудительно делаем маршрут динамическим
 export const dynamic = 'force-dynamic'
 
-// Подключение к базе данных
-function getDbConnection() {
-  return new Client({
-    connectionString: process.env.DATABASE_URL,
-  })
-}
+// Используем общий пул соединений
 
 // GET - получение списка пользователей
 export async function GET(request: NextRequest) {
@@ -34,8 +29,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул вместо отдельного клиента
 
     // Определяем, является ли пользователь суперадминистратором (id=1)
     const isSuperAdmin = session.user_id === 1;
@@ -55,7 +49,7 @@ export async function GET(request: NextRequest) {
       ORDER BY u.created_at DESC
     `;
 
-    const result = await client.query(query);
+    const result = await pool.query(query);
 
     const _users = result.rows.map(row => ({
       id: row.id,
@@ -75,14 +69,14 @@ export async function GET(request: NextRequest) {
       updatedAt: row.updated_at
     }))
 
-    await client.end()
+    // Пул автоматически управляет соединениями
 
     return NextResponse.json({
       success: true,
       users: _users
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -122,8 +116,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул вместо отдельного клиента
 
     // Проверяем уникальность username и email
     const existingUser = await client.query(`
@@ -131,7 +124,7 @@ export async function POST(request: NextRequest) {
     `, [username, email])
 
     if (existingUser.rows.length > 0) {
-      await client.end()
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'Username or email already exists' },
         { status: 400 }
@@ -142,7 +135,7 @@ export async function POST(request: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 12)
 
     // Создаем пользователя
-    const result = await client.query(`
+    const result = await pool.query(`
       INSERT INTO users (
         username, email, password_hash, role_id,
         first_name, last_name, status, email_verified,
@@ -175,7 +168,7 @@ export async function POST(request: NextRequest) {
       })
     ])
 
-    await client.end()
+    // Пул автоматически управляет соединениями
 
     return NextResponse.json({
       success: true,
@@ -187,7 +180,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

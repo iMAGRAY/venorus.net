@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast, tablesExist } from '@/lib/api-guards'
 
 // GET - Получить все значения характеристик для товара/варианта из новой EAV системы
@@ -13,7 +13,7 @@ try {
       return NextResponse.json({ success: true, data: [], total: 0, system: 'eav_simple' })
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
     const { searchParams } = new URL(request.url)
     const productId = searchParams.get('product_id')
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     // Проверяем существование варианта и шаблона
@@ -294,7 +294,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { raw_value, numeric_value, bool_value, date_value, file_url, enum_value_id } = body
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     const result = await client.query(`
@@ -356,7 +356,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
     const result = await client.query(
       'DELETE FROM product_characteristics_new WHERE variant_id = $1 AND template_id = $2 RETURNING *',

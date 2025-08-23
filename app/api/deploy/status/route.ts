@@ -12,7 +12,7 @@ export async function GET() {
       const logContent = await readFile(logPath, 'utf-8')
       const lines = logContent.split('\n').filter(Boolean)
       lastDeployments = lines.slice(-10) // Последние 10 записей
-    } catch (error) {
+    } catch (_error) {
       // Лог файл не существует или недоступен
     }
     
@@ -32,7 +32,7 @@ export async function GET() {
         commit: commit.trim(),
         lastCommit: lastCommit.trim()
       }
-    } catch (error) {
+    } catch (_error) {
       gitInfo = { error: 'Unable to read git info' }
     }
     

@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Pool } from 'pg'
-
-const pool = new Pool({
-  host: process.env.POSTGRESQL_HOST,
-  port: parseInt(process.env.POSTGRESQL_PORT || '5432'),
-  database: process.env.POSTGRESQL_DBNAME,
-  user: process.env.POSTGRESQL_USER,
-  password: process.env.POSTGRESQL_PASSWORD,
-  ssl: process.env.DATABASE_SSL === 'true' ? {
-    rejectUnauthorized: false
-  } : false
-})
+import { pool } from '@/lib/database/db-connection'
 
 // PUT - обновить секцию
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -28,11 +17,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       )
     }
 
-    const client = await pool.connect()
+    // Use shared pool instead of creating new connection
 
     try {
       // Проверяем, существует ли зона
-      const zoneCheck = await client.query(`
+      const zoneCheck = await pool.query(`
         SELECT id FROM warehouse_zones
         WHERE id = $1 AND is_active = true
       `, [zone_id])
@@ -44,7 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         )
       }
 
-      const result = await client.query(`
+      const result = await pool.query(`
         UPDATE warehouse_sections
         SET
           name = $2,
@@ -70,9 +59,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         data: result.rows[0]
       })
     } finally {
-      client.release()
+      // No need to release with shared pool
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка обновления секции' },
       { status: 500 }
@@ -86,11 +75,11 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
     const resolvedParams = await params
     const { id } = resolvedParams
 
-    const client = await pool.connect()
+    // Use shared pool instead of creating new connection
 
     try {
       // Проверяем, есть ли товары в секции
-      const inventoryCheck = await client.query(`
+      const inventoryCheck = await pool.query(`
         SELECT COUNT(*) as count
         FROM warehouse_inventory
         WHERE section_id = $1 AND status != 'discontinued'
@@ -103,7 +92,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
         )
       }
 
-      const result = await client.query(`
+      const result = await pool.query(`
         UPDATE warehouse_sections
         SET is_active = false, updated_at = NOW()
         WHERE id = $1 AND is_active = true
@@ -122,9 +111,9 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
         message: 'Секция успешно удалена'
       })
     } finally {
-      client.release()
+      // No need to release with shared pool
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка удаления секции' },
       { status: 500 }

@@ -1377,9 +1377,9 @@ function OrdersTable({
   deleting,
   onViewOrder,
   onDeleteOrder,
-  selectedOrder,
-  onStatusUpdate,
-  updating
+  selectedOrder: _selectedOrder,
+  onStatusUpdate: _onStatusUpdate,
+  updating: _updating
 }: {
   orders: Order[]
   loading: boolean
@@ -1562,9 +1562,9 @@ function DeletedOrdersTable({
   onViewOrder,
   onRestoreOrder,
   onPermanentDelete,
-  selectedOrder,
-  onStatusUpdate,
-  updating
+  selectedOrder: _selectedOrder,
+  onStatusUpdate: _onStatusUpdate,
+  updating: _updating
 }: {
   orders: Order[]
   loading: boolean

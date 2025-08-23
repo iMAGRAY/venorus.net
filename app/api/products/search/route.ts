@@ -43,22 +43,22 @@ export async function GET(request: NextRequest) {
             SELECT json_agg(
               json_build_object(
                 'id', pv.id,
-                'sizeName', pv.size_name,
-                'sizeValue', pv.size_value,
+                'sizeName', COALESCE(pv.name, pv.sku),
+                'sizeValue', COALESCE(pv.sku, pv.name),
                 'sku', pv.sku,
                 'price', pv.price,
                 'discountPrice', pv.discount_price,
                 'stockQuantity', pv.stock_quantity,
                 'isAvailable', pv.is_active
-              ) ORDER BY pv.sort_order, pv.size_name
+              ) ORDER BY pv.sort_order, COALESCE(pv.name, pv.sku)
             )
             FROM product_variants pv
             WHERE pv.master_id = p.id
               AND pv.is_active = true
-              AND pv.is_deleted = false
+              AND (pv.is_deleted = false OR pv.is_deleted IS NULL)
               AND (
-                LOWER(pv.size_name) LIKE LOWER($1)
-                OR LOWER(pv.size_value) LIKE LOWER($1)
+                LOWER(COALESCE(pv.name, pv.sku)) LIKE LOWER($1)
+                OR LOWER(COALESCE(pv.sku, pv.name)) LIKE LOWER($1)
                 OR LOWER(pv.sku) LIKE LOWER($1)
               )
           ),
@@ -79,10 +79,10 @@ export async function GET(request: NextRequest) {
               FROM product_variants pv 
               WHERE pv.master_id = p.id 
                 AND pv.is_active = true
-                AND pv.is_deleted = false
+                AND (pv.is_deleted = false OR pv.is_deleted IS NULL)
                 AND (
-                  LOWER(pv.size_name) LIKE LOWER($1)
-                  OR LOWER(pv.size_value) LIKE LOWER($1)
+                  LOWER(COALESCE(pv.name, pv.sku)) LIKE LOWER($1)
+                  OR LOWER(COALESCE(pv.sku, pv.name)) LIKE LOWER($1)
                   OR LOWER(pv.sku) LIKE LOWER($1)
                 )
             )

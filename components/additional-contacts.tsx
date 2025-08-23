@@ -10,7 +10,7 @@ interface AdditionalContactsProps {
   theme?: 'light' | 'dark';
 }
 
-export function AdditionalContacts({ contacts, className = '', theme = 'light' }: AdditionalContactsProps) {
+export function AdditionalContacts({ contacts, className = '', theme: _theme = 'light' }: AdditionalContactsProps) {
   return (
     <div className={className}>
       {contacts.map((contact, index) => (

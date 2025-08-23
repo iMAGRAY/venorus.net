@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/secure-auth'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { logger } from '@/lib/logger'
 import { userDataCache } from '@/lib/cache-manager'
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ templates: cached })
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(`
       SELECT
         id,
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(`
       INSERT INTO form_templates (name, description, template_data, created_by, updated_at)
       VALUES ($1, $2, $3, $4, NOW())
@@ -130,7 +130,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(`
       UPDATE form_templates
       SET
@@ -193,7 +193,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(`
       DELETE FROM form_templates
       WHERE id = $1

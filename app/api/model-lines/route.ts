@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery, testConnection } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/db-connection'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,13 +16,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
 
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const tableCheckQuery = `
       SELECT EXISTS (
@@ -94,7 +88,15 @@ export async function GET(request: NextRequest) {
 
     query += ' ORDER BY ms.name';
 
-    const result = await executeQuery(query, params);
+    // Добавляем timeout 15s для предотвращения hang
+    const queryTimeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Query timeout after 15 seconds')), 15000)
+    );
+    
+    const result = await Promise.race([
+      executeQuery(query, params),
+      queryTimeout
+    ]) as any;
     const modelLines = result.rows as any[];
 
     if (includeProducts && modelLines.length > 0) {
@@ -165,13 +167,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
 
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const tableCheckQuery = `
       SELECT EXISTS (

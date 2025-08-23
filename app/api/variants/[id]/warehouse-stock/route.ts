@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { pool } from '@/lib/db'
+import { pool } from '@/lib/database/db-connection'
 
 // GET - получить остатки варианта по складам
 export async function GET(
@@ -27,7 +27,7 @@ export async function GET(
     `, [variantId])
 
     return NextResponse.json(result.rows)
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch warehouse stock' },
       { status: 500 }
@@ -114,7 +114,7 @@ export async function PUT(
       await pool.query('ROLLBACK')
       throw error
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update warehouse stock' },
       { status: 500 }

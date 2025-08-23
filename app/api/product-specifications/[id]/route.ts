@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db-connection"
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 
 export const dynamic = 'force-dynamic'
 
@@ -68,7 +68,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const resolvedParams = await params
@@ -146,7 +146,7 @@ export async function PUT(
     }
 
     return NextResponse.json(result.rows[0])
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка обновления характеристики' },
       { status: 500 }
@@ -159,7 +159,7 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const resolvedParams = await params
@@ -179,7 +179,7 @@ export async function DELETE(
       success: true,
       message: 'Характеристика удалена'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка удаления характеристики' },
       { status: 500 }

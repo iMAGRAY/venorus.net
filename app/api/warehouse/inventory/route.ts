@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit)
       }
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения инвентаря'
@@ -188,14 +188,14 @@ export async function POST(request: NextRequest) {
 
             cacheManager.clear();
 
-        } catch (cacheError) {
+        } catch (_cacheError) {
         }
 
         return NextResponse.json({
             success: true,
             data: result.rows[0]
         });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка добавления товара в инвентарь'
@@ -297,14 +297,14 @@ export async function PUT(request: NextRequest) {
 
             cacheManager.clear();
 
-        } catch (cacheError) {
+        } catch (_cacheError) {
         }
 
         return NextResponse.json({
             success: true,
             data: result.rows[0]
         });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка обновления товара в инвентаре'
@@ -357,7 +357,7 @@ export async function DELETE(request: NextRequest) {
             success: true,
             data: result.rows[0]
         });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка удаления товара из инвентаря'

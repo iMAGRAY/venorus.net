@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import { pool } from '@/lib/database/db-connection';
 
 export async function GET(
   _request: NextRequest,
@@ -12,8 +8,6 @@ export async function GET(
 
   try {
     const resolvedParams = await params
-
-    const client = await pool.connect();
 
     try {
       // Сначала получаем информацию о модельном ряду
@@ -27,10 +21,9 @@ export async function GET(
         WHERE ml.id = $1
       `;
 
-      const modelLineResult = await client.query(modelLineQuery, [resolvedParams.id]);
+      const modelLineResult = await pool.query(modelLineQuery, [resolvedParams.id]);
 
       if (modelLineResult.rows.length === 0) {
-        client.release();
         return NextResponse.json(
           { success: false, error: 'Модельный ряд не найден' },
           { status: 404 }
@@ -51,9 +44,7 @@ export async function GET(
         ORDER BY p.name
       `;
 
-      const productsResult = await client.query(productsQuery, [resolvedParams.id]);
-
-      client.release();
+      const productsResult = await pool.query(productsQuery, [resolvedParams.id]);
 
       return NextResponse.json({
         success: true,
@@ -63,7 +54,6 @@ export async function GET(
         }
       });
     } catch (innerError) {
-      client.release();
       return NextResponse.json(
         { success: false, error: `Ошибка SQL: ${innerError.message}` },
         { status: 500 }

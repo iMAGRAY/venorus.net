@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery, testConnection } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/database/db-connection'
+import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,26 +17,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
 
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection(), используем try-catch на executeQuery
 
     const { searchParams } = new URL(request.url);
     const _includeStats = searchParams.get('include_stats') === 'true';
 
-    const tableCheckQuery = `
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name = 'manufacturers'
-      )
-    `
-
-    const tableExists = await executeQuery(tableCheckQuery)
+    // Используем prepared statement для проверки существования таблицы
+    const tableExists = await preparedStatements.executeQuery(
+      COMMON_QUERIES.TABLE_EXISTS,
+      `SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = $1
+      )`,
+      ['manufacturers']
+    )
 
     if (!tableExists.rows[0].exists) {
       return NextResponse.json({ success: false, error: 'Manufacturers schema is not initialized' }, { status: 503 })
@@ -61,7 +56,16 @@ export async function GET(request: NextRequest) {
       ORDER BY m.name
     `;
 
-    const result = await executeQuery(query);
+    // Добавляем timeout 15s для предотвращения hang
+    const queryTimeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Query timeout after 15 seconds')), 15000)
+    );
+    
+    // Используем обычный запрос, так как prepared statement не подходит для этого случая
+    const result = await Promise.race([
+      executeQuery(query, []),
+      queryTimeout
+    ]) as any;
     const manufacturers = result.rows;
 
     return NextResponse.json({
@@ -84,13 +88,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
 
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection(), используем try-catch на executeQuery
 
     const data = await request.json()
 
@@ -101,15 +99,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const tableCheckQuery = `
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name = 'manufacturers'
-      )
-    `
-
-    const tableExists = await executeQuery(tableCheckQuery)
+    // Используем prepared statement для проверки существования таблицы
+    const tableExists = await preparedStatements.executeQuery(
+      COMMON_QUERIES.TABLE_EXISTS,
+      `SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = $1
+      )`,
+      ['manufacturers']
+    )
 
     if (!tableExists.rows[0].exists) {
       return NextResponse.json({ success: false, error: 'Manufacturers schema is not initialized' }, { status: 503 })

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery, testConnection } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/db-connection'
 
 export async function GET(
   _request: NextRequest,
@@ -7,14 +7,7 @@ export async function GET(
 ) {
 
   try {
-    // Проверяем соединение с базой данных
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const resolvedParams = await params
     const modelLineId = resolvedParams.id;
@@ -116,14 +109,7 @@ export async function PUT(
 ) {
 
   try {
-    // Проверяем соединение с базой данных
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const resolvedParams = await params
     const modelLineId = resolvedParams.id;
@@ -222,14 +208,7 @@ export async function DELETE(
 ) {
 
   try {
-    // Проверяем соединение с базой данных
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(
-        { error: 'Database connection failed', success: false },
-        { status: 503 }
-      )
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const resolvedParams = await params
     const modelLineId = resolvedParams.id;

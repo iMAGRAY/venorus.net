@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import path from 'path'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { cpus } from 'os'
 import { guardDbOr503, tablesExist } from '@/lib/api-guards'
 
@@ -141,7 +141,7 @@ async function enrichWithProductData(files: any[]): Promise<any[]> {
   await dbSemaphore.acquire()
 
   try {
-    const pool = getPool()
+    // Use imported pool instance
     const urls = files.map(f => f.url)
 
     // Проверяем наличие необходимых таблиц, иначе возвращаем как есть
@@ -287,7 +287,7 @@ export async function GET(request: Request) {
 
       await dbSemaphore.acquire()
       try {
-        const pool = getPool()
+        // Use imported pool instance
         const dbQuery = `
           SELECT
             mf.id,

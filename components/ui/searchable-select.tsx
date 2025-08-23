@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { ChevronsUpDown, Check, Search } from "lucide-react"
+import { ChevronsUpDown, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Command,

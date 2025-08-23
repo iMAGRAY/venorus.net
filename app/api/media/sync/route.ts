@@ -129,7 +129,7 @@ skipped++
 
         synced++
 
-      } catch (error) {
+      } catch (_error) {
         errors++
       }
     }

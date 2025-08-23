@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { executeQuery } from "@/lib/db-connection"
 
 /**
@@ -29,7 +29,7 @@ export async function GET() {
       data: result.rows,
       warning: 'DEPRECATED: This API endpoint is deprecated. Use /api/admin/products/[id]/sizes instead. This endpoint will be removed in v2.0'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Failed to fetch product sizes" }, { status: 500 })
   }
 }
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
       selectionTables ? JSON.stringify(selectionTables) : null
     ]
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(insertQuery, values)
     const newSize = result.rows[0]
 

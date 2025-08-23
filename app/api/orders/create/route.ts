@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { pool } from '@/lib/db'
+// import { pool } from '@/lib/database/db-connection' // Unused
 import { v4 as uuidv4 } from 'uuid'
 import { getCart, hasCart, clearCart } from '@/lib/cart-storage'
 
 // Временное хранилище заказов
 const orders = new Map<string, any>()
 
-interface OrderCustomer {
+interface _OrderCustomer {
   name: string
   email: string
   phone: string
   address?: string
 }
 
-interface OrderDelivery {
+interface _OrderDelivery {
   type: 'pickup' | 'delivery'
   address?: string
   date?: string
@@ -22,7 +22,7 @@ interface OrderDelivery {
   comment?: string
 }
 
-interface OrderPayment {
+interface _OrderPayment {
   method?: 'cash' | 'card' | 'online'
   status?: 'pending' | 'paid' | 'failed'
 }
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
     
     return response
     
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка создания заказа'
@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
       order = orders.get(orderId)
     } else if (orderNumber) {
       // Поиск по номеру заказа
-      for (const [id, o] of orders.entries()) {
+      for (const [_id, o] of orders.entries()) {
         if (o.orderNumber === orderNumber) {
           order = o
           break
@@ -243,7 +243,7 @@ export async function GET(request: NextRequest) {
       }
     })
     
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения заказа'

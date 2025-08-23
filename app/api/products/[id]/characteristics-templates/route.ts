@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 
 // GET /api/products/[id]/characteristics-templates - получить характеристики товара на основе шаблонов (simple)
 export async function GET(
@@ -17,7 +17,7 @@ export async function GET(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     const characteristicsQuery = `
       SELECT
@@ -46,18 +46,18 @@ export async function GET(
     const sizesQuery = `
       SELECT
         pv.id,
-        pv.size_name,
-        pv.size_value,
+        COALESCE(pv.name, pv.sku) as size_name,
+        COALESCE(pv.sku, pv.name) as size_value,
         pv.weight,
         pv.price,
         pv.stock_quantity,
-        pv.dimensions,
-        pv.specifications
+        pv.custom_fields as dimensions,
+        pv.attributes as specifications
       FROM product_variants pv
       WHERE pv.master_id = $1
         AND pv.is_active = true
-        AND pv.is_deleted = false
-      ORDER BY pv.size_name
+        AND (pv.is_deleted = false OR pv.is_deleted IS NULL)
+      ORDER BY COALESCE(pv.name, pv.sku)
     `;
 
     const [characteristicsResult, sizesResult] = await Promise.all([
@@ -125,7 +125,7 @@ export async function GET(
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка получения характеристик товара' },
       { status: 500 }
@@ -159,7 +159,7 @@ export async function POST(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     await pool.query('BEGIN');
 
@@ -248,7 +248,7 @@ export async function POST(
       throw error;
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка сохранения характеристик товара' },
       { status: 500 }

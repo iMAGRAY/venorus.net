@@ -232,7 +232,7 @@ export async function GET() {
       source: 'optimized_database',
       performance: { response_time_ms: responseTime, optimized: true, items_processed: menuItems.length }
     })
-  } catch (error) {
+  } catch (_error) {
     const responseTime = Date.now() - startTime
     return NextResponse.json({ success: false, error: "Failed to load catalog menu", performance: { response_time_ms: responseTime, error: true } }, { status: 500 })
   }
@@ -356,7 +356,7 @@ export async function PUT(request: Request) {
       data: result.rows[0]
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка обновления элемента меню' },
       { status: 500 }
@@ -393,7 +393,7 @@ export async function DELETE(request: Request) {
       data: result.rows[0]
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка удаления элемента меню' },
       { status: 500 }

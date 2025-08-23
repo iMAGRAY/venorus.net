@@ -27,10 +27,10 @@ const HeroImage = () => {
         }}
       />
 
-      {/* Основное фоновое изображение hero.png (среднее движение) */}
+      {/* Основное фоновое изображение */}
       <Image
         src="/hero.png"
-        alt="Hero background"
+        alt="Фоновое изображение каталога"
         fill
         priority
         className="absolute inset-0 w-full h-full object-cover"

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery, getPool } from '@/lib/db-connection';
+import { executeQuery, } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { getCacheManager } from '@/lib/dependency-injection';
 import { invalidateRelated } from '@/lib/cache-manager';
 
@@ -93,7 +94,7 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit)
       }
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения движений товаров'
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
         }
 
         const inventory = inventoryCheck.rows[0];
-        const pool = getPool();
+        // Use imported pool instance
 
         await pool.query('BEGIN');
 
@@ -212,7 +213,7 @@ export async function POST(request: NextRequest) {
 
                 cacheManager.clear();
 
-            } catch (cacheError) {
+            } catch (_cacheError) {
             }
 
             return NextResponse.json({
@@ -226,7 +227,7 @@ export async function POST(request: NextRequest) {
             throw error;
         }
 
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка создания движения товара'

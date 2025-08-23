@@ -1,9 +1,10 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/database/db-connection'
 import { withCache, invalidateApiCache } from '@/lib/cache/cache-middleware'
 import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
 import { guardDbOr503, tablesExist } from '@/lib/api-guards'
+import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,15 +19,15 @@ export const GET = withCache(async function GET(request: NextRequest) {
     const guard = await guardDbOr503()
     if (guard) return guard
 
-    const tableCheckQuery = `
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name = 'product_categories'
-      )
-    `
-
-    const tableExists = await executeQuery(tableCheckQuery)
+    // Используем prepared statement для проверки существования таблицы
+    const tableExists = await preparedStatements.executeQuery(
+      COMMON_QUERIES.TABLE_EXISTS,
+      `SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = $1
+      )`,
+      ['product_categories']
+    )
 
     if (!tableExists.rows[0].exists) {
       return NextResponse.json(
@@ -61,7 +62,8 @@ export const GET = withCache(async function GET(request: NextRequest) {
       ORDER BY sort_order, name
     `;
 
-    const result = await executeQuery(query);
+    // Используем обычный запрос, так как prepared statement не подходит для этого случая
+    const result = await executeQuery(query, []);
     let categories = result.rows;
 
     if (includeStats && categories.length > 0) {
@@ -255,7 +257,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка обновления категории' },
       { status: 500 }
@@ -404,7 +406,7 @@ export async function DELETE(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка удаления категории' },
       { status: 500 }

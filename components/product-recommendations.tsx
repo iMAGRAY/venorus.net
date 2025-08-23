@@ -52,7 +52,7 @@ export function ProductRecommendations({
     } else if (allProducts.length > 0) {
       setSourceProducts(allProducts)
     }
-  }, [allProducts.length, sourceProducts.length])
+  }, [allProducts, sourceProducts.length, setSourceProducts])
 
   // Получаем рекомендации
   const recommendations = useMemo(() => {
@@ -254,7 +254,7 @@ export function ProductRecommendationsSidebar({
     } else if (allProducts.length > 0) {
       setSourceProducts(allProducts)
     }
-  }, [allProducts.length, sourceProducts.length])
+  }, [allProducts, sourceProducts.length, setSourceProducts])
 
   const sidebarRecommendations = useMemo(() => {
     if (!currentProduct || sourceProducts.length === 0) return []

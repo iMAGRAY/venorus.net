@@ -39,22 +39,60 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              // Обработчик ошибок загрузки чанков
-              window.addEventListener('error', function(event) {
-                if (event.message && event.message.includes('ChunkLoadError')) {
-                  console.warn('ChunkLoadError detected, reloading page...');
-                  window.location.reload();
-                }
-              });
-
-              // Обработчик необработанных промисов
-              window.addEventListener('unhandledrejection', function(event) {
-                if (event.reason && event.reason.name === 'ChunkLoadError') {
-                  console.warn('ChunkLoadError in promise, reloading page...');
-                  event.preventDefault();
-                  window.location.reload();
-                }
-              });
+              // Улучшенный обработчик ошибок загрузки чанков
+              (function() {
+                let reloadAttempts = 0;
+                const maxReloads = 2;
+                const reloadKey = 'chunkReloadCount';
+                
+                // Получаем счетчик перезагрузок из sessionStorage
+                const getReloadCount = () => parseInt(sessionStorage.getItem(reloadKey) || '0');
+                const setReloadCount = (count) => sessionStorage.setItem(reloadKey, count.toString());
+                
+                // Обработчик ошибок
+                const handleChunkError = (isPromise) => {
+                  reloadAttempts = getReloadCount();
+                  
+                  if (reloadAttempts < maxReloads) {
+                    setReloadCount(reloadAttempts + 1);
+                    // Задержка перед перезагрузкой
+                    setTimeout(() => window.location.reload(), 1000);
+                  } else {
+                    // Сброс счетчика после максимума попыток
+                    setReloadCount(0);
+                    // Показываем сообщение пользователю вместо бесконечных перезагрузок
+                    if (document.body) {
+                      const msg = document.createElement('div');
+                      msg.style.cssText = 'position:fixed;top:10px;right:10px;background:#ef4444;color:white;padding:10px;border-radius:5px;z-index:9999';
+                      msg.textContent = 'Ошибка загрузки. Попробуйте очистить кэш браузера.';
+                      document.body.appendChild(msg);
+                      setTimeout(() => msg.remove(), 5000);
+                    }
+                  }
+                };
+                
+                // Сброс счетчика при успешной загрузке
+                window.addEventListener('load', () => {
+                  setTimeout(() => setReloadCount(0), 3000);
+                });
+                
+                // Обработчик ошибок загрузки
+                window.addEventListener('error', function(event) {
+                  if (event.message && event.message.includes('ChunkLoadError')) {
+                    event.preventDefault();
+                    handleChunkError(false);
+                  }
+                });
+                
+                // Обработчик промисов
+                window.addEventListener('unhandledrejection', function(event) {
+                  if (event.reason && (event.reason.name === 'ChunkLoadError' || 
+                      (event.reason.message && event.reason.message.includes('Loading chunk')))) {
+                    event.preventDefault();
+                    handleChunkError(true);
+                  }
+                });
+              })();
             `,
           }}
         />

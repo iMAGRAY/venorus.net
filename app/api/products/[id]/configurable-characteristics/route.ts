@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { logger } from '@/lib/logger';
 import { requireAuth, hasPermission } from '@/lib/database-auth';
 
@@ -11,7 +11,7 @@ export async function GET(
   try {
     const { id: paramId } = await params
     const id = parseInt(paramId);
-    const pool = getPool();
+    // Use imported pool instance
     
     // Сначала проверяем, является ли это ID варианта товара
     const variantResult = await pool.query(
@@ -116,7 +116,7 @@ export async function POST(
     const { id } = await params
     const productId = parseInt(id);
     const { configurableCharacteristics } = await request.json();
-    const pool = getPool();
+    // Use imported pool instance
     
     logger.info('Saving configurable characteristics', { 
       productId, 

@@ -1,25 +1,18 @@
 import { NextResponse } from 'next/server'
-import { testConnection } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/db-connection'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const isConnected = await testConnection()
-
-    if (isConnected) {
-      return NextResponse.json({
-        status: 'ok',
-        database: 'connected',
-        timestamp: new Date().toISOString()
-      })
-    } else {
-      return NextResponse.json({
-        status: 'degraded',
-        database: 'disconnected',
-        timestamp: new Date().toISOString()
-      }, { status: 503 })
-    }
+    // Try a simple query to test database connection
+    await executeQuery('SELECT 1')
+    
+    return NextResponse.json({
+      status: 'ok',
+      database: 'connected',
+      timestamp: new Date().toISOString()
+    })
   } catch (error) {
     return NextResponse.json({
       status: 'degraded',

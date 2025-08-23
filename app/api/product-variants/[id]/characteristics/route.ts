@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { pool } from '@/lib/database/db-connection';
 
 // GET /api/product-variants/[id]/characteristics - получить характеристики варианта товара
 export async function GET(
@@ -126,7 +126,7 @@ export async function GET(
       locale
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка получения характеристик варианта' },
       { status: 500 }
@@ -192,7 +192,7 @@ export async function POST(
 
     return NextResponse.json(result.rows[0], { status: 201 });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка сохранения характеристики' },
       { status: 500 }
@@ -237,7 +237,7 @@ export async function DELETE(
       deleted: result.rows[0]
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка удаления характеристики' },
       { status: 500 }

@@ -11,9 +11,8 @@ export async function GET(_request: NextRequest) {
     const cacheKey = 'orders:count'
     const cached = cacheManager.get(cacheKey)
 
-    if (cached) {
-      logger.info('Cache hit for orders count')
-
+    if (cached !== undefined && cached !== null) {
+      logger.info('Cache hit for orders count', { cached })
       return NextResponse.json(cached)
     }
 

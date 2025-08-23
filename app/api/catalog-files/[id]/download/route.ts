@@ -63,7 +63,7 @@ export async function GET(
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка скачивания каталога' },
       { status: 500 }

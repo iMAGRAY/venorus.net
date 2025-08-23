@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: result.rows
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения городов'
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка создания города'
@@ -104,7 +104,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления города'
@@ -156,7 +156,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления города'

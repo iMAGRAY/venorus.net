@@ -15,12 +15,12 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
   const refreshOrdersCount = async () => {
     // Проверяем что мы на клиентской стороне
     if (typeof window === 'undefined') {
-
       return
     }
 
-    try {
+    let timeoutId: NodeJS.Timeout | null = null
 
+    try {
       // Проверяем доступность fetch
       if (typeof fetch === 'undefined') {
         throw new Error('Fetch API недоступен в этом браузере')
@@ -30,9 +30,10 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       const controller = typeof AbortController !== 'undefined'
         ? new AbortController()
         : null
-      const timeoutId = controller
-        ? setTimeout(() => controller.abort(), 10000) // 10 секунд
-        : null
+      
+      if (controller) {
+        timeoutId = setTimeout(() => controller.abort(), 30000) // 30 секунд - увеличили таймаут
+      }
 
       const response = await fetch('/api/orders/count', {
         method: 'GET',
@@ -67,6 +68,21 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         setOrdersCount(0)
       }
     } catch (error: any) {
+      // Очищаем таймаут в случае ошибки
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+
+      // Специальная обработка AbortError - это нормальная ситуация при таймауте
+      if (error.name === 'AbortError') {
+        console.warn('⏰ Запрос прерван по таймауту (30 сек):', {
+          url: '/api/orders/count',
+          timestamp: new Date().toISOString()
+        })
+        setOrdersCount(0)
+        return
+      }
+
       console.error('❌ Ошибка загрузки количества заказов:', {
         message: error.message,
         type: error.constructor.name,

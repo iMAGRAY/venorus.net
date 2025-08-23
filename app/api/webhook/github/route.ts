@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createHmac } from 'crypto'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import { logger } from '@/lib/logger'
 
 const execAsync = promisify(exec)
 
@@ -22,7 +23,7 @@ function verifySignature(payload: string, signature: string): boolean {
 
 async function deployUpdate(): Promise<{ success: boolean; output: string; error?: string }> {
   try {
-    console.log('🚀 Starting automatic deployment...')
+    logger.info('🚀 Starting automatic deployment...')
     
     // Выполняем скрипт автоматического обновления
     const { stdout, stderr } = await execAsync('npm run deploy:auto', {
@@ -31,13 +32,13 @@ async function deployUpdate(): Promise<{ success: boolean; output: string; error
     })
     
     const output = stdout + (stderr ? `\nSTDERR: ${stderr}` : '')
-    console.log('✅ Deployment completed successfully')
-    console.log(output)
+    logger.info('✅ Deployment completed successfully')
+    logger.info(output)
     
     return { success: true, output }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    console.error('❌ Deployment failed:', errorMessage)
+    logger.error('❌ Deployment failed:', errorMessage)
     
     return { 
       success: false, 
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
     
     // Проверяем подпись для безопасности
     if (!verifySignature(payload, signature)) {
-      console.warn('❌ Invalid webhook signature')
+      logger.warn('❌ Invalid webhook signature')
       return NextResponse.json(
         { error: 'Invalid signature' }, 
         { status: 401 }
@@ -65,16 +66,16 @@ export async function POST(request: NextRequest) {
     
     // Обрабатываем только push события в main/master ветку
     if (data.ref === 'refs/heads/main' || data.ref === 'refs/heads/master') {
-      console.log('📦 Push to main branch detected, starting deployment...')
-      console.log(`Commit: ${data.head_commit?.message || 'Unknown'}`)
-      console.log(`Author: ${data.head_commit?.author?.name || 'Unknown'}`)
+      logger.info('📦 Push to main branch detected, starting deployment...')
+      logger.info(`Commit: ${data.head_commit?.message || 'Unknown'}`)
+      logger.info(`Author: ${data.head_commit?.author?.name || 'Unknown'}`)
       
       // Запускаем деплойment асинхронно
       deployUpdate().then(result => {
         if (result.success) {
-          console.log('🎉 Auto-deployment completed successfully')
+          logger.info('🎉 Auto-deployment completed successfully')
         } else {
-          console.error('💥 Auto-deployment failed:', result.error)
+          logger.error('💥 Auto-deployment failed:', result.error)
         }
       })
       
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('❌ Webhook error:', error)
+    logger.error('❌ Webhook error:', error)
     return NextResponse.json(
       { error: 'Internal server error' }, 
       { status: 500 }

@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/database-auth'
-import { Client } from 'pg'
+import { pool } from '@/lib/database/db-connection'
 
 // Принудительно делаем маршрут динамическим
 export const dynamic = 'force-dynamic'
 
-// Подключение к базе данных
-function getDbConnection() {
-  return new Client({
-    connectionString: process.env.DATABASE_URL,
-  })
-}
+// Используем общий пул соединений
 
 // GET - получение конкретной роли
 export async function GET(
@@ -49,12 +44,11 @@ return NextResponse.json(
       )
     }
 
-const client = getDbConnection()
-    await client.connect()
+// Используем пул
 
     try {
       // Получаем роль
-      const result = await client.query(`
+      const result = await pool.query(`
         SELECT
           id, name, display_name, description, permissions, is_active,
           created_at, updated_at
@@ -64,7 +58,7 @@ const client = getDbConnection()
 
       if (result.rows.length === 0) {
 
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Role not found' },
           { status: 404 }
@@ -72,7 +66,7 @@ const client = getDbConnection()
       }
 
       const role = result.rows[0]
-await client.end()
+// Пул автоматически управляет соединениями
 
       return NextResponse.json({
         success: true,
@@ -87,14 +81,14 @@ await client.end()
           updatedAt: role.updated_at
         }
       })
-    } catch (error) {
-      await client.end()
+    } catch (_error) {
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'Ошибка получения роли из базы данных' },
         { status: 500 }
       )
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -138,17 +132,16 @@ export async function PATCH(
 
     const { displayName, description, permissions } = data
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул
 
     try {
       // Проверяем существование роли
-      const existingRole = await client.query(`
+      const existingRole = await pool.query(`
         SELECT id, name FROM roles WHERE id = $1
       `, [roleId])
 
       if (existingRole.rows.length === 0) {
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Роль не найдена' },
           { status: 404 }
@@ -159,7 +152,7 @@ export async function PATCH(
 
       // Запрещаем изменение роли super_admin
       if (roleName === 'super_admin') {
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Роль super_admin не может быть изменена' },
           { status: 400 }
@@ -197,7 +190,7 @@ export async function PATCH(
 
       // Если нет частей для обновления, возвращаем ошибку
       if (updateParts.length === 0) {
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Нет данных для обновления' },
           { status: 400 }
@@ -205,7 +198,7 @@ export async function PATCH(
       }
 
       // Обновляем роль
-      const result = await client.query(`
+      const result = await pool.query(`
         UPDATE roles
         SET ${updateParts.join(', ')}
         WHERE id = $${paramIndex}
@@ -215,7 +208,7 @@ export async function PATCH(
       const updatedRole = result.rows[0]
 
       // Логируем обновление роли
-      await client.query(`
+      await pool.query(`
         INSERT INTO user_audit_log (
           user_id, action, resource_type, resource_id,
           details, created_at
@@ -229,7 +222,7 @@ export async function PATCH(
         })
       ])
 
-      await client.end()
+      // Пул автоматически управляет соединениями
 
       return NextResponse.json({
         success: true,
@@ -243,14 +236,14 @@ export async function PATCH(
           updatedAt: updatedRole.updated_at
         }
       })
-    } catch (error) {
-      await client.end()
+    } catch (_error) {
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'Ошибка обновления роли в базе данных' },
         { status: 500 }
       )
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -290,17 +283,16 @@ export async function DELETE(
       )
     }
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул
 
     try {
       // Проверяем существование роли
-      const existingRole = await client.query(`
+      const existingRole = await pool.query(`
         SELECT id, name FROM roles WHERE id = $1
       `, [roleId])
 
       if (existingRole.rows.length === 0) {
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Роль не найдена' },
           { status: 404 }
@@ -311,7 +303,7 @@ export async function DELETE(
 // Запрещаем удаление системных ролей
       if (['super_admin', 'admin', 'moderator', 'editor', 'viewer'].includes(roleName)) {
 
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Системные роли не могут быть удалены' },
           { status: 400 }
@@ -319,13 +311,13 @@ export async function DELETE(
       }
 
       // Проверяем, используется ли роль пользователями
-      const usersWithRole = await client.query(`
+      const usersWithRole = await pool.query(`
         SELECT COUNT(*) as count FROM users WHERE role_id = $1
       `, [roleId])
 
       if (parseInt(usersWithRole.rows[0].count) > 0) {
 
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Роль используется пользователями и не может быть удалена' },
           { status: 400 }
@@ -333,14 +325,14 @@ export async function DELETE(
       }
 
       // Деактивируем роль вместо полного удаления
-      await client.query(`
+      await pool.query(`
         UPDATE roles
         SET is_active = false, updated_at = CURRENT_TIMESTAMP
         WHERE id = $1
       `, [roleId])
 
 // Логируем удаление роли
-      await client.query(`
+      await pool.query(`
         INSERT INTO user_audit_log (
           user_id, action, resource_type, resource_id,
           details, created_at
@@ -353,20 +345,20 @@ export async function DELETE(
         })
       ])
 
-      await client.end()
+      // Пул автоматически управляет соединениями
 
       return NextResponse.json({
         success: true,
         message: 'Роль успешно удалена'
       })
-    } catch (error) {
-      await client.end()
+    } catch (_error) {
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'Ошибка удаления роли в базе данных' },
         { status: 500 }
       )
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

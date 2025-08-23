@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { pool } from '@/lib/db'
+import { pool } from '@/lib/database/db-connection'
 import { 
   getOrCreateCart, 
   addItemToCart, 
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     
     return response
     
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка добавления товара в корзину'

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { pool } from '@/lib/database/db-connection';
 
 // GET /api/product-variants/[id] - получить конкретный вариант товара
 export async function GET(
@@ -35,7 +35,7 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: result.rows[0] });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка получения варианта товара' },
       { status: 500 }
@@ -82,7 +82,7 @@ export async function PUT(
 
     return NextResponse.json(result.rows[0]);
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка обновления варианта товара' },
       { status: 500 }
@@ -123,7 +123,7 @@ export async function DELETE(
       message: 'Вариант товара успешно удален'
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка удаления варианта товара' },
       { status: 500 }

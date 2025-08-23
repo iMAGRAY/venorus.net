@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server"
-import { executeQuery, testConnection } from "@/lib/db-connection"
+import { executeQuery } from "@/lib/db-connection"
 
 export const dynamic = 'force-dynamic'
 
@@ -18,10 +18,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json(getFallbackSettings(), { status: 503, headers: corsHeaders() })
     }
 
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json(getFallbackSettings(), { status: 503, headers: corsHeaders() })
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const exists = await executeQuery(`
       SELECT EXISTS (
@@ -79,10 +76,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ ...body, id: 1, updated_at: new Date().toISOString(), error: "Database config is not provided" }, { status: 503, headers: corsHeaders() })
     }
 
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json({ ...body, id: 1, updated_at: new Date().toISOString(), error: "Database connection failed, changes not saved" }, { status: 503, headers: corsHeaders() })
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const tableCheckQuery = `
       SELECT EXISTS (

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 
 /**
  * @deprecated This API is deprecated. Use /api/admin/products/[id]/sizes instead
@@ -32,7 +32,7 @@ export async function GET(
       WHERE ps.id = $1
     `
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(query, [id])
 
     if (result.rows.length === 0) {
@@ -66,7 +66,7 @@ export async function GET(
       data: size,
       warning: 'DEPRECATED: This API endpoint is deprecated. Use /api/admin/products/[id]/sizes instead. This endpoint will be removed in v2.0'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch product size' },
       { status: 500 }
@@ -184,7 +184,7 @@ export async function PUT(
       id
     ]
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(updateQuery, values)
 
     if (result.rows.length === 0) {
@@ -256,7 +256,7 @@ export async function DELETE(
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(
       'DELETE FROM product_sizes WHERE id = $1 RETURNING *',
       [id]
@@ -274,7 +274,7 @@ export async function DELETE(
       message: 'Product size deleted successfully',
       warning: 'DEPRECATED: This API endpoint is deprecated. Use /api/admin/products/[id]/sizes instead. This endpoint will be removed in v2.0'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete product size' },
       { status: 500 }

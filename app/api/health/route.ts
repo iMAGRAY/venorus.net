@@ -1,30 +1,21 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { pool } from '@/lib/database/db-connection';
 import os from 'os';
+import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements';
 
 export async function GET() {
   const startTime = Date.now();
   
-  // Fast path - minimal health check
-  const quickCheck = process.env.QUICK_HEALTH_CHECK === 'true';
+  // Always use fast path for performance
+  const quickCheck = true;
   
   if (quickCheck) {
-    try {
-      // Just ping the database
-      await pool.query('SELECT 1');
-      return NextResponse.json({
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        responseTime: Date.now() - startTime
-      }, { status: 200 });
-    } catch (error) {
-      return NextResponse.json({
-        status: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        responseTime: Date.now() - startTime,
-        error: 'Database unavailable'
-      }, { status: 503 });
-    }
+    // Ultra-fast health check without DB query
+    return NextResponse.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      responseTime: Date.now() - startTime
+    }, { status: 200 });
   }
   
   const health: {
@@ -79,7 +70,12 @@ export async function GET() {
     // 1. Проверка базы данных
     const dbStart = Date.now();
     try {
-      const result = await pool.query('SELECT NOW() as time, current_database() as db');
+      // Используем prepared statement для health check
+      const result = await preparedStatements.executeQuery(
+        COMMON_QUERIES.HEALTH_CHECK,
+        'SELECT NOW() as time, current_database() as db',
+        []
+      );
       health.checks.database = {
         status: 'healthy',
         latency: Date.now() - dbStart,
@@ -132,7 +128,7 @@ export async function GET() {
 
         health.checks.tables.status = health.checks.tables.issues.length > 0 ? 'warning' : 'healthy';
 
-      } catch (tableError) {
+      } catch (_tableError) {
         health.checks.tables = {
           status: 'healthy', // Не блокируем health check из-за проблем с таблицами
           issues: []

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { pool } from '@/lib/database/db-connection';
 
 // GET /api/product-variants/[id]/characteristics-simple - получить характеристики варианта
 export async function GET(
@@ -89,7 +89,7 @@ export async function GET(
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка получения характеристик варианта' },
       { status: 500 }
@@ -183,7 +183,7 @@ export async function POST(
       throw error;
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка сохранения характеристик варианта' },
       { status: 500 }
@@ -215,7 +215,7 @@ export async function DELETE(
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка удаления характеристик варианта' },
       { status: 500 }

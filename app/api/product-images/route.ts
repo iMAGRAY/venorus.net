@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { withCache, invalidateApiCache } from '@/lib/cache/cache-middleware'
 import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
 
 // GET /api/product-images - получить изображения товара
 export const GET = withCache(async function GET(request: NextRequest) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const { searchParams } = new URL(request.url)
@@ -57,7 +57,7 @@ export const GET = withCache(async function GET(request: NextRequest) {
     )
 
     return NextResponse.json(responseData)
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch product images' },
       { status: 500 }
@@ -67,7 +67,7 @@ export const GET = withCache(async function GET(request: NextRequest) {
 
 // POST /api/product-images - добавить изображения к товару
 export async function POST(request: NextRequest) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const body = await request.json()
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
       throw error
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to add product images' },
       { status: 500 }
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
 
 // PUT /api/product-images - обновить порядок изображений
 export async function PUT(request: NextRequest) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const body = await request.json()
@@ -251,7 +251,7 @@ export async function PUT(request: NextRequest) {
       throw error
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update product images' },
       { status: 500 }
@@ -261,7 +261,7 @@ export async function PUT(request: NextRequest) {
 
 // DELETE /api/product-images - удалить изображение товара
 export async function DELETE(request: NextRequest) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const { searchParams } = new URL(request.url)
@@ -377,7 +377,7 @@ export async function DELETE(request: NextRequest) {
       throw error
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete product images' },
       { status: 500 }

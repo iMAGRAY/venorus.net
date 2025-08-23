@@ -81,6 +81,15 @@ export function ProductVariantSelectorV2({
   const [comparisonMode, setComparisonMode] = useState(false)
   const [compareVariants, setCompareVariants] = useState<number[]>([])
 
+  const handleVariantSelect = useCallback((variant: ProductVariantV2) => {
+    setImageLoading(true)
+    setSelectedVariant(variant)
+    onVariantChange(variant)
+    
+    // Имитация загрузки изображения
+    setTimeout(() => setImageLoading(false), 300)
+  }, [onVariantChange, setSelectedVariant, setImageLoading])
+
   const fetchVariants = useCallback(async () => {
       try {
         setLoading(true)
@@ -112,25 +121,16 @@ export function ProductVariantSelectorV2({
           }
         }
       } catch (error) {
-        console.error('Error fetching variants:', error)
+        // Error is handled with toast notification
         toast.error('Не удалось загрузить варианты товара')
       } finally {
         setLoading(false)
       }
-    }, [productId, initialVariantId])
+    }, [productId, initialVariantId, handleVariantSelect])
 
   useEffect(() => {
     fetchVariants()
   }, [fetchVariants])
-
-  const handleVariantSelect = useCallback((variant: ProductVariantV2) => {
-    setImageLoading(true)
-    setSelectedVariant(variant)
-    onVariantChange(variant)
-    
-    // Имитация загрузки изображения
-    setTimeout(() => setImageLoading(false), 300)
-  }, [onVariantChange])
 
   const handleReturnToMaster = () => {
     setSelectedVariant(null)

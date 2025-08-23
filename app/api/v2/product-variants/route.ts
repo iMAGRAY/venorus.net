@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { pool } from '@/lib/db'
+import { pool } from '@/lib/database/db-connection'
 import { logger } from '@/lib/logger'
 
 // GET /api/v2/product-variants - получить варианты с полной информацией

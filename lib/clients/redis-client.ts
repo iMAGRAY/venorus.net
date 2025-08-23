@@ -1,20 +1,25 @@
 import { createClient, RedisClientType } from 'redis'
 import { RUNTIME_CONFIG } from '../app-config'
+import { logger } from '../logger'
 
 class RedisManager {
   private client: RedisClientType | null = null
   private isConnected = false
   private connectionAttempts = 0
-  private maxRetries = 3
+  private maxRetries = 5 // Увеличили количество попыток
   private emergencyMode = false
+  private circuitBreakerOpen = false
+  private lastFailTime = 0
+  private circuitBreakerTimeout = 60000 // 1 минута для circuit breaker
 
   constructor() {
-    // Включаем аварийный режим - не подключаемся к Redis при инициализации
-    if (process.env.NODE_ENV === 'production' || process.env.EMERGENCY_NO_REDIS === 'true') {
-      console.warn('🚨 EMERGENCY MODE: Redis connection disabled for stability')
+    // Отключаем аварийный режим только если явно указан EMERGENCY_NO_REDIS
+    if (process.env.EMERGENCY_NO_REDIS === 'true') {
+      logger.warn('🚨 EMERGENCY MODE: Redis connection disabled by EMERGENCY_NO_REDIS flag')
       this.emergencyMode = true
       this.isConnected = false
     } else {
+      // Пытаемся подключиться к Redis в любом режиме
       this.connect()
     }
   }
@@ -37,51 +42,74 @@ class RedisManager {
       })
 
       this.client.on('error', (err) => {
-        console.error('Redis Client Error:', err)
+        logger.error('Redis Client Error:', err)
         this.isConnected = false
       })
 
       this.client.on('connect', () => {
-        console.log(`Redis connected to ${RUNTIME_CONFIG.CACHE.REDIS.HOST}:${RUNTIME_CONFIG.CACHE.REDIS.PORT}`)
+        logger.info(`Redis connected to ${RUNTIME_CONFIG.CACHE.REDIS.HOST}:${RUNTIME_CONFIG.CACHE.REDIS.PORT}`)
         this.isConnected = true
         this.connectionAttempts = 0
       })
 
       this.client.on('disconnect', () => {
-        console.log('Redis disconnected')
+        logger.info('Redis disconnected')
         this.isConnected = false
       })
 
       await this.client.connect()
     } catch (error) {
-      console.error('Failed to connect to Redis:', error)
+      logger.error('Failed to connect to Redis:', error)
       this.isConnected = false
       this.connectionAttempts++
 
       if (this.connectionAttempts < this.maxRetries) {
-        console.log(`Retrying Redis connection in ${RUNTIME_CONFIG.CACHE.REDIS.RECONNECT_DELAY}ms...`)
-        setTimeout(() => this.connect(), RUNTIME_CONFIG.CACHE.REDIS.RECONNECT_DELAY)
+        // Exponential backoff: 1s, 2s, 4s, 8s, 16s
+        const backoffDelay = Math.min(1000 * Math.pow(2, this.connectionAttempts), 16000)
+        logger.info(`Retrying Redis connection in ${backoffDelay}ms (attempt ${this.connectionAttempts + 1}/${this.maxRetries})...`)
+        setTimeout(() => this.connect(), backoffDelay)
+      } else {
+        // Активируем circuit breaker после исчерпания попыток
+        this.circuitBreakerOpen = true
+        this.lastFailTime = Date.now()
+        logger.warn('Redis circuit breaker activated - falling back to in-memory cache')
       }
     }
   }
 
+  // Проверяем circuit breaker
+  private checkCircuitBreaker(): boolean {
+    if (this.circuitBreakerOpen) {
+      // Проверяем, можно ли сбросить circuit breaker
+      if (Date.now() - this.lastFailTime > this.circuitBreakerTimeout) {
+        logger.info('Attempting to reset Redis circuit breaker...')
+        this.circuitBreakerOpen = false
+        this.connectionAttempts = 0
+        this.connect() // Попытаемся переподключиться
+        return false // На этот раз еще не готов
+      }
+      return true // Circuit breaker все еще открыт
+    }
+    return false
+  }
+
   async get(key: string): Promise<string | null> {
-    if (this.emergencyMode || !this.isConnected || !this.client) {
-      // В аварийном режиме всегда возвращаем null (cache miss)
+    if (this.emergencyMode || this.checkCircuitBreaker() || !this.isConnected || !this.client) {
+      // В аварийном режиме или circuit breaker активен - возвращаем null (cache miss)
       return null
     }
 
     try {
       return await this.client.get(key)
     } catch (error) {
-      console.error('Redis GET error:', error)
+      logger.error('Redis GET error:', error)
       return null
     }
   }
 
   async set(key: string, value: string, options?: { EX?: number; PX?: number }): Promise<boolean> {
-    if (this.emergencyMode || !this.isConnected || !this.client) {
-      // В аварийном режиме притворяемся что кеш работает
+    if (this.emergencyMode || this.checkCircuitBreaker() || !this.isConnected || !this.client) {
+      // В аварийном режиме или circuit breaker активен - притворяемся что кеш работает
       return true
     }
 
@@ -89,7 +117,7 @@ class RedisManager {
       const result = await this.client.set(key, value, options)
       return result === 'OK'
     } catch (error) {
-      console.error('Redis SET error:', error)
+      logger.error('Redis SET error:', error)
       return false
     }
   }
@@ -100,7 +128,7 @@ class RedisManager {
       const options = ttlSeconds ? { EX: ttlSeconds } : undefined
       return await this.set(key, serialized, options)
     } catch (error) {
-      console.error('Redis setJson error:', error)
+      logger.error('Redis setJson error:', error)
       return false
     }
   }
@@ -110,7 +138,7 @@ class RedisManager {
       const data = await this.get(key)
       return data ? JSON.parse(data) : null
     } catch (error) {
-      console.error('Redis getJson error:', error)
+      logger.error('Redis getJson error:', error)
       return null
     }
   }
@@ -124,7 +152,7 @@ class RedisManager {
       const result = await this.client.del(key)
       return result > 0
     } catch (error) {
-      console.error('Redis DEL error:', error)
+      logger.error('Redis DEL error:', error)
       return false
     }
   }
@@ -138,7 +166,7 @@ class RedisManager {
       const result = await this.client.exists(key)
       return result > 0
     } catch (error) {
-      console.error('Redis EXISTS error:', error)
+      logger.error('Redis EXISTS error:', error)
       return false
     }
   }
@@ -151,7 +179,7 @@ class RedisManager {
     try {
       return await this.client.keys(pattern)
     } catch (error) {
-      console.error('Redis KEYS error:', error)
+      logger.error('Redis KEYS error:', error)
       return []
     }
   }
@@ -164,7 +192,7 @@ class RedisManager {
       const deleted = await Promise.all(keys.map(key => this.del(key)))
       return deleted.filter(Boolean).length
     } catch (error) {
-      console.error('Redis flushPattern error:', error)
+      logger.error('Redis flushPattern error:', error)
       return 0
     }
   }
@@ -178,7 +206,7 @@ class RedisManager {
       await this.client.flushDb()
       return true
     } catch (error) {
-      console.error('Redis FLUSH error:', error)
+      logger.error('Redis FLUSH error:', error)
       return false
     }
   }
@@ -191,7 +219,7 @@ class RedisManager {
     try {
       return await this.client.ttl(key)
     } catch (error) {
-      console.error('Redis TTL error:', error)
+      logger.error('Redis TTL error:', error)
       return -1
     }
   }
@@ -210,7 +238,7 @@ class RedisManager {
       const result = await this.client.ping()
       return result === 'PONG'
     } catch (error) {
-      console.error('Redis PING error:', error)
+      logger.error('Redis PING error:', error)
       return false
     }
   }

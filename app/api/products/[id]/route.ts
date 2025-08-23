@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery, testConnection } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/db-connection'
 import { getCacheManager } from '@/lib/dependency-injection'
 import { invalidateRelated } from '@/lib/cache-manager'
 import { requireAuth, hasPermission } from '@/lib/database-auth'
+import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
 
 function isDbConfigured() {
   return !!process.env.DATABASE_URL || (
@@ -18,13 +19,19 @@ export async function GET(
     if (!isDbConfigured()) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json({ success: false, error: 'Database connection failed' }, { status: 503 })
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const { id } = await params
-    const productId = parseInt(id)
+    
+    // Строгая валидация ID для предотвращения SQL-инъекций
+    const rawId = id.replace(/[^0-9]/g, '');
+    if (rawId !== id || rawId.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid product ID format' },
+        { status: 400 }
+      )
+    }
+    const productId = parseInt(rawId, 10)
     if (isNaN(productId) || productId <= 0) {
       return NextResponse.json(
         { success: false, error: 'Invalid product ID' },
@@ -32,22 +39,14 @@ export async function GET(
       )
     }
 
+    // Упрощенный запрос без RECURSIVE CTE для улучшения производительности
     const productQuery = `
-      WITH RECURSIVE category_path AS (
-        SELECT id, name, parent_id, name::text as full_path
-        FROM product_categories
-        WHERE id = (SELECT category_id FROM products WHERE id = $1)
-        UNION ALL
-        SELECT pc.id, pc.name, pc.parent_id, pc.name || ' / ' || cp.full_path as full_path
-        FROM product_categories pc
-        INNER JOIN category_path cp ON pc.id = cp.parent_id
-      )
       SELECT
         p.*,
         ms.name as model_line_name,
         m.name as manufacturer_name,
         pc.name as category_name,
-        (SELECT full_path FROM category_path WHERE parent_id IS NULL) as category_full_path
+        pc.name as category_full_path
       FROM products p
       LEFT JOIN model_series ms ON p.series_id = ms.id
       LEFT JOIN manufacturers m ON p.manufacturer_id = m.id
@@ -55,7 +54,12 @@ export async function GET(
       WHERE p.id = $1 AND (p.is_deleted = false OR p.is_deleted IS NULL)
     `
 
-    const productResult = await executeQuery(productQuery, [productId])
+    // Используем prepared statement для получения продукта по ID
+    const productResult = await preparedStatements.executeQuery(
+      COMMON_QUERIES.GET_PRODUCT_BY_ID,
+      productQuery,
+      [productId]
+    )
 
     if (productResult.rows.length === 0) {
       return NextResponse.json(
@@ -102,10 +106,7 @@ export async function PUT(
     if (!isDbConfigured()) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json({ success: false, error: 'Database connection failed' }, { status: 503 })
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const session = await requireAuth(request)
     if (!session) {
@@ -262,10 +263,7 @@ export async function DELETE(
     if (!isDbConfigured()) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
-    const isConnected = await testConnection()
-    if (!isConnected) {
-      return NextResponse.json({ success: false, error: 'Database connection failed' }, { status: 503 })
-    }
+    // Оптимизация: убираем медленный testConnection()
 
     const session = await requireAuth(request)
     if (!session) {

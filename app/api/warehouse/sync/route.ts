@@ -56,7 +56,7 @@ export async function POST(_request: NextRequest) {
 
             cacheManager.clear();
 
-        } catch (cacheError) {
+        } catch (_cacheError) {
         }
 
         return NextResponse.json({
@@ -68,7 +68,7 @@ export async function POST(_request: NextRequest) {
             }
         });
 
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({
             success: false,
             error: 'Ошибка синхронизации данных о товарах'

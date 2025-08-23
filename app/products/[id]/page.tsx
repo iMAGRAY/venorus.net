@@ -27,6 +27,7 @@ import { ProductVariantSelectorGrid } from "@/components/product-variant-selecto
 import { toast } from "sonner"
 import { ProductConfigurationSelector } from "@/components/product-configuration-selector"
 import { ProductTagsDisplay } from "@/components/product-tags-display"
+import { logger } from "@/lib/logger"
 
 // Расширенный тип для продукта с дополнительными полями из API
 interface ExtendedProduct extends Prosthetic {
@@ -142,7 +143,7 @@ export default function ProductPage() {
         
         if (filteredVariants.length > 0) {
           _setHasVariants(true)
-          console.log(`Loaded ${filteredVariants.length} variants for product ${productId}`)
+          logger.debug(`Loaded ${filteredVariants.length} variants for product ${productId}`)
         } else {
           _setHasVariants(false)
         }
@@ -150,7 +151,7 @@ export default function ProductPage() {
         _setHasVariants(false)
       }
     } catch (error) {
-      console.error('Error loading product variants:', error)
+      logger.error('Error loading product variants:', error)
       _setHasVariants(false)
     } finally {
       _setVariantsLoading(false)
@@ -267,7 +268,7 @@ export default function ProductPage() {
         }
       }
     } catch (error) {
-      console.error('Error loading product details:', error)
+      logger.error('Error loading product details:', error)
     }
     return null
   }
@@ -298,7 +299,7 @@ export default function ProductPage() {
         setProductImages([])
       }
     } catch (error) {
-      console.error('Error loading product images:', error)
+      logger.error('Error loading product images:', error)
       setProductImages([])
     } finally {
       setImagesLoading(false)
@@ -399,7 +400,7 @@ export default function ProductPage() {
           groups: sortedGroups
         }]
         
-        console.log('Setting variant characteristic groups:', sections)
+        logger.debug('Setting variant characteristic groups:', sections)
         setCharacteristicGroups(sections)
       } else if (selectedVariant && selectedVariant.id) {
         // Если выбран вариант, но у него нет характеристик, пробуем загрузить характеристики варианта из API
@@ -449,7 +450,7 @@ export default function ProductPage() {
                 groups: sortedGroups
               }]
               
-              console.log('Setting variant API characteristic groups:', sections)
+              logger.debug('Setting variant API characteristic groups:', sections)
               setCharacteristicGroups(sections)
             } else {
               // Если у варианта нет характеристик, показываем характеристики товара
@@ -457,7 +458,7 @@ export default function ProductPage() {
             }
           })
           .catch(err => {
-            console.error('❌ Failed to load variant characteristics', err)
+            logger.error('❌ Failed to load variant characteristics', err)
             // При ошибке показываем характеристики товара
             loadProductCharacteristics()
           })
@@ -475,7 +476,7 @@ export default function ProductPage() {
         .then(data => {
           if (data.success && data.data) {
             const sections = data.data.sections || []
-            console.log('🔍 Characteristics API Response:', {
+            logger.debug('🔍 Characteristics API Response:', {
               sectionsCount: sections.length,
               sections: sections,
               firstSectionGroups: sections[0]?.groups,
@@ -483,10 +484,10 @@ export default function ProductPage() {
             })
             setCharacteristicGroups(sections)
           } else if (data.error) {
-            console.error('❌ Simple characteristics API Error:', data.error)
+            logger.error('❌ Simple characteristics API Error:', data.error)
           }
         })
-        .catch(err => console.error('❌ Failed to load characteristics', err))
+        .catch(err => logger.error('❌ Failed to load characteristics', err))
     }
   }, [product, selectedVariant])
 
@@ -532,23 +533,23 @@ export default function ProductPage() {
                   return
                 }
 
-                console.log('🔍 Загрузка конфигурируемых характеристик для:', selectedVariant ? 'варианта' : 'товара', idToLoad)
+                logger.debug('🔍 Загрузка конфигурируемых характеристик для:', selectedVariant ? 'варианта' : 'товара', idToLoad)
                 
                 const response = await fetch(`/api/products/${idToLoad}/configurable-characteristics`)
                 const data = await response.json()
                 
                 if (data.success && data.data.configurable_characteristics) {
                   setConfigurableCharacteristics(data.data.configurable_characteristics)
-                  console.log('✅ Загружено конфигурируемых характеристик:', {
+                  logger.debug('✅ Загружено конфигурируемых характеристик:', {
                     count: data.data.configurable_characteristics.length,
                     characteristics: data.data.configurable_characteristics
                   })
                 } else {
-                  console.log('⚠️ Нет конфигурируемых характеристик')
+                  logger.debug('⚠️ Нет конфигурируемых характеристик')
                   setConfigurableCharacteristics([])
                 }
               } catch (error) {
-                console.error('❌ Ошибка загрузки конфигурируемых характеристик:', error)
+                logger.error('❌ Ошибка загрузки конфигурируемых характеристик:', error)
                 setConfigurableCharacteristics([])
               }
             }, [product?.id, selectedVariant])
@@ -650,7 +651,7 @@ export default function ProductPage() {
                 }
               } catch (error) {
                 // В случае ошибки переходим на главную
-                console.error('Navigation error:', error)
+                logger.error('Navigation error:', error)
                 router.push('/')
               }
             }}
@@ -685,7 +686,7 @@ export default function ProductPage() {
                             className="object-contain transition-transform duration-300 group-hover:scale-105"
                             priority={currentImageIndex === 0}
                             onError={(_e) => {
-                              console.error('Image failed to load:', images[currentImageIndex])
+                              logger.error('Image failed to load:', images[currentImageIndex])
                             }}
                           />
                           {/* Overlay с иконкой увеличения */}

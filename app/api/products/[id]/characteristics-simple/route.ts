@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { requireAuth, hasPermission } from '@/lib/database-auth';
 
 /**
@@ -28,7 +28,7 @@ export async function GET(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     // Получаем характеристики продукта из упрощенной системы и группируем их логически
     const productCharacteristics = await pool.query(`
@@ -207,7 +207,7 @@ export async function GET(
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка загрузки характеристик товара' },
       { status: 500 }
@@ -241,7 +241,7 @@ export async function POST(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     await pool.query('BEGIN');
 
@@ -351,7 +351,7 @@ export async function PUT(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     await pool.query('BEGIN');
 
@@ -486,7 +486,7 @@ export async function DELETE(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     // Удаляем все характеристики товара
     const result = await pool.query(`

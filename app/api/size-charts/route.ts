@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db-connection"
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503, tablesExist } from '@/lib/api-guards'
 
 export async function GET(request: NextRequest) {
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Начинаем транзакцию
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     try {

@@ -42,7 +42,7 @@ export async function GET(
       } else if (product.image_url) {
         imageUrls = [product.image_url];
       }
-    } catch (error) {
+    } catch (_error) {
       imageUrls = product.image_url ? [product.image_url] : [];
     }
 

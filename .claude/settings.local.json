@@ -20,12 +20,15 @@
       "Bash(npm install:*)",
       "Bash(ssh:*)",
       "Bash(git push:*)",
-      "Bash(scp:*)"
+      "Bash(scp:*)",
+      "mcp__postgresql-api-ssh__mcp_ssh_manager",
+      "Bash(tar:*)"
     ],
     "deny": [],
     "ask": [],
     "additionalDirectories": [
-      "C:\\c\\Users\\1\\Documents\\GitHub"
+      "C:\\c\\Users\\1\\Documents\\GitHub",
+      "C:\\var"
     ]
   }
 }

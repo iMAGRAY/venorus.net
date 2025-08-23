@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { getCacheManager, getLogger } from '@/lib/dependency-injection'
 
 // PUT - обновление цены товара в заказе
@@ -42,7 +42,7 @@ export async function PUT(
       }
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     try {

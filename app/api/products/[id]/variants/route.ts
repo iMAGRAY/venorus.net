@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { pool } from '@/lib/db'
+import { pool } from '@/lib/database/db-connection'
+import { logger } from '@/lib/logger'
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -16,39 +17,30 @@ export async function GET(
       }, { status: 400 })
     }
     
-    // Получаем варианты продукта
+    // Получаем варианты продукта (минимальный безопасный набор полей)
     const result = await pool.query(`
       SELECT 
         pv.id,
         pv.master_id,
-        pv.size_name,
-        pv.size_value,
         pv.sku,
         pv.price,
         pv.discount_price,
         pv.stock_quantity,
-        pv.is_active,
-        pv.sort_order,
         pv.created_at,
         pv.updated_at
       FROM product_variants pv
       WHERE pv.master_id = $1
-        AND pv.is_deleted = false
-      ORDER BY pv.sort_order, pv.size_name
+      ORDER BY pv.id
     `, [productId])
     
-    // Форматируем данные
+    // Форматируем данные (базовая структура)
     const variants = result.rows.map(row => ({
       id: row.id,
       masterId: row.master_id,
-      sizeName: row.size_name,
-      sizeValue: row.size_value,
       sku: row.sku,
       price: row.price ? parseFloat(row.price) : null,
       discountPrice: row.discount_price ? parseFloat(row.discount_price) : null,
       stockQuantity: row.stock_quantity,
-      isActive: row.is_active,
-      sortOrder: row.sort_order,
       createdAt: row.created_at,
       updatedAt: row.updated_at
     }))
@@ -58,10 +50,12 @@ export async function GET(
       data: variants
     })
     
-  } catch (error) {
+  } catch (error: any) {
+    logger.error('Error getting product variants:', error)
     return NextResponse.json({
       success: false,
-      error: 'Ошибка получения вариантов продукта'
+      error: 'Ошибка получения вариантов продукта',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     }, { status: 500 })
   }
 }

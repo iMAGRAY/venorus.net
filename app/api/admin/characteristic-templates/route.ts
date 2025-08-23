@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast, tablesExist, columnsExist } from '@/lib/api-guards'
 
 // GET /api/admin/characteristic-templates - получить все шаблоны характеристик
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const canJoinGroups = need.characteristic_groups && hasGroupId
     const canJoinUnits = need.characteristic_units && hasUnitId
 
-    const pool = getPool();
+    // Use imported pool instance
 
     const selectParts: string[] = [
       'ct.id',
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       data: result.rows
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения шаблонов характеристик'
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
 
     const cols = await columnsExist('characteristic_templates', ['unit_id','validation_rules','placeholder_text','default_value','input_type','is_required','sort_order','description'])
 
-    const pool = getPool();
+    // Use imported pool instance
 
     await pool.query('BEGIN');
 
@@ -220,7 +220,7 @@ export async function PUT(request: NextRequest) {
 
     const cols = await columnsExist('characteristic_templates', ['unit_id','validation_rules','placeholder_text','default_value','input_type','is_required','sort_order','name','description'])
 
-    const pool = getPool();
+    // Use imported pool instance
 
     await pool.query('BEGIN');
 

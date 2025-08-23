@@ -46,7 +46,7 @@ export async function GET(
       data: result.rows[0]
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка загрузки каталога' },
       { status: 500 }
@@ -143,7 +143,7 @@ export async function PUT(
       message: 'Каталог успешно обновлен'
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка обновления каталога' },
       { status: 500 }
@@ -209,7 +209,7 @@ export async function DELETE(
       message: 'Каталог успешно удален'
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка удаления каталога' },
       { status: 500 }

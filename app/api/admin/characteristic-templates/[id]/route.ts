@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast, tablesExist } from '@/lib/api-guards'
 
 // GET /api/admin/characteristic-templates/[id] - получить шаблон с предустановленными значениями
@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Templates schema is not initialized' }, { status: 503 })
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     const selectUnit = need.characteristic_units ? `,
         cu.code as unit_code,
@@ -120,7 +120,7 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Templates schema is not initialized' }, { status: 503 })
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     await pool.query('BEGIN');
 
@@ -231,7 +231,7 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Templates schema is not initialized' }, { status: 503 })
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     if (need.product_characteristics_simple && need.characteristics_values_simple) {
       const usageResult = await pool.query(`

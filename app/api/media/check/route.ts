@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
       throw error
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Failed to check media file" },
       { status: 500 }

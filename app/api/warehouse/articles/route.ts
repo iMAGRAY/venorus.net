@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit)
       }
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения товаров для артикулов'
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка создания складского артикула'
@@ -265,7 +265,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления складского артикула'
@@ -316,7 +316,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Складской артикул удален'
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления складского артикула'

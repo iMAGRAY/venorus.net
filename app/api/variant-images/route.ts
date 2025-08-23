@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 
 // Конфигурация для статической генерации
 export const dynamic = 'force-dynamic'
 
 // PUT /api/variant-images - обновить изображения варианта товара
 export async function PUT(request: NextRequest) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const body = await request.json()
@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest) {
       await pool.query('ROLLBACK')
       throw error
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update variant images' },
       { status: 500 }
@@ -78,7 +78,7 @@ export async function PUT(request: NextRequest) {
 
 // GET /api/variant-images - получить изображения варианта
 export async function GET(request: NextRequest) {
-  const pool = getPool()
+  // Use imported pool instance
 
   try {
     const { searchParams } = new URL(request.url)
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
         primaryImageUrl: variant.primary_image_url
       }
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch variant images' },
       { status: 500 }

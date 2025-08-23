@@ -23,7 +23,7 @@ export async function GET() {
           lowStock: parseInt(productsResult.rows[0].low_stock || '0')
         }
       }
-    } catch (error) {
+    } catch (_error) {
     }
 
     // Получаем статистику категорий с fallback
@@ -41,7 +41,7 @@ export async function GET() {
           active: parseInt(categoriesResult.rows[0].active || '0')
         }
       }
-    } catch (error) {
+    } catch (_error) {
     }
 
     // Получаем статистику производителей с fallback
@@ -59,7 +59,7 @@ export async function GET() {
           active: parseInt(manufacturersResult.rows[0].active || '0')
         }
       }
-    } catch (error) {
+    } catch (_error) {
     }
 
     // Получаем статистику медиафайлов с fallback
@@ -81,7 +81,7 @@ export async function GET() {
           size: mediaCount > 0 ? `${Math.round(mediaCount * 1.2)} МБ` : '0 Б' // Примерная оценка: 1.2 МБ на файл
         }
       }
-    } catch (error) {
+    } catch (_error) {
     }
 
     // Загружаем реальные данные о зонах склада из базы данных
@@ -141,7 +141,7 @@ export async function GET() {
 
         throw new Error('Table not found')
       }
-    } catch (error) {
+    } catch (_error) {
       // Fallback: генерируем реалистичные данные о складах на основе количества товаров
       const totalProducts = productsStats.total || 26
       const baseCapacityPerZone = Math.ceil(totalProducts / 4) + 10 // Добавляем запас
@@ -197,7 +197,7 @@ export async function GET() {
 
     return NextResponse.json(stats)
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to load dashboard statistics' },
       { status: 500 }

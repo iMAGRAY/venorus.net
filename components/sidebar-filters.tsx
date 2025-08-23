@@ -49,7 +49,7 @@ export function SidebarFilters({
 
                 setCategories(categoriesData.filter((cat: any) => cat.is_active).map((cat: any) => cat.name))
                 setFeatures(featuresData.filter((feat: any) => feat.is_active).map((feat: any) => feat.name))
-              } catch (error) {
+              } catch (_error) {
                 // Fallback data
                 setCategories(["Протезы рук", "Протезы ног", "Специальные протезы", "Детские протезы"])
                 setFeatures(["Миоэлектрическое управление", "Водонепроницаемость", "Регулируемая посадка", "Легкий вес", "Высокая прочность"])

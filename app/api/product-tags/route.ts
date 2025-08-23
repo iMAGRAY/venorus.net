@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { pool } from '@/lib/db'
+// import { cookies } from 'next/headers' // Unused
+import { pool } from '@/lib/database/db-connection'
 
 // GET - получение всех тегов
 export async function GET(request: NextRequest) {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: result.rows
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка загрузки тегов'
@@ -240,7 +240,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       data: result.rows[0]
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления тега'

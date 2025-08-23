@@ -11,7 +11,7 @@ import { useAdminStore } from '@/lib/admin-store'
 export default function CreateProductPage() {
   const router = useRouter()
   const { hasPermission } = useAuth()
-  const { forceRefresh } = useAdminStore()
+  const { forceRefresh: _forceRefresh } = useAdminStore()
 
   // Проверяем права доступа
   const canCreateProducts = hasPermission('products.create') || hasPermission('products.*') || hasPermission('*')
@@ -73,7 +73,7 @@ export default function CreateProductPage() {
       setTimeout(async () => {
         try {
           // Принудительно обновляем store через глобальный кеш
-          const { useAdminStore } = await import('@/lib/admin-store')
+          const { useAdminStore: _useAdminStore } = await import('@/lib/admin-store')
           // Note: В данном контексте мы не можем использовать React Hook
           console.log('Store refresh skipped - using component refresh')
 

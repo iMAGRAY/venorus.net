@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { pool } from '@/lib/database/db-connection';
 
 // GET /api/product-variants - получить все варианты товаров
 // GET /api/product-variants?master_id=X - получить варианты конкретного товара
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка получения вариантов товаров' },
       { status: 500 }
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result.rows[0], { status: 201 });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка создания варианта товара' },
       { status: 500 }

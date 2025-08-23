@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
 
     // Проверяем существование группы
     const groupResult = await pool.query(

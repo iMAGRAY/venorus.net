@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { Pool } from "pg"
+import { pool } from '@/lib/database/db-connection'
 
 export const dynamic = 'force-dynamic'
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-})
 
 // GET /api/form-templates - Get all form templates
 export async function GET() {
@@ -66,7 +61,7 @@ export async function POST(request: NextRequest) {
     `, [name.trim(), description?.trim() || '', JSON.stringify(characteristics), is_favorite])
 
     return NextResponse.json(result.rows[0])
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to save template' }, { status: 500 })
   }
 }
@@ -122,7 +117,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json(updatedTemplate)
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update template' },
       { status: 500 }
@@ -153,7 +148,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete template' },
       { status: 500 }

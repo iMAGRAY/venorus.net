@@ -62,7 +62,7 @@ export function MediaUploader({
           }))
         })
         results.push(result)
-      } catch (error) {
+      } catch (_error) {
         results.push({ success: false, error: `Failed to upload ${file.name}` })
       }
     }

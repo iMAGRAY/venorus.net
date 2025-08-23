@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/database-auth'
-import { Client } from 'pg'
+import { pool } from '@/lib/database/db-connection'
 import bcrypt from 'bcrypt'
 
 // Принудительно делаем маршрут динамическим
 export const dynamic = 'force-dynamic'
 
-// Подключение к базе данных
-function getDbConnection() {
-  return new Client({
-    connectionString: process.env.DATABASE_URL,
-  })
-}
+// Используем общий пул соединений
 
 // PATCH - обновление пользователя
 export async function PATCH(
@@ -73,16 +68,15 @@ export async function PATCH(
       )
     }
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул
 
     // Проверяем существование пользователя
-    const existingUser = await client.query(`
+    const existingUser = await pool.query(`
       SELECT id, username, email FROM users WHERE id = $1
     `, [userId])
 
     if (existingUser.rows.length === 0) {
-      await client.end()
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -91,13 +85,13 @@ export async function PATCH(
 
     // Проверяем уникальность username и email (исключая текущего пользователя)
     if (username || email) {
-      const duplicateCheck = await client.query(`
+      const duplicateCheck = await pool.query(`
         SELECT id FROM users
         WHERE (username = $1 OR email = $2) AND id != $3
       `, [username || '', email || '', userId])
 
       if (duplicateCheck.rows.length > 0) {
-        await client.end()
+        // Пул автоматически управляет соединениями
         return NextResponse.json(
           { error: 'Username or email already exists' },
           { status: 400 }
@@ -149,7 +143,7 @@ export async function PATCH(
     }
 
     if (updateFields.length === 0) {
-      await client.end()
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'No fields to update' },
         { status: 400 }
@@ -167,11 +161,11 @@ export async function PATCH(
       RETURNING id, username, email, first_name, last_name, status, updated_at
     `
 
-    const result = await client.query(updateQuery, updateValues)
+    const result = await pool.query(updateQuery, updateValues)
     const updatedUser = result.rows[0]
 
     // Логируем изменение пользователя
-    await client.query(`
+    await pool.query(`
       INSERT INTO user_audit_log (
         user_id, action, resource_type, resource_id,
         details, created_at
@@ -185,7 +179,7 @@ export async function PATCH(
       })
     ])
 
-    await client.end()
+    // Пул автоматически управляет соединениями
 
     return NextResponse.json({
       success: true,
@@ -200,7 +194,7 @@ export async function PATCH(
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -257,16 +251,15 @@ export async function DELETE(
       )
     }
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул
 
     // Проверяем существование пользователя
-    const existingUser = await client.query(`
+    const existingUser = await pool.query(`
       SELECT id, username, email FROM users WHERE id = $1
     `, [userId])
 
     if (existingUser.rows.length === 0) {
-      await client.end()
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -276,19 +269,19 @@ export async function DELETE(
     const userToDelete = existingUser.rows[0]
 
     // Вместо полного удаления, деактивируем пользователя
-    await client.query(`
+    await pool.query(`
       UPDATE users
       SET status = 'inactive', updated_at = CURRENT_TIMESTAMP
       WHERE id = $1
     `, [userId])
 
     // Удаляем активные сессии пользователя
-    await client.query(`
+    await pool.query(`
       DELETE FROM user_sessions WHERE user_id = $1
     `, [userId])
 
     // Логируем деактивацию пользователя
-    await client.query(`
+    await pool.query(`
       INSERT INTO user_audit_log (
         user_id, action, resource_type, resource_id,
         details, created_at
@@ -305,14 +298,14 @@ export async function DELETE(
       })
     ])
 
-    await client.end()
+    // Пул автоматически управляет соединениями
 
     return NextResponse.json({
       success: true,
       message: 'User deactivated successfully'
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -363,11 +356,10 @@ export async function GET(
       )
     }
 
-    const client = getDbConnection()
-    await client.connect()
+    // Используем пул
 
     // Получаем пользователя с его ролью
-    const result = await client.query(`
+    const result = await pool.query(`
       SELECT
         u.id, u.username, u.email, u.first_name, u.last_name,
         u.status, u.email_verified, u.last_login, u.login_count,
@@ -380,7 +372,7 @@ export async function GET(
     `, [userId])
 
     if (result.rows.length === 0) {
-      await client.end()
+      // Пул автоматически управляет соединениями
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -388,7 +380,7 @@ export async function GET(
     }
 
     const user = result.rows[0]
-    await client.end()
+    // Пул автоматически управляет соединениями
 
     return NextResponse.json({
       success: true,
@@ -413,7 +405,7 @@ export async function GET(
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

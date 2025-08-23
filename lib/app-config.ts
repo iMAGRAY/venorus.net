@@ -52,13 +52,17 @@ export const CACHE_CONFIG = {
 
   // Redis конфигурация
   REDIS: {
-    HOST: process.env.REDIS_HOST || '77.233.221.46',
+    HOST: process.env.REDIS_HOST || '94.141.162.221',
     PORT: parseInt(process.env.REDIS_PORT || '6379', 10),
     USERNAME: process.env.REDIS_USERNAME || 'default',
     PASSWORD: process.env.REDIS_PASSWORD || 'TIC8lkAAX~ND-u',
     DATABASE: parseInt(process.env.REDIS_DATABASE || '0', 10),
     CONNECT_TIMEOUT: 10_000,
     RECONNECT_DELAY: 5_000,
+    TLS: process.env.REDIS_TLS === 'true' ? { 
+      rejectUnauthorized: false,
+      checkServerIdentity: () => undefined
+    } : undefined,
   }
 } as const
 

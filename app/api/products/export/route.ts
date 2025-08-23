@@ -54,7 +54,7 @@ export async function GET() {
         'Content-Disposition': 'attachment; filename="products.xlsx"',
       },
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Export failed' }, { status: 500 })
   }
 }

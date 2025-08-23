@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import { pool } from '@/lib/database/db-connection';
 
 export async function GET(
   _request: NextRequest,
@@ -11,16 +7,14 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params
-    const client = await pool.connect();
-
     // Сначала получаем информацию о производителе
-    const manufacturerResult = await client.query(
+    const manufacturerResult = await pool.query(
       'SELECT * FROM manufacturers WHERE id = $1',
       [resolvedParams.id]
     );
 
     if (manufacturerResult.rows.length === 0) {
-      client.release();
+      // No need to release with shared pool
       return NextResponse.json(
         { success: false, error: 'Производитель не найден' },
         { status: 404 }
@@ -28,7 +22,7 @@ export async function GET(
     }
 
     // Получаем модельные ряды производителя
-    const modelLinesResult = await client.query(`
+    const modelLinesResult = await pool.query(`
       SELECT
         ml.*,
         m.name as manufacturer_name,
@@ -41,7 +35,7 @@ export async function GET(
       ORDER BY ml.name
     `, [resolvedParams.id]);
 
-    client.release();
+    // No need to release with shared pool
 
     return NextResponse.json({
       success: true,
@@ -50,7 +44,7 @@ export async function GET(
         modelLines: modelLinesResult.rows
       }
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка получения данных' },
       { status: 500 }

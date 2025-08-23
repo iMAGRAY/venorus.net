@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { pool } from '@/lib/db'
+// import { cookies } from 'next/headers' // Unused
+import { pool } from '@/lib/database/db-connection'
 
 // GET - получение тегов товара
 export async function GET(
@@ -49,7 +49,7 @@ export async function GET(
       data: result.rows
     })
   } catch (error) {
-    const { id } = await params
+    const { id: _id } = await params
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Ошибка загрузки тегов товара'
@@ -153,7 +153,7 @@ export async function POST(
       success: true,
       data: result.rows
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка добавления тега'
@@ -237,7 +237,7 @@ export async function PUT(
     } finally {
       client.release()
     }
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления тегов'
@@ -285,7 +285,7 @@ export async function DELETE(
       success: true,
       message: 'Тег удален'
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления тега'

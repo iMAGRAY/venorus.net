@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast, tablesExist } from '@/lib/api-guards'
 
 export const dynamic = 'force-dynamic'
@@ -30,7 +30,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Characteristics schema is not initialized' }, { status: 503 })
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     const valuesQuery = `
       SELECT
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     // Валидация: если создаем группу характеристик (не раздел),
     // то parent_id должен указывать на раздел, а не на группу
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
       message: 'Группа характеристик создана успешно'
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка создания группы характеристик' },
       { status: 500 }
@@ -265,7 +265,7 @@ export async function PUT(request: NextRequest) {
       parent_id
     } = body
 
-    const pool = getPool()
+    // Use imported pool instance
 
     // Если обновляем только parent_id (drag and drop)
     if (parent_id !== undefined && (!name || name.trim() === '')) {
@@ -381,7 +381,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-const pool = getPool()
+// Use imported pool instance
 
     // Проверяем существование группы
     const checkResult = await pool.query(

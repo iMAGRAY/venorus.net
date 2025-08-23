@@ -5,6 +5,7 @@ import { logger } from '@/lib/logger'
 import { withCache, invalidateApiCache } from '@/lib/cache/cache-middleware'
 import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
 import { guardDbOr503, tablesExist, okEmpty } from '@/lib/api-guards'
+import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -44,8 +45,8 @@ export const GET = withCache(async function GET(request: NextRequest) {
     };
     const cacheKey = cacheKeys.productList(cacheParams);
 
-    // Определяем TTL в зависимости от типа запроса
-    const ttl = fast ? CACHE_TTL.SHORT : CACHE_TTL.MEDIUM;
+    // Определяем TTL в зависимости от типа запроса - ОПТИМИЗИРОВАНО для производительности
+    const ttl = fast ? CACHE_TTL.MEDIUM : CACHE_TTL.LONG;
 
     // Используем cacheRemember для автоматического кеширования
     const fetchProducts = async () => {
@@ -96,57 +97,25 @@ export const GET = withCache(async function GET(request: NextRequest) {
         ${orderBy}
       `;
     } else {
-      // Полный запрос с JOIN'ами включая характеристики из простой системы
-      // Если нет таблиц характеристик — падать не должны. Проверим отдельно.
-      const charTables = await tablesExist(['product_characteristics_simple','characteristics_values_simple','characteristics_groups_simple'])
-
-      const joinSimple = charTables.product_characteristics_simple && charTables.characteristics_values_simple && charTables.characteristics_groups_simple
-
+      // ОПТИМИЗИРОВАННЫЙ запрос - получаем сначала только основные данные продуктов
+      // без сложных JSON агрегаций и множественных JOIN'ов
       query = `
         SELECT
           p.*,
           ms.name as model_line_name,
           m.name as manufacturer_name,
           pc.name as category_name,
-          ${joinSimple ? `COALESCE(
-            JSON_AGG(
-              CASE WHEN prch.id IS NOT NULL THEN
-                JSON_BUILD_OBJECT(
-                  'spec_name', cg.name,
-                  'spec_value', cv.value,
-                  'group_name', cg.name,
-                  'group_id', cg.id,
-                  'spec_type', 'simple'
-                )
-              END
-            ) FILTER (WHERE prch.id IS NOT NULL),
-            '[]'::json
-          ) as specifications,` : `('[]'::json) as specifications,`}
-          COALESCE(
-            JSON_AGG(
-              JSON_BUILD_OBJECT(
-                'id', pv.id,
-                'price', pv.price,
-                'discountPrice', pv.discount_price,
-                'isAvailable', pv.is_active,
-                'sizeName', pv.name,
-                'sizeValue', pv.short_name,
-                'stockQuantity', pv.stock_quantity,
-                'sku', pv.sku
-              ) ORDER BY pv.sort_order, pv.name
-            ) FILTER (WHERE pv.id IS NOT NULL),
-            '[]'::json
-          ) as variants
+          -- Подсчитываем варианты отдельно для производительности
+          (SELECT COUNT(*) FROM product_variants pv 
+           WHERE pv.master_id = p.id AND pv.is_active = true AND (pv.is_deleted = false OR pv.is_deleted IS NULL)) as variants_count,
+          -- Устанавливаем has_variants как boolean
+          (SELECT COUNT(*) FROM product_variants pv 
+           WHERE pv.master_id = p.id AND pv.is_active = true AND (pv.is_deleted = false OR pv.is_deleted IS NULL)) > 0 as has_variants
         FROM products p
         LEFT JOIN model_series ms ON p.series_id = ms.id
         LEFT JOIN manufacturers m ON p.manufacturer_id = m.id
         LEFT JOIN product_categories pc ON p.category_id = pc.id
-        LEFT JOIN product_variants pv ON pv.master_id = p.id AND pv.is_active = true AND pv.is_deleted = false
-        ${joinSimple ? `LEFT JOIN product_characteristics_simple prch ON p.id = prch.product_id
-        LEFT JOIN characteristics_values_simple cv ON prch.value_id = cv.id AND cv.is_active = true
-        LEFT JOIN characteristics_groups_simple cg ON cv.group_id = cg.id AND cg.is_active = true` : ''}
         ${whereClause}
-        GROUP BY p.id, ms.name, m.name, pc.name
         ${orderBy}
       `;
     }
@@ -169,10 +138,101 @@ export const GET = withCache(async function GET(request: NextRequest) {
         setTimeout(() => reject(new Error('Query timeout after 15 seconds')), 15000)
       );
       
-      const result = await Promise.race([
-        executeQuery(query, queryParams),
-        queryTimeout
-      ]) as any;
+      // Используем prepared statements для частых запросов
+      let result;
+      if (!categoryId && !manufacturerId && sort === 'created_desc' && fast) {
+        // Быстрый запрос продуктов - используем prepared statement
+        result = await Promise.race([
+          preparedStatements.executeQuery(
+            COMMON_QUERIES.GET_PRODUCTS_LIST, 
+            query, 
+            queryParams
+          ),
+          queryTimeout
+        ]) as any;
+      } else {
+        // Сложный запрос - обычный executeQuery
+        result = await Promise.race([
+          executeQuery(query, queryParams),
+          queryTimeout
+        ]) as any;
+      }
+
+      // Если не fast режим, получаем варианты и характеристики отдельно для каждого продукта
+      if (!fast && result.rows.length > 0 && _detailed) {
+        const productIds = result.rows.map((p: any) => p.id);
+        
+        // Получаем варианты для всех продуктов одним запросом
+        const variantsQuery = `
+          SELECT 
+            pv.master_id,
+            JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'id', pv.id,
+                'price', pv.price,
+                'discountPrice', pv.discount_price,
+                'isAvailable', pv.is_active,
+                'sizeName', COALESCE(pv.name, pv.sku),
+                'sizeValue', COALESCE(pv.sku, pv.name),
+                'stockQuantity', pv.stock_quantity,
+                'sku', pv.sku
+              ) ORDER BY pv.sort_order, pv.name
+            ) as variants
+          FROM product_variants pv
+          WHERE pv.master_id = ANY($1) 
+            AND pv.is_active = true 
+            AND (pv.is_deleted = false OR pv.is_deleted IS NULL)
+          GROUP BY pv.master_id
+        `;
+        
+        const variantsResult = await executeQuery(variantsQuery, [productIds]);
+        const variantsByProductId: any = {};
+        variantsResult.rows.forEach((row: any) => {
+          variantsByProductId[row.master_id] = row.variants;
+        });
+        
+        // Проверяем таблицы характеристик и получаем их если нужно
+        const charTables = await tablesExist(['product_characteristics_simple','characteristics_values_simple','characteristics_groups_simple']);
+        let specsByProductId: any = {};
+        
+        if (charTables.product_characteristics_simple && charTables.characteristics_values_simple && charTables.characteristics_groups_simple) {
+          const specsQuery = `
+            SELECT 
+              prch.product_id,
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'spec_name', cg.name,
+                  'spec_value', cv.value,
+                  'group_name', cg.name,
+                  'group_id', cg.id,
+                  'spec_type', 'simple'
+                )
+              ) as specifications
+            FROM product_characteristics_simple prch
+            LEFT JOIN characteristics_values_simple cv ON prch.value_id = cv.id AND cv.is_active = true
+            LEFT JOIN characteristics_groups_simple cg ON cv.group_id = cg.id AND cg.is_active = true
+            WHERE prch.product_id = ANY($1) AND cv.id IS NOT NULL AND cg.id IS NOT NULL
+            GROUP BY prch.product_id
+          `;
+          
+          const specsResult = await executeQuery(specsQuery, [productIds]);
+          specsResult.rows.forEach((row: any) => {
+            specsByProductId[row.product_id] = row.specifications;
+          });
+        }
+        
+        // Добавляем варианты и характеристики к продуктам
+        result.rows.forEach((product: any) => {
+          product.variants = variantsByProductId[product.id] || [];
+          product.specifications = specsByProductId[product.id] || [];
+        });
+      } else {
+        // Для fast режима или non-detailed просто добавляем пустые массивы
+        result.rows.forEach((product: any) => {
+          if (!product.variants) product.variants = [];
+          if (!product.specifications) product.specifications = [];
+        });
+      }
 
       const responseData = {
         success: true,

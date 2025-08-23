@@ -1,7 +1,7 @@
 // @ts-nocheck
 // GET /api/specifications - Get all specification groups and enums with hierarchical structure
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast } from '@/lib/api-guards'
 
 export const dynamic = 'force-dynamic'
@@ -11,7 +11,7 @@ export async function GET(_request: NextRequest) {
     const fast = guardDbOr503Fast()
     if (fast) return fast
 
-    const pool = getPool();
+    // Use imported pool instance
     const client = await pool.connect();
 
     const exists = await client.query(`
@@ -223,7 +223,7 @@ export async function GET(_request: NextRequest) {
       characteristic_groups_count: rootCharacteristicGroups.length,
       manufacturers_count: rootManufacturers.length
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ success: false, error: 'Ошибка получения данных' }, { status: 500 });
   }
 }
@@ -241,7 +241,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
     const client = await pool.connect();
 
     // Создаем характеристику
@@ -272,7 +272,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: characteristic
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Ошибка создания характеристики' },
       { status: 500 }

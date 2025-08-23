@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: result.rows
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения складов'
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка создания склада'
@@ -162,7 +162,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: result.rows[0]
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления склада'
@@ -223,7 +223,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Склад удален'
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка удаления склада'

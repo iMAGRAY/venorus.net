@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { executeQuery } from '@/lib/db-connection'
 import { logger } from '@/lib/logger'
-import { generateUniqueSlug, generateSizeSlug } from '@/lib/utils/slug-generator'
+import { generateUniqueSlug } from '@/lib/utils/slug-generator'
 import {
   mapLegacySizeToVariant,
   mapVariantToLegacySize,

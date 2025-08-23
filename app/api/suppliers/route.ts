@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { pool } from '@/lib/database/db-connection';
 
 // GET /api/suppliers - получить всех поставщиков
 export async function GET(request: NextRequest) {
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка получения поставщиков' },
       { status: 500 }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result.rows[0], { status: 201 });
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Ошибка создания поставщика' },
       { status: 500 }

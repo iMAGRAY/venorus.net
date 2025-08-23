@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { guardDbOr503Fast, tablesExist } from '@/lib/api-guards'
 
 export const dynamic = 'force-dynamic'
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, data: [] })
     }
 
-    const pool = getPool()
+    // Use imported pool instance
 
     let query = `
       SELECT
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     const result = await pool.query(query, params)
     return NextResponse.json({ success: true, data: result.rows })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Failed to fetch spec enums' },
       { status: 500 }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
     const result = await client.query(
       `INSERT INTO characteristic_values (group_id, value, display_name, color_hex, ordering, is_active, created_at, updated_at)
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result.rows[0]
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: "Ошибка создания enum значения" },
       { status: 500 }
@@ -101,7 +101,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { value, ordering, parent_id, color_value } = body
 
-    const pool = getPool()
+    // Use imported pool instance
     const result = await pool.query(
       `UPDATE characteristic_values
        SET value = $2,
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest) {
       data: result.rows[0]
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Ошибка обновления enum" },
       { status: 500 }
@@ -149,7 +149,7 @@ export async function DELETE(request: NextRequest) {
     const enumId = parseInt(id)
 
     // удаляем потомков
-    const pool = getPool()
+    // Use imported pool instance
     await pool.query('DELETE FROM characteristic_values WHERE parent_id = $1', [enumId])
     const result = await pool.query('DELETE FROM characteristic_values WHERE id = $1 RETURNING *', [enumId])
 
@@ -165,7 +165,7 @@ export async function DELETE(request: NextRequest) {
       deleted: result.rows[0]
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Ошибка удаления enum" },
       { status: 500 }

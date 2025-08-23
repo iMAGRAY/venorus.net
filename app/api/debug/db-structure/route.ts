@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { executeQuery } from '@/lib/database/db-connection'
 
 export async function GET() {

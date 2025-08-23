@@ -32,7 +32,7 @@ export async function GET(
   try {
     const result = await executeQuery(`SELECT * FROM ${table} ORDER BY 1 LIMIT $1`, [limit])
     return NextResponse.json({ rows: result.rows })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to fetch table' }, { status: 500 })
   }
 }

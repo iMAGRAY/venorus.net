@@ -191,7 +191,7 @@ export function ProductSpecificationsManagerNew({
               } finally {
                 setLoading(false)
               }
-            }, [isNewProduct])
+            }, [isNewProduct, loadSpecGroups, loadProductCharacteristics, loadTemplates])
 
   useEffect(() => {
     loadData()
@@ -250,7 +250,7 @@ export function ProductSpecificationsManagerNew({
 
         setSpecGroups(processedGroups)
       }
-    } catch (error) {
+    } catch (_error) {
       // Error loading spec groups
       toast.error('Не удалось загрузить группы характеристик')
     }
@@ -288,12 +288,12 @@ export function ProductSpecificationsManagerNew({
           setActiveStep('manage')
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Error loading product characteristics
     }
   }, [productId, isNewProduct, processApiCharacteristics])
 
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       const res = await fetch('/api/form-templates')
       if (res.ok) {
@@ -303,10 +303,10 @@ export function ProductSpecificationsManagerNew({
       } else {
         // Failed to load templates
       }
-    } catch (error) {
+    } catch (_error) {
       // Error loading templates
     }
-  }
+  }, [])
 
   // УДАЛЕНА дублированная функция processHierarchicalGroups - уже определена выше
   // УДАЛЕНА дублированная функция processApiCharacteristics - уже определена выше
@@ -460,11 +460,11 @@ export function ProductSpecificationsManagerNew({
         setTemplateForm({ name: '', description: '' })
         await loadTemplates()
       } else {
-        const errorData = await res.json().catch(() => ({}))
+        const _errorData = await res.json().catch(() => ({}))
         // Failed to save template
         toast.error('Не удалось сохранить шаблон')
       }
-    } catch (error) {
+    } catch (_error) {
       // Error saving template
       toast.error('Не удалось сохранить шаблон')
     } finally {
@@ -483,11 +483,11 @@ export function ProductSpecificationsManagerNew({
         toast.success('Шаблон удалён')
         await loadTemplates()
       } else {
-        const errorData = await res.json().catch(() => ({}))
+        const _errorData = await res.json().catch(() => ({}))
         // Failed to delete template
         toast.error('Не удалось удалить шаблон')
       }
-    } catch (error) {
+    } catch (_error) {
       // Error deleting template
       toast.error('Не удалось удалить шаблон')
     }
@@ -564,7 +564,7 @@ export function ProductSpecificationsManagerNew({
       setActiveStep('manage')
       setIsTemplateDialogOpen(false) // Закрываем диалог
 
-    } catch (error) {
+    } catch (_error) {
       // Error applying template
       toast.error('Не удалось применить шаблон')
     }

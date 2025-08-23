@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  host: process.env.POSTGRESQL_HOST,
-  port: parseInt(process.env.POSTGRESQL_PORT || '5432'),
-  database: process.env.POSTGRESQL_DBNAME,
-  user: process.env.POSTGRESQL_USER,
-  password: process.env.POSTGRESQL_PASSWORD,
-  ssl: process.env.DATABASE_SSL === 'true' ? {
-    rejectUnauthorized: false
-  } : false
-});
+import { pool } from '@/lib/database/db-connection';
 
 export async function POST(_request: NextRequest) {
   try {

@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Внутренняя ошибка сервера' },
       { status: 500 }
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Внутренняя ошибка сервера' },
       { status: 500 }

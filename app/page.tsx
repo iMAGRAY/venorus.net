@@ -15,15 +15,15 @@ import { Button } from "@/components/ui/button"
 import { ChevronRight, Filter, Loader2, X, ChevronUp, ChevronDown } from "lucide-react"
 import FlagIcon from '@mui/icons-material/Flag'
 import StarIcon from '@mui/icons-material/Star'
-import HomeIcon from '@mui/icons-material/Home'
-import CategoryIcon from '@mui/icons-material/Category'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import SearchIcon from '@mui/icons-material/Search'
-import SettingsIcon from '@mui/icons-material/Settings'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import WarningIcon from '@mui/icons-material/Warning'
-import LanguageIcon from '@mui/icons-material/Language'
-import RefreshIcon from '@mui/icons-material/Refresh'
+// import HomeIcon from '@mui/icons-material/Home' // Unused
+// import CategoryIcon from '@mui/icons-material/Category' // Unused
+// import InventoryIcon from '@mui/icons-material/Inventory' // Unused
+// import SearchIcon from '@mui/icons-material/Search' // Unused
+// import SettingsIcon from '@mui/icons-material/Settings' // Unused
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle' // Unused
+// import WarningIcon from '@mui/icons-material/Warning' // Unused
+// import LanguageIcon from '@mui/icons-material/Language' // Unused
+// import RefreshIcon from '@mui/icons-material/Refresh' // Unused
 import FactoryIcon from '@mui/icons-material/Factory'
 import ShieldIcon from '@mui/icons-material/Shield'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
@@ -82,7 +82,7 @@ const PRODUCTS_PER_PAGE = 12 // Количество товаров для за�
 
 export default function HomePage() {
   const { t } = useI18n()
-  console.log('HomePage рендерится')
+  logger.debug('HomePage рендерится')
   
   const {
     products: allProducts,
@@ -132,7 +132,7 @@ export default function HomePage() {
       await forceRefresh()
 
     } catch (error) {
-      console.error('❌ Ошибка при обновлении данных:', error)
+      logger.error('❌ Ошибка при обновлении данных:', error)
     } finally {
       _setRefreshing(false)
     }
@@ -170,7 +170,7 @@ export default function HomePage() {
 
   // Функция загрузки характеристик для фильтрации
   const loadFilterCharacteristics = useCallback(async (categoryId?: number | null) => {
-    console.log('loadFilterCharacteristics вызвана с categoryId:', categoryId)
+    logger.debug('loadFilterCharacteristics вызвана с categoryId:', categoryId)
     
     // Отменяем предыдущий запрос если он есть
     if (abortControllerRef.current) {
@@ -193,7 +193,7 @@ export default function HomePage() {
       const response = await fetch(url, { signal: abortController.signal })
       
       if (!response.ok) {
-        console.error('❌ HTTP ошибка при загрузке характеристик:', {
+        logger.error('❌ HTTP ошибка при загрузке характеристик:', {
           status: response.status,
           statusText: response.statusText,
           url
@@ -202,7 +202,7 @@ export default function HomePage() {
       
       const result = await response.json()
       
-      console.log('📊 API ответ:', {
+      logger.debug('📊 API ответ:', {
         url,
         success: result.success,
         sectionsCount: result.data?.sections?.length,
@@ -221,7 +221,7 @@ export default function HomePage() {
           })) || []
         ) || []
         
-        console.log('allGroups после обработки:', {
+        logger.debug('allGroups после обработки:', {
           count: allGroups.length,
           sample: allGroups.slice(0, 3)
         })
@@ -242,7 +242,7 @@ export default function HomePage() {
           values: group.values
         }))
 
-        console.log('flatCharacteristics после преобразования:', {
+        logger.debug('flatCharacteristics после преобразования:', {
           count: flatCharacteristics.length,
           sample: flatCharacteristics.slice(0, 3),
           groupNameCounts
@@ -261,7 +261,7 @@ export default function HomePage() {
         // Проверяем что запрос не был отменен перед обновлением состояния
         if (!abortController.signal.aborted) {
           setAvailableCharacteristics(flatCharacteristics)
-          console.log('Установлены характеристики:', flatCharacteristics.length, flatCharacteristics)
+          logger.debug('Установлены характеристики:', flatCharacteristics.length, flatCharacteristics)
         }
       } else {
         if (!abortController.signal.aborted) {
@@ -272,7 +272,7 @@ export default function HomePage() {
     } catch (error: any) {
       // Игнорируем AbortError - это нормальная отмена запроса
       if (error.name === 'AbortError') {
-        console.log('🚫 Запрос характеристик отменен')
+        logger.debug('🚫 Запрос характеристик отменен')
         return
       }
       logger.error('❌ Ошибка загрузки характеристик для фильтрации:', error)
@@ -289,7 +289,7 @@ export default function HomePage() {
     let isMounted = true;
     
     // Очищаем характеристики при монтировании
-    console.log('🧹 Очищаем характеристики при монтировании')
+    logger.debug('🧹 Очищаем характеристики при монтировании')
     setAvailableCharacteristics([])
 
     const loadCategories = async () => {
@@ -384,7 +384,7 @@ export default function HomePage() {
 
   const [filteredProducts, setFilteredProducts] = useState<any[]>([])
   const [displayedProducts, setDisplayedProducts] = useState<any[]>([]) // Товары для отображения
-  const [currentPage, setCurrentPage] = useState(1) // Текущая "страница" для infinite scroll
+  const [_currentPage, _setCurrentPage] = useState(1) // Текущая "страница" для infinite scroll
   const [isLoadingMore, setIsLoadingMore] = useState(false) // Загрузка дополнительных товаров
   const [hasMore, setHasMore] = useState(true) // Есть ли еще товары для загрузки
   const [activeCategory, setActiveCategory] = useState<string>("All")
@@ -407,18 +407,18 @@ export default function HomePage() {
 
   // Состояние для фильтров характеристик
   const [availableCharacteristics, setAvailableCharacteristics] = useState<any[]>(() => {
-    console.log('Инициализация availableCharacteristics: пустой массив')
+    logger.debug('Инициализация availableCharacteristics: пустой массив')
     return []
   })
   const [isLoadingCharacteristics, setIsLoadingCharacteristics] = useState(false)
   
   // Логируем изменения availableCharacteristics
   useEffect(() => {
-    console.log('availableCharacteristics изменились:', availableCharacteristics.length, availableCharacteristics)
+    logger.debug('availableCharacteristics изменились:', availableCharacteristics.length, availableCharacteristics)
   }, [availableCharacteristics])
 
   const handleCategoryChange = useCallback((categoryName: string, categoryId?: number) => {
-    console.log('handleCategoryChange вызвана:', { categoryName, categoryId })
+    logger.debug('handleCategoryChange вызвана:', { categoryName, categoryId })
     logger.log(`Смена категории на: "${categoryName}" (ID: ${categoryId})`)
     setActiveCategory(categoryName)
     setActiveCategoryId(categoryId || null)
@@ -430,13 +430,13 @@ export default function HomePage() {
     
     // Загружаем характеристики для новой категории
     if (categoryName === "All" || categoryName === "Все категории") {
-      console.log('Загружаем все характеристики')
+      logger.debug('Загружаем все характеристики')
       loadFilterCharacteristics(null)
     } else if (categoryId) {
-      console.log('Загружаем характеристики для категории:', categoryId)
+      logger.debug('Загружаем характеристики для категории:', categoryId)
       loadFilterCharacteristics(categoryId)
     } else {
-      console.log('Нет categoryId для категории "' + categoryName + '", очищаем характеристики')
+      logger.debug('Нет categoryId для категории "' + categoryName + '", очищаем характеристики')
       setAvailableCharacteristics([])
     }
   }, [loadFilterCharacteristics])
@@ -478,7 +478,7 @@ export default function HomePage() {
           {/* Кнопка категории */}
           <button
             onClick={() => {
-              console.log('Категория нажата:', { name: group.name, id: group.id })
+              logger.debug('Категория нажата:', { name: group.name, id: group.id })
               handleCategoryChange(group.name, group.id)
             }}
             className={`
@@ -706,7 +706,7 @@ export default function HomePage() {
     }
 
     return tempProducts
-  }, [searchQuery, activeCategory, activeCategoryId, appliedFilters, sortBy, allProducts, hierarchicalCategories])
+  }, [searchQuery, activeCategory, activeCategoryId, appliedFilters, sortBy, allProducts, hierarchicalCategories, findGroupAndChildrenById])
 
   // Обновляем отфильтрованные товары и сбрасываем пагинацию при изменении фильтров
   useEffect(() => {
@@ -722,7 +722,7 @@ export default function HomePage() {
     
     setFilteredProducts(uniqueProducts)
     filteredProductsRef.current = uniqueProducts  // Синхронизируем ref
-    setCurrentPage(1)
+    _setCurrentPage(1)
     setHasMore(true)
     hasMoreRef.current = true
 
@@ -744,7 +744,7 @@ export default function HomePage() {
 
     // Имитируем небольшую задержку для плавности
     setTimeout(() => {
-      setCurrentPage(prevPage => {
+      _setCurrentPage(prevPage => {
         const nextPage = prevPage + 1
         const startIndex = (nextPage - 1) * PRODUCTS_PER_PAGE
         const endIndex = startIndex + PRODUCTS_PER_PAGE

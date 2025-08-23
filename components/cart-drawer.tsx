@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { Minus, Plus, Trash2, ClipboardList, Phone, MessageCircle, Share2 } from "lucide-react"
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart' // Unused
+// import InventoryIcon from '@mui/icons-material/Inventory' // Unused
+// import AttachMoneyIcon from '@mui/icons-material/AttachMoney' // Unused
 import { useCart } from "@/lib/cart-context"
 import { OrderForm } from "@/components/order-form"
 import { toast } from "sonner"
@@ -76,7 +76,7 @@ ${items.map(item => {
         toast.success('Заявка отправлена!')
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('Ошибка при использовании Web Share API:', error)
+          // console.error('Ошибка при использовании Web Share API:', error)
           toast.error('Ошибка при отправке')
         }
       }

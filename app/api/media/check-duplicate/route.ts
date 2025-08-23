@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       isDuplicate: false
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Ошибка при проверке дубликата файла" },
       { status: 500 }

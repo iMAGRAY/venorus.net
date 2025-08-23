@@ -3,7 +3,7 @@
  * Обеспечивает backward compatibility и правильное сопоставление полей
  */
 
-import { ProductVariant } from '@/lib/api/types';
+// Field mapping helper for product_variants
 
 /**
  * Интерфейс для входящих данных от API (legacy format)

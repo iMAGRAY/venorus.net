@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { requireAuth, hasPermission } from '@/lib/database-auth';
 
 // GET /api/products/[id]/characteristics - получить характеристики товара из EAV системы
@@ -18,7 +18,7 @@ export async function GET(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     // Используем только старую систему, так как новая таблица не существует
 
@@ -269,12 +269,12 @@ export async function POST(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
 
     let body: any = {};
     try {
       body = await request.json();
-    } catch (error) {
+    } catch (_error) {
       return NextResponse.json({
         error: 'Invalid JSON in request body'
       }, { status: 400 });
@@ -329,7 +329,7 @@ export async function POST(
                   continue;
               }
             }
-          } catch (createError) {
+          } catch (_createError) {
             continue;
           }
         }
@@ -356,7 +356,7 @@ export async function POST(
             try {
               const _deleteResult = await pool.query(deleteQuery, deleteParams);
 
-            } catch (deleteError) {
+            } catch (_deleteError) {
               // Error deleting characteristic
             }
           }
@@ -446,7 +446,7 @@ export async function POST(
                 } else {
                   continue;
                 }
-              } catch (createError) {
+              } catch (_createError) {
                 continue;
               }
             } else {
@@ -513,7 +513,7 @@ export async function POST(
             }
 
             savedCharacteristics.push(upsertResult.rows[0]);
-          } catch (upsertError) {
+          } catch (_upsertError) {
             continue;
           }
         }
@@ -594,7 +594,7 @@ export async function DELETE(
       );
     }
 
-    const pool = getPool();
+    // Use imported pool instance
     const { searchParams } = new URL(request.url);
     const variantId = searchParams.get('variant_id');
     const templateId = searchParams.get('template_id');

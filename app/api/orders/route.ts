@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPool } from '@/lib/db-connection'
+import { pool } from '@/lib/database/db-connection';
 import { getCacheManager, getLogger } from '@/lib/dependency-injection'
 
 // POST - создание нового заказа
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     try {
@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const offset = (page - 1) * limit
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     try {
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
       client.release()
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Внутренняя ошибка сервера' },
       { status: 500 }

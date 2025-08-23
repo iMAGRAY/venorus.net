@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery, getPool } from '@/lib/db-connection'
+import { executeQuery, } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 import { getLogger } from '@/lib/dependency-injection'
 
 // GET - получение деталей заказа
@@ -138,7 +139,7 @@ export async function PUT(
       message: 'Заказ успешно обновлен'
     })
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Внутренняя ошибка сервера' },
       { status: 500 }
@@ -162,7 +163,7 @@ export async function DELETE(
       )
     }
 
-    const pool = getPool()
+    // Use imported pool instance
     const client = await pool.connect()
 
     try {
@@ -212,7 +213,7 @@ export async function DELETE(
       client.release()
     }
 
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Внутренняя ошибка сервера' },
       { status: 500 }

@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { pool } from '@/lib/db'
+import { pool } from '@/lib/database/db-connection'
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params
-    const variantId = parseInt(id)
+    const cleanId = id.replace(/[^0-9]/g, '');
+    const variantId = parseInt(cleanId)
     
     if (isNaN(variantId)) {
       return NextResponse.json({
@@ -152,7 +153,7 @@ export async function GET(
       data: formattedVariant
     })
     
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения деталей варианта'

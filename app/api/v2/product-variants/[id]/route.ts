@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { pool } from '@/lib/db'
+import { pool } from '@/lib/database/db-connection'
 import { logger } from '@/lib/logger'
 
 // Функция для глубокой очистки объектов от проблемных данных

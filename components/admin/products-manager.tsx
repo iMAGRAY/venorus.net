@@ -247,7 +247,7 @@ export function ProductsManager({
           } else {
             await loadData();
           }
-        } catch (reloadError) {
+        } catch (_reloadError) {
           // Error reloading data after save
           // Fallback к обычной загрузке
           if (modelLineId) {
@@ -324,7 +324,7 @@ export function ProductsManager({
             } else {
               await loadData();
             }
-          } catch (reloadError) {
+          } catch (_reloadError) {
             // Error reloading data after deletion
             // Fallback к обычной загрузке
             if (modelLineId) {

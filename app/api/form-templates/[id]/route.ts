@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Pool } from 'pg'
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-})
+import { pool } from '@/lib/database/db-connection'
 
 // DELETE /api/form-templates/[id] - Delete form template
 export async function DELETE(
@@ -29,7 +24,7 @@ export async function DELETE(
       message: 'Template deleted successfully',
       deleted: result.rows[0]
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to delete template' }, { status: 500 })
   }
 }
@@ -59,7 +54,7 @@ export async function GET(
     }
 
     return NextResponse.json(result.rows[0])
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to load template' }, { status: 500 })
   }
 }

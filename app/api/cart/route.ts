@@ -8,13 +8,11 @@ import {
   updateCartItemQuantity, 
   removeCartItem, 
   clearCart, 
-  getCartStats,
-  type Cart,
-  type CartItem 
+  getCartStats
 } from '@/lib/cart-storage'
 
 // GET - получить корзину
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const cookieStore = await cookies()
     const cartId = cookieStore.get('cartId')?.value
@@ -54,7 +52,7 @@ export async function GET(request: NextRequest) {
         itemCount: stats.itemCount
       }
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка получения корзины'
@@ -119,7 +117,7 @@ export async function POST(request: NextRequest) {
     })
     
     return response
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка добавления в корзину'
@@ -178,7 +176,7 @@ export async function PUT(request: NextRequest) {
         itemCount: stats.itemCount
       }
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка обновления корзины'
@@ -230,7 +228,7 @@ export async function DELETE(request: NextRequest) {
         itemCount: stats.itemCount
       }
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({
       success: false,
       error: 'Ошибка очистки корзины'

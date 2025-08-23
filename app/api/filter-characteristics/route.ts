@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPool } from '@/lib/db-connection';
+import { pool } from '@/lib/database/db-connection';
 
 /**
  * FILTER CHARACTERISTICS API - НОВАЯ EAV СИСТЕМА
@@ -10,7 +10,7 @@ import { getPool } from '@/lib/db-connection';
 export async function GET(_request: NextRequest) {
   try {
 
-    const pool = getPool();
+    // Use imported pool instance
 
     // Новый запрос: уникальные значения по group_id через WITH
     const query = `

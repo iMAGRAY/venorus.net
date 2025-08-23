@@ -74,6 +74,11 @@ export function ProductVariantSelectorModal({
   const [variants, setVariants] = useState<ProductVariantV2[]>([])
   const [selectedVariant, setSelectedVariant] = useState<ProductVariantV2 | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const handleVariantSelect = useCallback((variant: ProductVariantV2 | null) => {
+    setSelectedVariant(variant)
+    onVariantChange(variant)
+  }, [onVariantChange, setSelectedVariant])
  
   const fetchVariants = useCallback(async () => {
       try {
@@ -105,21 +110,16 @@ export function ProductVariantSelectorModal({
           }
         }
       } catch (error) {
-        console.error('Error fetching variants:', error)
+        // Error is handled with toast notification
         toast.error('Не удалось загрузить варианты товара')
       } finally {
         setLoading(false)
       }
-    }, [productId, initialVariantId])
+    }, [productId, initialVariantId, handleVariantSelect])
 
   useEffect(() => {
     fetchVariants()
   }, [fetchVariants])
-
-  const handleVariantSelect = useCallback((variant: ProductVariantV2 | null) => {
-    setSelectedVariant(variant)
-    onVariantChange(variant)
-  }, [onVariantChange])
 
   if (loading) {
     return (
