@@ -191,7 +191,7 @@ export function ProductSpecificationsManagerNew({
               } finally {
                 setLoading(false)
               }
-            }, [isNewProduct, loadSpecGroups, loadProductCharacteristics, loadTemplates])
+            }, [isNewProduct])
 
   useEffect(() => {
     loadData()

@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     // Используем пул вместо отдельного клиента
 
     // Проверяем уникальность username и email
-    const existingUser = await client.query(`
+    const existingUser = await pool.query(`
       SELECT id FROM users WHERE username = $1 OR email = $2
     `, [username, email])
 
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     const newUser = result.rows[0]
 
     // Логируем создание пользователя
-    await client.query(`
+    await pool.query(`
       INSERT INTO user_audit_log (
         user_id, action, resource_type, resource_id,
         details, created_at
