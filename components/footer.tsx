@@ -12,19 +12,9 @@ import { AdditionalContacts } from "@/components/additional-contacts"
 import { useAdminStore } from "@/lib/stores"
 import { SafeImage } from "@/components/safe-image"
 import { useI18n } from "@/components/i18n-provider"
-import { useEffect } from "react"
-
 export function Footer() {
   const { t } = useI18n()
   const siteSettings = useAdminStore(state => state.settings)
-  const isInitialized = useAdminStore(state => state.initialized.settings)
-  const initializeSettings = useAdminStore(state => state.initializeSettings)
-
-  useEffect(() => {
-    if (!isInitialized) {
-      initializeSettings()
-    }
-  }, [isInitialized, initializeSettings])
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-br from-red-50/70 via-white to-blue-50/60">

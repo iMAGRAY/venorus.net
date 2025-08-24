@@ -19,30 +19,40 @@ export async function GET(
       }, { status: 400 })
     }
     
-    const result = await pool.query(`
-      SELECT 
-        pt.id,
-        pt.name,
-        pt.slug,
-        pt.color,
-        pt.bg_color,
-        pt.icon,
-        pt.sort_order,
-        pt.product_id
-      FROM product_tags pt
-      WHERE pt.is_active = true
-        AND (
-          -- Личные теги товара
-          pt.product_id = $1
-          OR
-          -- Общие теги, связанные с товаром через таблицу связей
-          (pt.product_id IS NULL AND EXISTS (
-            SELECT 1 FROM product_tag_relations ptr 
-            WHERE ptr.tag_id = pt.id AND ptr.product_id = $1
-          ))
-        )
-      ORDER BY pt.product_id DESC NULLS LAST, pt.sort_order ASC, pt.name ASC
-    `, [productId])
+    // TEMPORARY FIX: Return empty array to prevent 503 errors
+    // TODO: Restore once product_tags and product_tag_relations tables are created
+    let result = { rows: [] }
+    
+    try {
+      result = await pool.query(`
+        SELECT 
+          pt.id,
+          pt.name,
+          pt.slug,
+          pt.color,
+          pt.bg_color,
+          pt.icon,
+          pt.sort_order,
+          pt.product_id
+        FROM product_tags pt
+        WHERE pt.is_active = true
+          AND (
+            -- Личные теги товара
+            pt.product_id = $1
+            OR
+            -- Общие теги, связанные с товаром через таблицу связей
+            (pt.product_id IS NULL AND EXISTS (
+              SELECT 1 FROM product_tag_relations ptr 
+              WHERE ptr.tag_id = pt.id AND ptr.product_id = $1
+            ))
+          )
+        ORDER BY pt.product_id DESC NULLS LAST, pt.sort_order ASC, pt.name ASC
+      `, [productId])
+    } catch (dbError) {
+      // Table might not exist in production yet, return empty array
+      console.warn('Product tags table not found, returning empty array:', dbError.message)
+      result = { rows: [] }
+    }
     
     return NextResponse.json({
       success: true,

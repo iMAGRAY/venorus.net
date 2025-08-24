@@ -19,30 +19,40 @@ export async function GET(
       }, { status: 400 })
     }
     
-    const result = await pool.query(`
-      SELECT 
-        pt.id,
-        pt.name,
-        pt.slug,
-        pt.color,
-        pt.bg_color,
-        pt.icon,
-        pt.sort_order,
-        pt.variant_id
-      FROM product_tags pt
-      WHERE pt.is_active = true
-        AND (
-          -- Личные теги варианта
-          pt.variant_id = $1
-          OR
-          -- Общие теги, связанные с вариантом через таблицу связей
-          (pt.variant_id IS NULL AND pt.product_id IS NULL AND EXISTS (
-            SELECT 1 FROM variant_tag_relations vtr 
-            WHERE vtr.tag_id = pt.id AND vtr.variant_id = $1
-          ))
-        )
-      ORDER BY pt.variant_id DESC NULLS LAST, pt.sort_order ASC, pt.name ASC
-    `, [variantId])
+    // TEMPORARY FIX: Return empty array to prevent 503 errors
+    // TODO: Restore once variant_tag_relations table is created
+    let result = { rows: [] }
+    
+    try {
+      result = await pool.query(`
+        SELECT 
+          pt.id,
+          pt.name,
+          pt.slug,
+          pt.color,
+          pt.bg_color,
+          pt.icon,
+          pt.sort_order,
+          pt.variant_id
+        FROM product_tags pt
+        WHERE pt.is_active = true
+          AND (
+            -- Личные теги варианта
+            pt.variant_id = $1
+            OR
+            -- Общие теги, связанные с вариантом через таблицу связей
+            (pt.variant_id IS NULL AND pt.product_id IS NULL AND EXISTS (
+              SELECT 1 FROM variant_tag_relations vtr 
+              WHERE vtr.tag_id = pt.id AND vtr.variant_id = $1
+            ))
+          )
+        ORDER BY pt.variant_id DESC NULLS LAST, pt.sort_order ASC, pt.name ASC
+      `, [variantId])
+    } catch (dbError) {
+      // Table might not exist in production yet, return empty array
+      console.warn('Variant tags table not found, returning empty array:', dbError.message)
+      result = { rows: [] }
+    }
     
     return NextResponse.json({
       success: true,

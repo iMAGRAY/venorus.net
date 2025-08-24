@@ -9,7 +9,7 @@ import { InstantLink } from "@/components/instant-link"
 import { CartDrawer } from "@/components/cart-drawer"
 import { useCart } from "@/lib/cart-context"
 import { Badge } from "@/components/ui/badge"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useI18n } from "@/components/i18n-provider"
 import { SafeImage } from "@/components/safe-image"
 
@@ -60,34 +60,32 @@ export default function Header() {
   const initializeSettings = useAdminStore(state => state.initializeSettings)
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [lang, setLang] = useState<'ru' | 'es'>(language)
   const [currency, setCurrency] = useState<'RUB' | 'USD'>(() => {
     if (typeof window === 'undefined') return 'RUB'
     const saved = localStorage.getItem('venorus_currency')
     return saved === 'USD' ? 'USD' : 'RUB'
   })
 
-  // Инициализация настроек если нужно
+  // Объединенный useEffect для инициализации и сохранения настроек
   useEffect(() => {
+    // Инициализация настроек если нужно
     if (!isInitialized) {
       initializeSettings()
     }
-  }, [isInitialized, initializeSettings])
 
-  // Сохраняем выбор пользователя
-  useEffect(() => {
+    // Сохраняем выбор валюты пользователя
     if (typeof window !== 'undefined') {
-      localStorage.setItem('venorus_lang', lang)
       localStorage.setItem('venorus_currency', currency)
     }
-  }, [lang, currency])
+  }, [isInitialized, initializeSettings, currency])
 
-  useEffect(() => {
-    // Синхронизируем локальный селектор с провайдером i18n
-    if (lang !== language) {
-      setLanguage(lang)
+  // Обработчик смены языка - напрямую обновляем i18n провайдер
+  const handleLanguageChange = useCallback((newLang: 'ru' | 'es') => {
+    setLanguage(newLang)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('venorus_lang', newLang)
     }
-  }, [lang, language, setLanguage])
+  }, [setLanguage])
 
   const navLinks = [
     { href: "#contact", label: t('header.contacts') },
@@ -161,8 +159,8 @@ export default function Header() {
             <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-md px-2 py-1 text-slate-700">
               <Globe className="w-3.5 h-3.5" />
               <select
-                value={lang}
-                onChange={(e) => setLang(e.target.value as 'ru' | 'es')}
+                value={language}
+                onChange={(e) => handleLanguageChange(e.target.value as 'ru' | 'es')}
                 className="bg-transparent text-xs focus:outline-none"
                 aria-label="Выбор языка"
               >
@@ -218,8 +216,8 @@ export default function Header() {
                   <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-md px-2 py-1 text-slate-700">
                     <Globe className="w-3.5 h-3.5" />
                     <select
-                      value={lang}
-                      onChange={(e) => setLang(e.target.value as 'ru' | 'es')}
+                      value={language}
+                      onChange={(e) => handleLanguageChange(e.target.value as 'ru' | 'es')}
                       className="bg-transparent text-xs focus:outline-none"
                       aria-label="Выбор языка"
                     >

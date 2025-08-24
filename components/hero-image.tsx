@@ -1,20 +1,35 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import Image from "next/image"
 
 const HeroImage = () => {
   const [scrollY, setScrollY] = useState(0)
+  const ticking = useRef(false)
 
-  // Отслеживание скролла для эффекта параллакса
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+  // Дебаунсинг для скролла через requestAnimationFrame
+  const updateScrollY = useCallback(() => {
+    setScrollY(window.scrollY)
+    ticking.current = false
   }, [])
+
+  const handleScroll = useCallback(() => {
+    if (!ticking.current) {
+      requestAnimationFrame(updateScrollY)
+      ticking.current = true
+    }
+  }, [updateScrollY])
+
+  // Отслеживание скролла для эффекта параллакса с дебаунсингом
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (ticking.current) {
+        ticking.current = false
+      }
+    }
+  }, [handleScroll])
 
   return (
     <div className="relative w-full h-full overflow-hidden">

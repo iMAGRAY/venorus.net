@@ -50,6 +50,13 @@ export function ProductTagsDisplay({
 
   const fetchProductTags = useCallback(async () => {
       try {
+        setIsLoading(true)
+        // Temporarily return empty tags to prevent React error #185
+        setTags([])
+        setIsLoading(false)
+        return
+        
+        /* DISABLED TEMPORARILY TO FIX REACT ERROR #185
         const _allTags: ProductTag[] = []
         const tagMap = new Map<number, ProductTag>()
         
@@ -82,6 +89,7 @@ export function ProductTagsDisplay({
         // Преобразуем Map в массив и сортируем по sort_order
         const uniqueTags = Array.from(tagMap.values()).sort((a, b) => a.sort_order - b.sort_order)
         setTags(uniqueTags)
+        */
         
       } catch (error) {
         console.error('Error fetching tags:', error)
