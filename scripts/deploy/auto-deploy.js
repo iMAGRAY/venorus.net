@@ -57,14 +57,39 @@ async function deployApplication() {
   await log('🚀 ===== STARTING AUTOMATIC DEPLOYMENT =====')
   
   try {
-    // 1. Получаем последние изменения из Git
+    // 1. Останавливаем текущие процессы Node.js на порту 3010
+    try {
+      await runCommand('node scripts/kill-port.js 3010', 'Stopping processes on port 3010')
+    } catch (error) {
+      await log('⚠️ Port cleanup failed, continuing deployment')
+    }
+
+    // 2. Получаем последние изменения из Git
     await runCommand('git fetch origin', 'Fetching latest changes')
     await runCommand('git reset --hard origin/main', 'Resetting to latest main')
     
-    // 2. Устанавливаем зависимости
-    await runCommand('npm ci', 'Installing dependencies')
+    // 3. Очищаем node_modules для предотвращения permission issues
+    try {
+      // Проверяем наличие rimraf, если нет - устанавливаем
+      try {
+        await runCommand('npx rimraf node_modules', 'Cleaning node_modules')
+      } catch (rimrafError) {
+        await log('⚠️ rimraf failed, trying manual removal')
+        await runCommand('rm -rf node_modules', 'Manual node_modules removal')
+      }
+    } catch (error) {
+      await log('⚠️ node_modules cleanup failed, continuing with npm install')
+    }
     
-    // 3. Собираем проект
+    // 4. Устанавливаем зависимости с обходом permission issues
+    try {
+      await runCommand('npm install --no-optional --prefer-offline', 'Installing dependencies with optimizations')
+    } catch (error) {
+      await log('⚠️ Optimized npm install failed, trying fallback')
+      await runCommand('npm install', 'Installing dependencies (fallback)')
+    }
+    
+    // 5. Собираем проект
     await runCommand('npm run build', 'Building application')
     
     // 4. Проверяем линтинг (не критично для деплоя)
