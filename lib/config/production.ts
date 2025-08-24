@@ -43,15 +43,19 @@ export const productionConfig = {
     // Rate limiting
     rateLimit: {
       windowMs: 15 * 60 * 1000, // 15 минут
-      max: 100, // максимум запросов с одного IP
+      max: 2000, // максимум запросов с одного IP (увеличено для нормального использования)
       message: 'Слишком много запросов с этого IP, попробуйте позже',
       // Специальные лимиты для разных endpoints
       endpoints: {
         '/api/auth/login': { windowMs: 15 * 60 * 1000, max: 5 },
         '/api/auth/register': { windowMs: 60 * 60 * 1000, max: 3 },
         '/api/upload': { windowMs: 60 * 60 * 1000, max: 20 },
-        '/api/cache/clear': { windowMs: 1 * 60 * 1000, max: 100 }, // 100 запросов за 1 минуту для очистки кеша
-        '/api/cache/*': { windowMs: 1 * 60 * 1000, max: 500 }, // 500 запросов за 1 минуту для всех cache операций
+        '/api/cache/clear': { windowMs: 1 * 60 * 1000, max: 100 },
+        '/api/cache/*': { windowMs: 1 * 60 * 1000, max: 500 },
+        '/api/products': { windowMs: 5 * 60 * 1000, max: 1000 }, // 1000 запросов за 5 минут для продуктов
+        '/api/categories': { windowMs: 5 * 60 * 1000, max: 1000 }, // 1000 запросов за 5 минут для категорий
+        '/api/characteristics': { windowMs: 5 * 60 * 1000, max: 1000 },
+        '/api/manufacturers': { windowMs: 5 * 60 * 1000, max: 1000 },
       }
     },
     // CORS
