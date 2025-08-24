@@ -191,18 +191,18 @@ export function middleware(request: NextRequest) {
   // Добавляем HSTS header для принудительного HTTPS
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
   
-  // Улучшенный Content Security Policy
-  response.headers.set('Content-Security-Policy', 
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-    "style-src 'self' 'unsafe-inline'; " +
-    "img-src 'self' data: https: blob:; " +
-    "font-src 'self' data:; " +
-    "connect-src 'self' ws: wss:; " +
-    "frame-ancestors 'none'; " +
-    "base-uri 'self'; " +
-    "form-action 'self';"
-  )
+  // Временно отключён строгий CSP для устранения блокировок Next.js ресурсов
+  // response.headers.set('Content-Security-Policy', 
+  //   "default-src 'self'; " +
+  //   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " +
+  //   "style-src 'self' 'unsafe-inline' https:; " +
+  //   "img-src 'self' data: https: blob:; " +
+  //   "font-src 'self' data: https:; " +
+  //   "connect-src 'self' ws: wss: https:; " +
+  //   "frame-ancestors 'none'; " +
+  //   "base-uri 'self'; " +
+  //   "form-action 'self';"
+  // )
   
   return response
 }

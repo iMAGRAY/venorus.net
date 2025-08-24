@@ -20,11 +20,18 @@ class BackupSystem {
     
     // Database configuration from environment
     this.dbConfig = {
-      host: process.env.POSTGRESQL_HOST || 'localhost',
+      host: process.env.POSTGRESQL_HOST || '1bb84d1fbea33d62faf51337.twc1.net',
       port: process.env.POSTGRESQL_PORT || 5432,
-      user: process.env.POSTGRESQL_USER || 'postgres',
-      database: process.env.POSTGRESQL_DBNAME || 'venorus',
+      user: process.env.POSTGRESQL_USER || 'gen_user',
+      database: process.env.POSTGRESQL_DBNAME || 'default_db',
       password: process.env.POSTGRESQL_PASSWORD
+    };
+    
+    // Redis configuration from environment
+    this.redisConfig = {
+      host: process.env.REDIS_HOST || '37.139.32.30',
+      port: process.env.REDIS_PORT || 14004,
+      password: process.env.REDIS_PASSWORD
     };
   }
 
@@ -107,9 +114,9 @@ class BackupSystem {
       await this.log('info', 'Starting Redis backup');
       
       // Create Redis backup using BGSAVE
-      const redisHost = process.env.REDIS_HOST || 'localhost';
-      const redisPort = process.env.REDIS_PORT || 6379;
-      const redisPassword = process.env.REDIS_PASSWORD;
+      const redisHost = this.redisConfig.host;
+      const redisPort = this.redisConfig.port;
+      const redisPassword = this.redisConfig.password;
       
       let redisCmd = `redis-cli -h ${redisHost} -p ${redisPort}`;
       if (redisPassword) {
