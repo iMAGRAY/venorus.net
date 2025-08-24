@@ -27,7 +27,7 @@ import StarIcon from '@mui/icons-material/Star'
 import FactoryIcon from '@mui/icons-material/Factory'
 import ShieldIcon from '@mui/icons-material/Shield'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import logger from "@/lib/logger"
 import { CatalogDownloadButtons } from "@/components/catalog-download-buttons"
 import { useI18n } from "@/components/i18n-provider"
@@ -84,14 +84,13 @@ export default function HomePage() {
   const { t } = useI18n()
   logger.debug('HomePage рендерится')
   
-  const {
-    products: allProducts,
-    categories: adminCategories,
-    siteSettings,
-    initializeData,
-    forceRefresh,
-    isLoading,
-  } = useAdminStore()
+  const allProducts = useAdminStore(state => state.products)
+  const adminCategories = useAdminStore(state => state.categories)  
+  const siteSettings = useAdminStore(state => state.settings)
+  const isLoading = useAdminStore(state => state.loading.products || state.loading.categories || state.loading.settings)
+  const isInitialized = useAdminStore(state => state.initialized.products && state.initialized.categories && state.initialized.settings)
+  const initializeAll = useAdminStore(state => state.initializeAll)
+  const refreshAll = useAdminStore(state => state.refreshAll)
 
   // Initialize data on mount
   useEffect(() => {
@@ -99,13 +98,13 @@ export default function HomePage() {
     logger.log("HomePage: isLoading:", isLoading)
 
     // Always try to initialize data if we don't have products
-    if (allProducts.length === 0 && !isLoading) {
-      logger.log("HomePage: No products found, initializing data...")
-      initializeData()
+    if (!isInitialized && !isLoading) {
+      logger.log("HomePage: Not initialized, initializing data...")
+      initializeAll()
     } else {
       logger.log("HomePage: Products already loaded:", allProducts.length)
     }
-  }, [initializeData, allProducts.length, isLoading])
+  }, [initializeAll, allProducts.length, isLoading, isInitialized])
 
   // Debug log for products
   useEffect(() => {
@@ -129,7 +128,7 @@ export default function HomePage() {
   const _handleForceRefresh = async () => {
     _setRefreshing(true)
     try {
-      await forceRefresh()
+      await refreshAll()
 
     } catch (error) {
       logger.error('❌ Ошибка при обновлении данных:', error)
@@ -653,7 +652,7 @@ export default function HomePage() {
 
     // Apply advanced filters
     if (appliedFilters.categories && appliedFilters.categories.length > 0) {
-      tempProducts = tempProducts.filter((p) => p.category && appliedFilters.categories.includes(p.category))
+      tempProducts = tempProducts.filter((p) => p.category && appliedFilters.categories.includes(typeof p.category === 'string' ? p.category : p.category.name))
     }
 
     // Apply characteristics filters
@@ -919,8 +918,8 @@ export default function HomePage() {
                   </h1>
 
                   <p className="text-lg sm:text-xl lg:text-2xl text-white/85 leading-relaxed mb-6 sm:mb-8 max-w-4xl mx-auto lg:mx-0">
-                    {siteSettings?.heroSubtitle && siteSettings?.heroSubtitle.trim() !== "Тестовый подзаголовок"
-                      ? siteSettings.heroSubtitle
+                    {(siteSettings as any)?.heroSubtitle && (siteSettings as any)?.heroSubtitle.trim() !== "Тестовый подзаголовок"
+                      ? (siteSettings as any).heroSubtitle
                       : t('hero.defaultSubtitle')}
                   </p>
 

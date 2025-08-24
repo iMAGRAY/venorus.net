@@ -171,39 +171,7 @@ export function ProductSpecificationsManagerNew({
     }
   }, [selectedGroups])
 
-  // Загрузка данных
-    const loadData = useCallback(async () => {
-              try {
-                setLoading(true)
-
-                // Сбрасываем состояние для новых товаров
-                if (isNewProduct) {
-                  setSelectedGroups(new Set())
-                  setProductCharacteristics([])
-                  setActiveStep('groups')
-                }
-
-                await Promise.all([
-                  loadSpecGroups(),
-                  loadProductCharacteristics(),
-                  loadTemplates()
-                ])
-              } finally {
-                setLoading(false)
-              }
-            }, [isNewProduct])
-
-  useEffect(() => {
-    loadData()
-  }, [loadData])
-
-  // Синхронизация с родительским компонентом
-  useEffect(() => {
-
-    onSpecificationsChange(productCharacteristics)
-  }, [productCharacteristics, onSpecificationsChange])
-
-  // Вспомогательная функция для обработки иерархических групп (перемещена выше использования)
+  // Вспомогательные функции (должны быть выше их использования)
   const processHierarchicalGroups = useCallback((groups: any[]): SpecGroup[] => {
     const processGroup = (group: any, _index: number): SpecGroup | null => {
       let groupId: number;
@@ -236,6 +204,7 @@ export function ProductSpecificationsManagerNew({
     return groups.map((group, index) => processGroup(group, index)).filter(Boolean) as SpecGroup[]
   }, [])
 
+  // Функции загрузки данных (должны быть выше loadData)
   const loadSpecGroups = useCallback(async () => {
     try {
       const res = await fetch('/api/specifications')
@@ -307,6 +276,39 @@ export function ProductSpecificationsManagerNew({
       // Error loading templates
     }
   }, [])
+
+  // Загрузка данных
+    const loadData = useCallback(async () => {
+              try {
+                setLoading(true)
+
+                // Сбрасываем состояние для новых товаров
+                if (isNewProduct) {
+                  setSelectedGroups(new Set())
+                  setProductCharacteristics([])
+                  setActiveStep('groups')
+                }
+
+                await Promise.all([
+                  loadSpecGroups(),
+                  loadProductCharacteristics(),
+                  loadTemplates()
+                ])
+              } finally {
+                setLoading(false)
+              }
+            }, [isNewProduct, loadSpecGroups, loadProductCharacteristics, loadTemplates])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  // Синхронизация с родительским компонентом
+  useEffect(() => {
+
+    onSpecificationsChange(productCharacteristics)
+  }, [productCharacteristics, onSpecificationsChange])
+
 
   // УДАЛЕНА дублированная функция processHierarchicalGroups - уже определена выше
   // УДАЛЕНА дублированная функция processApiCharacteristics - уже определена выше

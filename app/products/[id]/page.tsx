@@ -12,7 +12,7 @@ import Header from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ProductRecommendations } from "@/components/product-recommendations"
 import { ProductQuickView } from "@/components/product-quick-view"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import { ArrowLeft, FileText } from "lucide-react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import type { Prosthetic } from "@/lib/data"
@@ -87,8 +87,19 @@ export default function ProductPage() {
   const { t } = useI18n()
   const params = useParams()
   const router = useRouter()
-  const { products } = useAdminStore()
+  const products = useAdminStore(state => state.products)
+  const adaptedProducts = useAdminStore(state => state.getAdaptedProducts())
+  const isInitialized = useAdminStore(state => state.initialized.products)
+  const initializeProducts = useAdminStore(state => state.initializeProducts)
   const { addItem } = useCart()
+  
+  // Инициализация продуктов если нужно
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeProducts()
+    }
+  }, [isInitialized, initializeProducts])
+  
   const [product, setProduct] = useState<ExtendedProduct | null>(null)
   const [productImages, setProductImages] = useState<string[]>([])
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -334,9 +345,9 @@ export default function ProductPage() {
 
           // Fallback на данные из store
           if (products.length > 0) {
-            const foundProduct = products.find((p: Prosthetic) => p.id === productId)
+            const foundProduct = products.find((p: any) => p.id === productId)
             if (foundProduct) {
-              setProduct(foundProduct)
+              setProduct(foundProduct as any)
               // Сохраняем оригинальное изображение товара
               setProductImage(foundProduct.imageUrl || foundProduct.image_url || foundProduct.primary_image_url || null)
               loadProductImages(productId)
@@ -1053,8 +1064,8 @@ export default function ProductPage() {
             </div>
 
             <ProductRecommendations
-              currentProduct={product}
-              allProducts={products}
+              currentProduct={product as any}
+              allProducts={adaptedProducts}
               onProductSelect={handleQuickView}
               className="max-w-none"
             />

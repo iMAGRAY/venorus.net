@@ -1,10 +1,19 @@
 "use client"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { Phone, Mail, MapPin } from "lucide-react"
+import { useEffect } from 'react'
 
 export default function ContactsPage() {
-  const { siteSettings } = useAdminStore()
+  const siteSettings = useAdminStore(state => state.settings)
+  const isInitialized = useAdminStore(state => state.initialized.settings)
+  const initializeSettings = useAdminStore(state => state.initializeSettings)
+
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeSettings()
+    }
+  }, [isInitialized, initializeSettings])
 
   const phone =
     siteSettings?.contactPhone || process.env.NEXT_PUBLIC_CONTACT_PHONE || ''

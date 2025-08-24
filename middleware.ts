@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   // Применяем rate limiting для API endpoints
   if (url.pathname.startsWith('/api/')) {
     // Исключаем некоторые endpoints из общего rate limiting
-    const excludedPaths = ['/api/health', '/api/admin/auth/login'] 
+    const excludedPaths = ['/api/health', '/api/admin/auth/login', '/api/cache/'] 
     
     // Исключения для test environment - localhost, development, или unknown IP
     const isTestEnvironment = process.env.NODE_ENV === 'development' || 

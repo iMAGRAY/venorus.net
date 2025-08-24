@@ -101,7 +101,6 @@ export class ApiClient {
         const _body = JSON.parse(options.body as string)
 
       } catch (_e) {
-        console.log('🌐 PUT request body (not JSON):', options.body)
       }
     }
 
@@ -173,15 +172,23 @@ export class ApiClient {
           willRetry: attempt < maxRetries
         })
 
-        // Не ретраим если это HTTP ошибка (404, 500, etc) - только network errors
-        if (!error.message.includes('Failed to fetch') && error.name !== 'AbortError') {
-
+        // Ретраим network errors и 429 Too Many Requests
+        const shouldRetry = error.message.includes('Failed to fetch') || 
+                          error.name === 'AbortError' || 
+                          (error.status === 429)
+        
+        if (!shouldRetry) {
           throw error
         }
 
         if (attempt < maxRetries) {
-          // Экспоненциальная задержка: 500ms, 1000ms, 2000ms
-          const delay = Math.min(500 * Math.pow(2, attempt - 1), 2000)
+          // Для 429 ошибок используем Retry-After заголовок, иначе экспоненциальную задержку
+          let delay
+          if (error.status === 429 && error.retryAfter) {
+            delay = Math.min(error.retryAfter * 1000, 30000) // макс 30 сек
+          } else {
+            delay = Math.min(500 * Math.pow(2, attempt - 1), 2000) // 500ms, 1000ms, 2000ms
+          }
 
           await new Promise(resolve => setTimeout(resolve, delay))
         }
@@ -225,16 +232,6 @@ export class ApiClient {
 
       clearTimeout(timeoutId) // Очищаем таймаут если запрос успешен
 
-      console.log('📡 API Response Details:', {
-        url: fullUrl,
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        type: response.type,
-        redirected: response.redirected,
-        headers: Object.fromEntries(response.headers.entries()),
-        bodyUsed: response.bodyUsed
-      })
 
       const responseTime = Date.now() - startTime
 
@@ -246,7 +243,17 @@ export class ApiClient {
           errorText: errorText,
           url: fullUrl
         })
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
+        
+        // Создаем расширенную ошибку для 429 статуса
+        const error = new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
+        ;(error as any).status = response.status
+        
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After')
+          ;(error as any).retryAfter = retryAfter ? parseInt(retryAfter, 10) : null
+        }
+        
+        throw error
       }
 
       const data = await response.json()
@@ -444,30 +451,6 @@ export class ApiClient {
     // Принудительно очищаем все кеши связанные с продуктами
     this.clearCache()
 
-    // Принудительно очищаем Redis кэш
-    try {
-      const response = await fetch('/api/cache/clear', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          patterns: [
-            'medsip:products:*',
-            'products:*',
-            'product:*',
-            'products-fast:*',
-            'products-full:*',
-            'products-detailed:*',
-            'products-basic:*'
-          ]
-        })
-      })
-
-      if (response.ok) {
-
-      }
-    } catch (cacheError) {
-      console.warn('⚠️ Failed to clear cache via API after creation:', cacheError)
-    }
 
     return result
   }
@@ -496,30 +479,6 @@ export class ApiClient {
       // Принудительно очищаем все кеши связанные с продуктами
       this.clearCache()
 
-      // Принудительно очищаем Redis кэш
-      try {
-        const response = await fetch('/api/cache/clear', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            patterns: [
-              'medsip:products:*',
-              'products:*',
-              'product:*',
-              'products-fast:*',
-              'products-full:*',
-              'products-detailed:*',
-              'products-basic:*'
-            ]
-          })
-        })
-
-        if (response.ok) {
-
-        }
-      } catch (cacheError) {
-        console.warn('⚠️ Failed to clear cache via API:', cacheError)
-      }
 
       return result
     } catch (error) {

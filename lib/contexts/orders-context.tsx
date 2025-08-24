@@ -47,12 +47,6 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         clearTimeout(timeoutId) // Очищаем таймаут если запрос успешен
       }
 
-      console.log('📡 Ответ получен:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        headers: Object.fromEntries(response.headers.entries())
-      })
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)

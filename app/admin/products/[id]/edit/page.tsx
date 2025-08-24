@@ -8,7 +8,7 @@ import { ProductFormModern } from '@/components/admin/product-form-modern'
 import { Card, CardContent } from '@/components/ui/card'
 import { Loader2, AlertCircle, Shield } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useAdminStore } from '@/lib/admin-store'
+import { useAdminStore } from '@/lib/stores'
 import { useAuth } from '@/components/admin/auth-guard'
 
 export default function EditProductPage() {
@@ -18,7 +18,7 @@ export default function EditProductPage() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { initializeData } = useAdminStore()
+  const initializeAll = useAdminStore(state => state.initializeAll)
 
   const productId = params?.id as string
 
@@ -72,7 +72,7 @@ export default function EditProductPage() {
     if (isManualSave !== false) {
     try {
 
-      await initializeData()
+      await initializeAll()
 
     } catch (err) {
       console.error('⚠️ Failed to refresh admin store:', err)

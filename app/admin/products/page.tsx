@@ -1,7 +1,6 @@
 "use client"
 import { SafeImage } from "@/components/safe-image"
-
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { AdminLayout } from "@/components/admin/admin-layout"
 import { ProductFormModern } from "@/components/admin/product-form-modern"
@@ -11,25 +10,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import ProductsFilters, { ProductAdminFilters } from "@/components/admin/products-filters"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { Prosthetic } from "@/lib/data"
 import { Plus, Search, Edit, Trash2, Download, ChevronLeft, ChevronRight, Shield, Package } from "lucide-react"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
+import type { Product } from "@/lib/api/types"
 import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
 import { useAuth } from "@/components/admin/auth-guard"
 
 export default function ProductsAdmin() {
   const router = useRouter()
   const { authStatus: _authStatus, hasPermission } = useAuth()
-  const {
-    products,
-    updateProduct,
-    deleteProduct,
-    initializeData,
-    forceRefresh,
-  } = useAdminStore()
+  
+  // Используем новый store с правильными селекторами
+  const products = useAdminStore(state => state.products)
+  const isLoading = useAdminStore(state => state.loading.products)
+  const error = useAdminStore(state => state.errors.products)
+  const isInitialized = useAdminStore(state => state.initialized.products)
+  const updateProduct = useAdminStore(state => state.updateProduct)
+  const deleteProduct = useAdminStore(state => state.deleteProduct)
+  const initializeProducts = useAdminStore(state => state.initializeProducts)
+  const refreshProducts = useAdminStore(state => state.refreshProducts)
 
   const [showForm, setShowForm] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<Prosthetic | undefined>()
+  const [editingProduct, setEditingProduct] = useState<Product | undefined>()
   const [searchQuery, setSearchQuery] = useState("")
   const [adminFilters, setAdminFilters] = useState<ProductAdminFilters>({})
   const [currentPage, setCurrentPage] = useState(1)
@@ -41,96 +43,72 @@ export default function ProductsAdmin() {
   const canUpdateProducts = hasPermission('products.update') || hasPermission('products.*') || hasPermission('*')
   const canDeleteProducts = hasPermission('products.delete') || hasPermission('products.*') || hasPermission('*')
 
-
-  // Initialize data when component mounts with force refresh
-    const loadData = useCallback(async () => {
-              try {
-
-                // Сначала очищаем кэш
-                const { apiClient } = await import('@/lib/api-client')
-                apiClient.clearCache()
-
-                // Принудительно очищаем Redis кэш
-                try {
-                  const response = await fetch('/api/cache/clear', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      patterns: [
-                        'medsip:products:*',
-                        'products:*',
-                        'product:*',
-                        'products-fast:*',
-                        'products-full:*',
-                        'products-detailed:*',
-                        'products-basic:*'
-                      ]
-                    })
-                  })
-
-                  if (response.ok) {
-
-                  }
-                } catch (cacheError) {
-                  console.warn('⚠️ Failed to clear cache via API:', cacheError)
-                }
-
-                // Принудительно обновляем данные при загрузке страницы
-                await forceRefresh()
-
-              } catch (error) {
-                console.error('❌ Ошибка при загрузке данных:', error)
-                // Fallback к обычной загрузке
-                await initializeData()
-              }
-            }, [forceRefresh, initializeData])
-
+  // Простая инициализация данных без циклических вызовов
   useEffect(() => {
-    loadData()
-  }, [loadData])
-
-  // Дополнительное обновление при наличии параметра refresh в URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const shouldRefresh = urlParams.get('refresh')
-
-    if (shouldRefresh === 'true') {
-
-      const refreshData = async () => {
-        try {
-          await forceRefresh()
-
-          // Убираем параметр из URL
-          const newUrl = new URL(window.location.href)
-          newUrl.searchParams.delete('refresh')
-          window.history.replaceState({}, '', newUrl.toString())
-        } catch (error) {
-          console.error('❌ Error refreshing data:', error)
-        }
-      }
-
-      refreshData()
+    if (!isInitialized && canViewProducts) {
+      initializeProducts()
     }
-  }, [forceRefresh])
-
-  // Обновляем данные при возвращении на страницу (фокус на вкладке)
-  useEffect(() => {
-    const handleFocus = async () => {
-      try {
-        await forceRefresh()
-      } catch (error) {
-        console.error('❌ Error refreshing on focus:', error)
-      }
-    }
-
-    window.addEventListener('focus', handleFocus)
-    return () => window.removeEventListener('focus', handleFocus)
-  }, [forceRefresh])
+  }, [isInitialized, canViewProducts, initializeProducts])
 
   // Сбрасываем страницу при изменении поиска
   useEffect(() => {
     setCurrentPage(1)
   }, [searchQuery])
+
+  // Мемоизированная фильтрация для оптимизации
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const p = product as any // Type assertion для расширенных полей
+      
+      // search
+      const searchMatch = searchQuery
+        ? (product.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (p.category_name || p.category || "").toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+
+      if (!searchMatch) return false
+
+      // manufacturer
+      if (adminFilters.manufacturer) {
+        const man = p.manufacturer_name || p.manufacturer
+        if (man !== adminFilters.manufacturer) return false
+      }
+
+      // model line
+      if (adminFilters.modelLine) {
+        const ml = p.model_line_name || p.modelLine
+        if (ml !== adminFilters.modelLine) return false
+      }
+
+      // category
+      if (adminFilters.category) {
+        const cat = p.category_name || p.category
+        if (cat !== adminFilters.category) return false
+      }
+
+      // price
+      if (adminFilters.priceFrom !== undefined) {
+        const price = product.price || product.discount_price || 0
+        if (price < adminFilters.priceFrom) return false
+      }
+      if (adminFilters.priceTo !== undefined) {
+        const price = product.price || product.discount_price || 0
+        if (price > adminFilters.priceTo) return false
+      }
+
+      return true
+    })
+  }, [products, searchQuery, adminFilters])
+
+  // Мемоизированная пагинация
+  const { pageCount, paginatedProducts } = useMemo(() => {
+    const pageCount = Math.max(1, Math.ceil(filteredProducts.length / ROWS_PER_PAGE))
+    const paginatedProducts = filteredProducts.slice(
+      (currentPage - 1) * ROWS_PER_PAGE,
+      currentPage * ROWS_PER_PAGE,
+    )
+    return { pageCount, paginatedProducts }
+  }, [filteredProducts, currentPage])
 
   // Ранний возврат без прав — после хуков
   if (!canViewProducts) {
@@ -151,63 +129,11 @@ export default function ProductsAdmin() {
     )
   }
 
-  // Безопасно обрабатываем возможные null/undefined значения полей name и category
-  const filteredProducts = products.filter((product) => {
-    // search
-    const searchMatch = searchQuery
-      ? (product.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.category || "").toLowerCase().includes(searchQuery.toLowerCase())
-      : true
-
-    if (!searchMatch) return false
-
-    // manufacturer
-    if (adminFilters.manufacturer) {
-      const man = product.manufacturer_name || product.manufacturer
-      if (man !== adminFilters.manufacturer) return false
-    }
-
-    // model line
-    if (adminFilters.modelLine) {
-      const ml = product.model_line_name || product.modelLine
-      if (ml !== adminFilters.modelLine) return false
-    }
-
-    // category
-    if (adminFilters.category) {
-      const cat = product.category_name || product.category
-      if (cat !== adminFilters.category) return false
-    }
-
-    // price
-    if (adminFilters.priceFrom !== undefined) {
-      const price = product.price || product.discount_price || 0
-      if (price < adminFilters.priceFrom) return false
-    }
-    if (adminFilters.priceTo !== undefined) {
-      const price = product.price || product.discount_price || 0
-      if (price > adminFilters.priceTo) return false
-    }
-
-    return true
-  })
-
-  // Compute products for current page
-  const pageCount = Math.max(1, Math.ceil(filteredProducts.length / ROWS_PER_PAGE))
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * ROWS_PER_PAGE,
-    currentPage * ROWS_PER_PAGE,
-  )
-
-  const handleSaveProduct = async (savedProduct: Prosthetic) => {
+  const handleSaveProduct = async (savedProduct: any) => {
     try {
       if (editingProduct) {
-        await updateProduct(String(savedProduct.id), savedProduct)
+        await updateProduct(savedProduct.id, savedProduct)
       }
-
-      // Принудительно обновляем данные после сохранения
-
-      await forceRefresh()
 
       setShowForm(false)
       setEditingProduct(undefined)
@@ -217,16 +143,16 @@ export default function ProductsAdmin() {
     }
   }
 
-  const handleEditProduct = (product: Prosthetic) => {
+  const handleEditProduct = (product: Product) => {
     if (!canUpdateProducts) {
       alert('У вас нет прав для редактирования товаров')
       return
     }
-    // Перенаправляем на отдельную страницу редактирования, которая правильно загружает данные через API
+    // Перенаправляем на отдельную страницу редактирования
     router.push(`/admin/products/${product.id}/edit`)
   }
 
-  const handleDeleteProduct = async (productId: string) => {
+  const handleDeleteProduct = async (productId: number) => {
     if (!canDeleteProducts) {
       alert('У вас нет прав для удаления товаров')
       return
@@ -234,18 +160,10 @@ export default function ProductsAdmin() {
 
     if (confirm("Вы уверены, что хотите удалить этот товар? Это действие нельзя отменить.")) {
       try {
-        await deleteProduct(productId);
-
-        // Принудительно перезагружаем данные для полной синхронизации
-
-        await forceRefresh();
-
+        await deleteProduct(productId)
       } catch (error) {
-        console.error('Error deleting product:', error);
-        alert('Ошибка при удалении товара');
-
-        // Возвращаем товар в список при ошибке
-        await forceRefresh();
+        console.error('Error deleting product:', error)
+        alert('Ошибка при удалении товара')
       }
     }
   }
@@ -336,7 +254,7 @@ export default function ProductsAdmin() {
           </div>
 
           {/* Other filters */}
-          <ProductsFilters products={products} value={adminFilters} onChange={setAdminFilters} />
+          <ProductsFilters products={products as any} value={adminFilters} onChange={setAdminFilters} />
         </div>
 
         <Card>
@@ -347,52 +265,86 @@ export default function ProductsAdmin() {
             </div>
           </CardHeader>
           <CardContent>
-            {products.length === 0 ? (
+            {/* Состояние загрузки */}
+            {isLoading && products.length === 0 && (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-slate-500">Загрузка товаров...</p>
+              </div>
+            )}
+
+            {/* Состояние ошибки */}
+            {error && (
+              <div className="text-center py-8">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <h3 className="text-red-800 font-medium">Ошибка загрузки</h3>
+                  <p className="text-red-600 text-sm mt-1">{error}</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-3"
+                    onClick={() => refreshProducts()}
+                  >
+                    Повторить попытку
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Пустое состояние */}
+            {!isLoading && !error && products.length === 0 && (
               <div className="text-center py-8">
                 <p className="text-slate-500">Товары не найдены</p>
-                <Button
-                  onClick={() => setShowForm(true)}
-                  className="mt-4 bg-blue-500 hover:bg-blue-600"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Создать первый товар
-                </Button>
+                {canCreateProducts && (
+                  <Button
+                    onClick={() => setShowForm(true)}
+                    className="mt-4 bg-blue-500 hover:bg-blue-600"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Создать первый товар
+                  </Button>
+                )}
               </div>
-            ) : (
+            )}
+
+            {/* Отображение товаров */}
+            {!isLoading && !error && products.length > 0 && (
               <>
                 {/* Мобильная версия - карточки */}
                 <div className="block lg:hidden space-y-4">
-                  {paginatedProducts.map((product) => (
+                  {paginatedProducts.map((product) => {
+                    const p = product as any
+                    return (
                     <Card key={product.id} className="p-4">
                       <div className="flex items-start gap-3">
-                        <SafeImage src={product.imageUrl || product.images?.[0] || PROSTHETIC_FALLBACK_IMAGE} alt={product.name} width={64} height={64} className="w-16 h-16 object-cover rounded-md border border-slate-200 flex-shrink-0" />
+                        <SafeImage src={p.imageUrl || p.images?.[0] || PROSTHETIC_FALLBACK_IMAGE} alt={product.name} width={64} height={64} className="w-16 h-16 object-cover rounded-md border border-slate-200 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <h3 className="font-medium text-sm leading-tight">{product.name}</h3>
                             <Badge
-                              variant={product.inStock ? "default" : "destructive"}
+                              variant={p.inStock ? "default" : "destructive"}
                               className={`text-xs flex-shrink-0 ${
-                                product.inStock ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'
+                                p.inStock ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'
                               }`}
                             >
-                              {product.inStock ? 'Доступен на сайте' : 'Недоступен на сайте'}
+                              {p.inStock ? 'Доступен на сайте' : 'Недоступен на сайте'}
                             </Badge>
                             <Badge
                               variant="outline"
                               className={`text-xs flex-shrink-0 ${
-                                product.stock_status === 'in_stock' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                product.stock_status === 'nearby_warehouse' ? 'bg-gray-100 text-gray-700 border-gray-200' :
-                                product.stock_status === 'distant_warehouse' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                                product.stock_status === 'on_order' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                                p.stock_status === 'in_stock' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                p.stock_status === 'nearby_warehouse' ? 'bg-gray-100 text-gray-700 border-gray-200' :
+                                p.stock_status === 'distant_warehouse' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                                p.stock_status === 'on_order' ? 'bg-purple-100 text-purple-700 border-purple-200' :
                                 'bg-gray-100 text-gray-700 border-gray-200'
                               }`}
                             >
-                              {product.stock_status === 'in_stock' && 'В наличии'}
-                              {product.stock_status === 'nearby_warehouse' && 'Ближний склад'}
-                              {product.stock_status === 'distant_warehouse' && 'Дальний склад'}
-                              {product.stock_status === 'on_order' && 'Под заказ'}
-                              {product.stock_status === 'out_of_stock' && 'Нет в наличии'}
-                              {!product.stock_status && 'Статус склада неизвестен'}
+                              {p.stock_status === 'in_stock' && 'В наличии'}
+                              {p.stock_status === 'nearby_warehouse' && 'Ближний склад'}
+                              {p.stock_status === 'distant_warehouse' && 'Дальний склад'}
+                              {p.stock_status === 'on_order' && 'Под заказ'}
+                              {p.stock_status === 'out_of_stock' && 'Нет в наличии'}
+                              {!p.stock_status && 'Статус склада неизвестен'}
                             </Badge>
                           </div>
 
@@ -402,19 +354,19 @@ export default function ProductsAdmin() {
                                 SKU: {product.sku}
                               </Badge>
                             )}
-                            {product.article_number && (
+                            {p.article_number && (
                               <Badge variant="outline" className="text-xs border-blue-200 text-blue-600">
-                                {product.article_number}
+                                {p.article_number}
                               </Badge>
                             )}
                             {product.category && (
                               <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
-                                {product.category}
+                                {typeof product.category === 'string' ? product.category : p.category_name || 'Без категории'}
                               </Badge>
                             )}
-                            {product.has_variants && typeof product.variants_count === 'number' && product.variants_count > 0 && (
+                            {p.has_variants && typeof p.variants_count === 'number' && p.variants_count > 0 && (
                               <Badge variant="secondary" className="text-xs border-purple-200 text-purple-600">
-                                {product.variants_count} вар.
+                                {p.variants_count} вар.
                               </Badge>
                             )}
                           </div>
@@ -448,7 +400,7 @@ export default function ProductsAdmin() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => handleDeleteProduct(String(product.id))}
+                                onClick={() => handleDeleteProduct(product.id)}
                                 className="border-red-200 text-red-600 hover:bg-red-50 h-8 px-3 text-xs flex-1"
                               >
                                 <Trash2 className="w-3 h-3 mr-1" />
@@ -459,7 +411,8 @@ export default function ProductsAdmin() {
                         </div>
                       </div>
                     </Card>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Десктопная версия - таблица */}
@@ -481,10 +434,12 @@ export default function ProductsAdmin() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {paginatedProducts.map((product) => (
+                      {paginatedProducts.map((product) => {
+                        const p = product as any
+                        return (
                         <TableRow key={product.id}>
                           <TableCell className="w-16">
-                            <SafeImage src={product.imageUrl || product.images?.[0] || PROSTHETIC_FALLBACK_IMAGE} alt={product.name} width={56} height={56} className="w-14 h-14 object-cover rounded-md border border-slate-200" />
+                            <SafeImage src={p.imageUrl || p.images?.[0] || PROSTHETIC_FALLBACK_IMAGE} alt={product.name} width={56} height={56} className="w-14 h-14 object-cover rounded-md border border-slate-200" />
                           </TableCell>
                           <TableCell className="font-medium max-w-[220px] truncate">{product.name}</TableCell>
                           <TableCell>
@@ -494,19 +449,19 @@ export default function ProductsAdmin() {
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="border-blue-200 text-blue-600">
-                              {product.article_number || '-'}
+                              {p.article_number || '-'}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="border-blue-200 text-blue-600">
-                              {product.category || 'Без категории'}
+                              {typeof product.category === 'string' ? product.category : p.category_name || 'Без категории'}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-slate-600">
-                            {product.manufacturer_name || product.manufacturer || '-'}
+                            {p.manufacturer_name || product.manufacturer || '-'}
                           </TableCell>
                           <TableCell className="text-sm text-slate-600">
-                            {product.model_line_name || product.modelLine || '-'}
+                            {p.model_line_name || p.modelLine || '-'}
                           </TableCell>
                           <TableCell>
                             <div className="text-sm">
@@ -529,29 +484,29 @@ export default function ProductsAdmin() {
                           <TableCell>
                             <div className="flex flex-col gap-1">
                               <Badge
-                                variant={product.inStock ? "default" : "destructive"}
+                                variant={p.inStock ? "default" : "destructive"}
                                 className={`text-xs ${
-                                  product.inStock ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'
+                                  p.inStock ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'
                                 }`}
                               >
-                                {product.inStock ? 'Доступен на сайте' : 'Недоступен на сайте'}
+                                {p.inStock ? 'Доступен на сайте' : 'Недоступен на сайте'}
                               </Badge>
                               <Badge
                                 variant="outline"
                                 className={`text-xs ${
-                                  product.stock_status === 'in_stock' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                  product.stock_status === 'nearby_warehouse' ? 'bg-gray-100 text-gray-700 border-gray-200' :
-                                  product.stock_status === 'distant_warehouse' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                                  product.stock_status === 'on_order' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                                  p.stock_status === 'in_stock' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                  p.stock_status === 'nearby_warehouse' ? 'bg-gray-100 text-gray-700 border-gray-200' :
+                                  p.stock_status === 'distant_warehouse' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                                  p.stock_status === 'on_order' ? 'bg-purple-100 text-purple-700 border-purple-200' :
                                   'bg-gray-100 text-gray-700 border-gray-200'
                                 }`}
                               >
-                                {product.stock_status === 'in_stock' && 'В наличии'}
-                                {product.stock_status === 'nearby_warehouse' && 'Ближний склад'}
-                                {product.stock_status === 'distant_warehouse' && 'Дальний склад'}
-                                {product.stock_status === 'on_order' && 'Под заказ'}
-                                {product.stock_status === 'out_of_stock' && 'Нет в наличии'}
-                                {!product.stock_status && 'Статус склада неизвестен'}
+                                {p.stock_status === 'in_stock' && 'В наличии'}
+                                {p.stock_status === 'nearby_warehouse' && 'Ближний склад'}
+                                {p.stock_status === 'distant_warehouse' && 'Дальний склад'}
+                                {p.stock_status === 'on_order' && 'Под заказ'}
+                                {p.stock_status === 'out_of_stock' && 'Нет в наличии'}
+                                {!p.stock_status && 'Статус склада неизвестен'}
                               </Badge>
                               {product.stock_quantity && product.stock_quantity > 0 && (
                                 <span className="text-xs text-gray-500">
@@ -562,9 +517,9 @@ export default function ProductsAdmin() {
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col gap-1">
-                              {product.has_variants && typeof product.variants_count === 'number' && product.variants_count > 0 ? (
+                              {p.has_variants && typeof p.variants_count === 'number' && p.variants_count > 0 ? (
                                 <Badge variant="secondary" className="text-xs">
-                                  {product.variants_count} вар.
+                                  {p.variants_count} вар.
                                 </Badge>
                               ) : (
                                 <span className="text-xs text-slate-400">Нет вариантов</span>
@@ -589,7 +544,7 @@ export default function ProductsAdmin() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handleDeleteProduct(String(product.id))}
+                                    onClick={() => handleDeleteProduct(product.id)}
                                     className="border-red-200 text-red-600 hover:bg-red-50"
                                   >
                                     <Trash2 className="w-4 h-4 mr-1" />
@@ -611,7 +566,8 @@ export default function ProductsAdmin() {
                             </div>
                           </TableCell>
                         </TableRow>
-                      ))}
+                        )
+                      })}
                     </TableBody>
                   </Table>
                 </div>

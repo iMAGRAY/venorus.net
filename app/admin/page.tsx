@@ -35,7 +35,7 @@ import {
   Shield,
   ClipboardList
 } from "lucide-react"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import { InstantLink } from "@/components/instant-link"
 
 interface WarehouseZone {
@@ -77,7 +77,10 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
-  const { products, initializeData, isLoading } = useAdminStore()
+  const products = useAdminStore(state => state.products)
+  const isLoading = useAdminStore(state => state.loading.products || state.loading.categories)
+  const isInitialized = useAdminStore(state => state.initialized.products)
+  const initializeAll = useAdminStore(state => state.initializeAll)
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loadingStats, setLoadingStats] = useState(true)
 
@@ -182,9 +185,8 @@ return {
     setLoadingStats(true)
     try {
       // Загружаем основные данные только если они еще не загружены и мы не находимся в процессе загрузки
-      if (!products.length && !isLoading) {
-
-        await initializeData()
+      if (!isInitialized && !isLoading) {
+        await initializeAll()
       }
 
       // Загружаем статистику дашборда
@@ -211,7 +213,7 @@ return {
     } finally {
       setLoadingStats(false)
     }
-  }, [products.length, isLoading, initializeData, generateFallbackStats])
+  }, [isInitialized, isLoading, initializeAll, generateFallbackStats])
 
   // Инициализация дашборда (перемещен после объявления loadDashboardData)
   useEffect(() => {

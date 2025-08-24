@@ -208,8 +208,6 @@ export class ProductService {
   // Сохранение таблиц подбора для продукта
   async saveProductSelectionTables(productId: string, tables: any): Promise<void> {
     try {
-      console.log('💾 Tables object keys:', Object.keys(tables || {}))
-      console.log('💾 Tables object is empty:', Object.keys(tables || {}).length === 0)
       const result = await this.api.put(`/products/${productId}/selection-tables`, { tables })
       if (!result.success) throw new Error(result.error || 'Product selection tables save failed')
     } catch (error) {

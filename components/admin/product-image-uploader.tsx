@@ -37,19 +37,6 @@ export function ProductImageUploader({
   const availableSlots = Math.max(0, maxImages - safeProductImages.length)
   
   // Расширенная отладочная информация
-  console.log('ProductImageUploader Debug Info:', {
-    productId,
-    isVariant,
-    productImages: productImages,
-    safeProductImages: safeProductImages,
-    productImagesLength: safeProductImages.length,
-    productImagesType: typeof productImages,
-    isArray: Array.isArray(productImages),
-    maxImages,
-    availableSlots: availableSlots,
-    showUploadArea: availableSlots > 0,
-    location: typeof window !== 'undefined' ? window.location.pathname : 'SSR'
-  })
   
   const [files, setFiles] = useState<File[]>([])
   const [_uploadProgress, __setUploadProgress] = useState<{ [key: string]: number }>({})
@@ -144,7 +131,6 @@ export function ProductImageUploader({
       // Проверяем, является ли это новым вариантом
       if (typeof productId === 'string' && productId.startsWith('new-variant-')) {
         // Для новых вариантов пропускаем синхронизацию
-        console.log('Skipping sync for new variant')
         return
       }
       resolvedProductId = productId.toString()

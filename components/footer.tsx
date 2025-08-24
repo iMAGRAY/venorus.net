@@ -9,13 +9,22 @@ import ShieldIcon from '@mui/icons-material/Shield'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import HomeIcon from '@mui/icons-material/Home'
 import { AdditionalContacts } from "@/components/additional-contacts"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import { SafeImage } from "@/components/safe-image"
 import { useI18n } from "@/components/i18n-provider"
+import { useEffect } from "react"
 
 export function Footer() {
   const { t } = useI18n()
-  const { siteSettings } = useAdminStore()
+  const siteSettings = useAdminStore(state => state.settings)
+  const isInitialized = useAdminStore(state => state.initialized.settings)
+  const initializeSettings = useAdminStore(state => state.initializeSettings)
+
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeSettings()
+    }
+  }, [isInitialized, initializeSettings])
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-br from-red-50/70 via-white to-blue-50/60">
@@ -138,7 +147,7 @@ export function Footer() {
                 <div className="mt-6 pt-6 border-t border-blue-200/40">
                   <h5 className="text-sm font-semibold text-blue-700 mb-4">{t('footer.socialTitle')}</h5>
                   <div className="flex gap-3">
-                    {siteSettings.socialMedia.vk && (
+                    {siteSettings.socialMedia?.vk && (
                       <a
                         href={siteSettings.socialMedia.vk}
                         target="_blank"
@@ -149,7 +158,7 @@ export function Footer() {
                         <VkIcon className="w-6 h-6 text-white" />
                       </a>
                     )}
-                    {siteSettings.socialMedia.telegram && (
+                    {siteSettings.socialMedia?.telegram && (
                       <a
                         href={siteSettings.socialMedia.telegram}
                         target="_blank"
@@ -160,7 +169,7 @@ export function Footer() {
                         <TelegramIcon className="w-6 h-6 text-white" />
                       </a>
                     )}
-                    {siteSettings.socialMedia.youtube && (
+                    {siteSettings.socialMedia?.youtube && (
                       <a
                         href={siteSettings.socialMedia.youtube}
                         target="_blank"
@@ -171,7 +180,7 @@ export function Footer() {
                         <Youtube className="w-6 h-6 text-white" />
                       </a>
                     )}
-                    {siteSettings.socialMedia.ok && (
+                    {siteSettings.socialMedia?.ok && (
                       <a
                         href={siteSettings.socialMedia.ok}
                         target="_blank"

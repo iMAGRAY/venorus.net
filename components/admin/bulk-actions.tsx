@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { SearchableSelect } from "@/components/ui/searchable-select"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 
 interface BulkActionsProps {
   selectedIds: string[]
@@ -13,12 +13,10 @@ interface BulkActionsProps {
 
 export function BulkActions({ selectedIds, onSelectionChange, type }: BulkActionsProps) {
   const [bulkAction, setBulkAction] = useState("")
-  const {
-    updateProduct,
-    deleteProduct,
-    updateCategory,
-    deleteCategory,
-  } = useAdminStore()
+  const updateProduct = useAdminStore(state => state.updateProduct)
+  const deleteProduct = useAdminStore(state => state.deleteProduct)
+  const updateCategory = useAdminStore(state => state.updateCategory)
+  const deleteCategory = useAdminStore(state => state.deleteCategory)
 
   const handleBulkAction = () => {
     if (!bulkAction || selectedIds.length === 0) return
@@ -27,12 +25,13 @@ export function BulkActions({ selectedIds, onSelectionChange, type }: BulkAction
       case "delete":
         if (confirm(`Are you sure you want to delete ${selectedIds.length} items?`)) {
           selectedIds.forEach((id) => {
+            const numId = parseInt(id, 10)
             switch (type) {
               case "products":
-                deleteProduct(id)
+                deleteProduct(numId)
                 break
               case "categories":
-                deleteCategory(id)
+                deleteCategory(numId)
                 break
             }
           })
@@ -41,12 +40,13 @@ export function BulkActions({ selectedIds, onSelectionChange, type }: BulkAction
         break
       case "activate":
         selectedIds.forEach((id) => {
+          const numId = parseInt(id, 10)
           switch (type) {
             case "products":
-              updateProduct(id, { inStock: true })
+              updateProduct(numId, { inStock: true })
               break
             case "categories":
-              updateCategory(id, { isActive: true })
+              updateCategory(numId, { is_active: true })
               break
           }
         })
@@ -54,12 +54,13 @@ export function BulkActions({ selectedIds, onSelectionChange, type }: BulkAction
         break
       case "deactivate":
         selectedIds.forEach((id) => {
+          const numId = parseInt(id, 10)
           switch (type) {
             case "products":
-              updateProduct(id, { inStock: false })
+              updateProduct(numId, { inStock: false })
               break
             case "categories":
-              updateCategory(id, { isActive: false })
+              updateCategory(numId, { is_active: false })
               break
           }
         })

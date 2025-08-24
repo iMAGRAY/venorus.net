@@ -6,12 +6,12 @@ import { ProductFormModern } from '@/components/admin/product-form-modern'
 import { useAuth } from '@/components/admin/auth-guard'
 import { Card, CardContent } from '@/components/ui/card'
 import { Shield } from 'lucide-react'
-import { useAdminStore } from '@/lib/admin-store'
+import { useAdminStore } from '@/lib/stores'
 
 export default function CreateProductPage() {
   const router = useRouter()
   const { hasPermission } = useAuth()
-  const { forceRefresh: _forceRefresh } = useAdminStore()
+  const refreshAll = useAdminStore(state => state.refreshAll)
 
   // Проверяем права доступа
   const canCreateProducts = hasPermission('products.create') || hasPermission('products.*') || hasPermission('*')
@@ -73,9 +73,9 @@ export default function CreateProductPage() {
       setTimeout(async () => {
         try {
           // Принудительно обновляем store через глобальный кеш
-          const { useAdminStore: _useAdminStore } = await import('@/lib/admin-store')
+          // Используем новый admin store
+          refreshAll().catch(console.warn)
           // Note: В данном контексте мы не можем использовать React Hook
-          console.log('Store refresh skipped - using component refresh')
 
         } catch (refreshError) {
           console.error('❌ Error refreshing products after creation:', refreshError)

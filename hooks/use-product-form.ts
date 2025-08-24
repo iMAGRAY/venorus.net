@@ -203,11 +203,6 @@ export function useProductForm(product?: any): ProductFormHookReturn {
       }
       
       // Сохраняем конфигурируемые характеристики
-      console.log('🔍 Saving configurable characteristics:', {
-        hasCustomFields: !!custom_fields,
-        configurableCharacteristics: custom_fields?.configurableCharacteristics,
-        count: custom_fields?.configurableCharacteristics?.length
-      })
       
       if (custom_fields?.configurableCharacteristics && custom_fields.configurableCharacteristics.length > 0) {
         savePromises.push(productService.saveConfigurableCharacteristics(productId, custom_fields.configurableCharacteristics))
@@ -273,7 +268,6 @@ export function useProductForm(product?: any): ProductFormHookReturn {
   }, [])
 
   const _handleConfigurableCharacteristicsChange = useCallback((characteristics: any[]) => {
-    console.log('🔍 handleConfigurableCharacteristicsChange called with:', characteristics)
     setFormDataState(prev => {
       const updated = {
         ...prev,
@@ -282,7 +276,6 @@ export function useProductForm(product?: any): ProductFormHookReturn {
           configurableCharacteristics: characteristics
         }
       }
-      console.log('🔍 Updated formData with custom_fields:', updated.custom_fields)
       return updated
     })
     setIsDirty(true)

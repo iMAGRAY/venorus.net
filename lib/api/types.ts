@@ -284,18 +284,121 @@ export interface ProductFilter {
 }
 
 // ============== Настройки сайта ==============
+
+// Дополнительные контакты
+export interface AdditionalContact {
+  id: string;
+  type: "phone" | "email" | "address" | "website" | "other";
+  label: string;
+  value: string;
+  isActive: boolean;
+}
+
 export interface SiteSettings {
   id: number;
-  site_name: string;
-  site_description?: string;
-  site_keywords?: string;
-  contact_email?: string;
-  contact_phone?: string;
-  contact_address?: string;
-  social_links?: Record<string, string>;
-  analytics_code?: string;
-  custom_css?: string;
-  custom_js?: string;
-  maintenance_mode: boolean;
-  updated_at: string;
+  siteName: string;
+  siteDescription?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  socialMedia?: Record<string, string>;
+  additionalContacts?: AdditionalContact[];
+  createdAt?: string;
+  updatedAt: string;
+}
+
+// ============== API CLIENT TYPES ==============
+
+// HTTP методы
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+
+// Опции для запросов
+export interface RequestOptions {
+  method?: HttpMethod
+  headers?: Record<string, string>
+  body?: any
+  timeout?: number
+  retries?: number
+  cache?: boolean
+  cacheTTL?: number
+  cacheTags?: string[]
+}
+
+// Конфигурация API клиента
+export interface ApiClientConfig {
+  baseUrl: string
+  timeout: number
+  maxRetries: number
+  retryDelay: number
+  defaultHeaders: Record<string, string>
+  enableCache: boolean
+  defaultCacheTTL: number
+  enableMetrics: boolean
+  enableDebug: boolean
+}
+
+// Метрики API
+export interface ApiMetrics {
+  requests: {
+    total: number
+    success: number
+    failed: number
+    cached: number
+  }
+  timing: {
+    average: number
+    min: number
+    max: number
+  }
+  errors: Record<string, number>
+  endpoints: Record<string, {
+    requests: number
+    failures: number
+    averageTime: number
+  }>
+}
+
+// Ошибки API
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public endpoint: string,
+    public response?: any
+  ) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+export class NetworkError extends Error {
+  constructor(message: string, public endpoint: string) {
+    super(message)
+    this.name = 'NetworkError'
+  }
+}
+
+export class TimeoutError extends Error {
+  constructor(message: string, public endpoint: string) {
+    super(message)
+    this.name = 'TimeoutError'
+  }
+}
+
+// Типы для дедупликации запросов
+export interface PendingRequest<T = any> {
+  promise: Promise<T>
+  timestamp: number
+  abortController: AbortController
+}
+
+// Интерфейс для retry логики
+export interface RetryConfig {
+  maxRetries: number
+  baseDelay: number
+  maxDelay: number
+  backoffFactor: number
+  retryCondition: (error: Error) => boolean
 }

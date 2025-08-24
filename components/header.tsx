@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X, Phone, Mail, MapPin, ClipboardList, Globe, Banknote } from "lucide-react"
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { InstantLink } from "@/components/instant-link"
 import { CartDrawer } from "@/components/cart-drawer"
@@ -55,7 +55,9 @@ function SafeCartButton() {
 
 export default function Header() {
   const { language, setLanguage, t } = useI18n()
-  const { siteSettings } = useAdminStore()
+  const siteSettings = useAdminStore(state => state.settings)
+  const isInitialized = useAdminStore(state => state.initialized.settings)
+  const initializeSettings = useAdminStore(state => state.initializeSettings)
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [lang, setLang] = useState<'ru' | 'es'>(language)
@@ -64,6 +66,13 @@ export default function Header() {
     const saved = localStorage.getItem('venorus_currency')
     return saved === 'USD' ? 'USD' : 'RUB'
   })
+
+  // Инициализация настроек если нужно
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeSettings()
+    }
+  }, [isInitialized, initializeSettings])
 
   // Сохраняем выбор пользователя
   useEffect(() => {
@@ -339,13 +348,13 @@ export default function Header() {
                 </div>
 
                 {/* Additional Contacts */}
-                {siteSettings?.additionalContacts && siteSettings.additionalContacts.length > 0 && (
+                {(siteSettings as any)?.additionalContacts && (siteSettings as any).additionalContacts.length > 0 && (
                   <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-blue-200/50">
                     <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
                       Дополнительные контакты
                     </h3>
                     <AdditionalContacts
-                      contacts={siteSettings.additionalContacts}
+                      contacts={(siteSettings as any).additionalContacts}
                       className="space-y-3"
                       theme="light"
                     />

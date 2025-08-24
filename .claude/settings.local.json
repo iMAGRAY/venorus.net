@@ -22,7 +22,8 @@
       "Bash(git push:*)",
       "Bash(scp:*)",
       "mcp__postgresql-api-ssh__mcp_ssh_manager",
-      "Bash(tar:*)"
+      "Bash(tar:*)",
+      "Bash(npx depcheck:*)"
     ],
     "deny": [],
     "ask": [],

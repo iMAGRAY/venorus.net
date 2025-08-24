@@ -33,7 +33,6 @@ export function ProductConfigurationSelector({
 }: ProductConfigurationSelectorProps) {
   const [configuration, setConfiguration] = useState<Record<string, any>>({})
 
-  console.log('🎨 ProductConfigurationSelector: Получено характеристик:', configurableCharacteristics.length, configurableCharacteristics)
 
   // Группируем характеристики по группам
   const groupedCharacteristics = configurableCharacteristics.reduce((acc, char) => {

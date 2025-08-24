@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { AdminLayout } from "@/components/admin/admin-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,13 +8,13 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { SiteSettings, AdditionalContact } from "@/lib/admin-data"
+import type { AdditionalContact } from "@/lib/admin-data"
 import { Save, Globe, Mail, Phone, MapPin, FileDown, Upload, Trash2, Edit, Download, X } from "lucide-react"
 import { AdditionalContactsManager } from "@/components/admin/additional-contacts-manager"
 import { toast } from "sonner"
 
-// Update to use the admin store
-import { useAdminStore } from "@/lib/admin-store"
+// Обновляем импорт на новый Zustand store
+import { useAdminStore } from "@/lib/stores"
 
 interface CatalogFile {
   id: number
@@ -45,10 +45,14 @@ interface CatalogFormData {
 }
 
 export default function SettingsAdmin() {
-  // Add at the beginning of the component:
-  const { siteSettings: settings, updateSiteSettings, loadSiteSettings } = useAdminStore()
+  // Обновляем на новую Zustand архитектуру
+  const settings = useAdminStore(state => state.settings)
+  const updateSettings = useAdminStore(state => state.updateSettings)
+  const initializeSettings = useAdminStore(state => state.initializeSettings)
+  const isSettingsLoading = useAdminStore(state => state.loading.settings)
+  const isInitialized = useAdminStore(state => state.initialized.settings)
+  
   const [isSaving, setIsSaving] = useState(false)
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   // Catalog management state
@@ -68,30 +72,17 @@ export default function SettingsAdmin() {
     is_active: true
   })
 
-  // Update the handleSave function:
+  // Обновляем handleSave для новой архитектуры
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      // Проверяем что settings не null/undefined
       if (!settings) {
         toast.error("Ошибка: настройки не загружены")
         return
       }
 
-      // Создаем объект с дефолтными значениями для безопасности
-      const settingsToSave = {
-        siteName: settings.siteName || 'МедСИП Протезирование',
-        siteDescription: settings.siteDescription || '',
-        heroTitle: settings.heroTitle || '',
-        heroSubtitle: settings.heroSubtitle || '',
-        contactEmail: settings.contactEmail || '',
-        contactPhone: settings.contactPhone || '',
-        address: settings.address || '',
-        socialMedia: settings.socialMedia || {},
-        additionalContacts: settings.additionalContacts || []
-      }
-
-      await updateSiteSettings(settingsToSave)
+      // Используем новый метод updateSettings
+      await updateSettings(settings)
       toast.success("Настройки успешно сохранены!")
       setHasUnsavedChanges(false)
     } catch (error) {
@@ -101,18 +92,19 @@ export default function SettingsAdmin() {
     setIsSaving(false)
   }
 
-  // Update the updateSetting function:
-  const updateSetting = (key: keyof SiteSettings, value: any) => {
+  // Обновляем updateSetting для работы с новым store
+  const updateSetting = (key: string, value: any) => {
     if (!settings) {
       toast.error('Настройки не загружены')
       return
     }
     const updatedSettings = { ...settings, [key]: value }
-    updateSiteSettings(updatedSettings)
+    // Обновляем локальное состояние через store
+    updateSettings(updatedSettings)
     setHasUnsavedChanges(true)
   }
 
-  // Update the updateSocialMedia function:
+  // Обновляем updateSocialMedia для работы с новым API типом (socialMedia)
   const updateSocialMedia = (platform: string, value: string) => {
     if (!settings) {
       toast.error('Настройки не загружены')
@@ -122,11 +114,11 @@ export default function SettingsAdmin() {
       ...settings,
       socialMedia: { ...settings.socialMedia, [platform]: value }
     }
-    updateSiteSettings(updatedSettings)
+    updateSettings(updatedSettings)
     setHasUnsavedChanges(true)
   }
 
-  // Update additional contacts function:
+  // Обновляем updateAdditionalContacts для работы с новым store
   const updateAdditionalContacts = (contacts: AdditionalContact[]) => {
     if (!settings) {
       toast.error('Настройки не загружены')
@@ -136,7 +128,7 @@ export default function SettingsAdmin() {
       ...settings,
       additionalContacts: contacts
     }
-    updateSiteSettings(updatedSettings)
+    updateSettings(updatedSettings)
     setHasUnsavedChanges(true)
   }
 
@@ -158,25 +150,24 @@ export default function SettingsAdmin() {
     }
   }
 
-  // Load site settings and catalogs on component mount
-  React.useEffect(() => {
+  // Обновляем useEffect для новой архитектуры
+  useEffect(() => {
     const loadData = async () => {
       try {
-        setIsLoadingSettings(true)
-        // Загружаем настройки сайта
-        await loadSiteSettings()
+        // Используем новый метод инициализации
+        if (!isInitialized) {
+          await initializeSettings()
+        }
         // Загружаем каталоги
         await loadCatalogs()
       } catch (error) {
         console.error('❌ Error loading data:', error)
         toast.error('Ошибка загрузки данных')
-      } finally {
-        setIsLoadingSettings(false)
       }
     }
 
     loadData()
-  }, [loadSiteSettings])
+  }, [initializeSettings, isInitialized])
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -306,7 +297,7 @@ export default function SettingsAdmin() {
           </div>
           <Button
             onClick={handleSave}
-            disabled={isSaving || isLoadingSettings || !settings}
+            disabled={isSaving || isSettingsLoading || !settings}
             className={`${hasUnsavedChanges ? 'bg-orange-600 hover:bg-orange-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
           >
             <Save className="w-4 h-4 mr-2" />
@@ -314,7 +305,7 @@ export default function SettingsAdmin() {
           </Button>
         </div>
 
-        {isLoadingSettings ? (
+        {isSettingsLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -324,7 +315,7 @@ export default function SettingsAdmin() {
         ) : !settings ? (
           <div className="text-center py-8">
             <p className="text-red-600 mb-4">Ошибка загрузки настроек</p>
-            <Button onClick={() => loadSiteSettings()} variant="outline">
+            <Button onClick={() => initializeSettings()} variant="outline">
               Попробовать снова
             </Button>
           </div>

@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import { ProductRecommendationsSidebar } from "@/components/product-recommendations"
 import { ProductVariantSelectorModal } from "@/components/product-variant-selector-modal"
 
-import { useAdminStore } from "@/lib/admin-store"
+import { useAdminStore } from "@/lib/stores"
 import type { Prosthetic } from "@/lib/data"
 import { Package, Clock, Shield, Tag, ChevronLeft, ChevronRight, X, Building } from "lucide-react"
 import { useState, useMemo } from "react"
@@ -62,7 +62,8 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)
   const { addItem } = useCart()
-  const { products } = useAdminStore()
+  const _products = useAdminStore(state => state.products)
+  const adaptedProducts = useAdminStore(state => state.getAdaptedProducts())
 
   // Получаем изображения из выбранного варианта или товара
   const images = useMemo(() => {
@@ -410,8 +411,8 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
                   Рекомендуем также
                 </h3>
                 <ProductRecommendationsSidebar
-                  currentProduct={product}
-                  allProducts={products}
+                  currentProduct={product as any}
+                  allProducts={adaptedProducts}
                   onProductSelect={handleRecommendationSelect}
                 />
               </div>
@@ -425,8 +426,8 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
             </h3>
             <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
               <ProductRecommendationsSidebar
-                currentProduct={product}
-                allProducts={products}
+                currentProduct={product as any}
+                allProducts={adaptedProducts}
                 onProductSelect={handleRecommendationSelect}
                 className="flex gap-2 pb-2"
               />

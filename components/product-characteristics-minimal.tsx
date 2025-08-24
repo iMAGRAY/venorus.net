@@ -37,12 +37,6 @@ export default function ProductCharacteristicsMinimal({ sections }: ProductChara
   
   // Проверяем структуру данных и логируем для отладки
   try {
-    console.log('📊 ProductCharacteristicsMinimal received:', {
-      sectionsCount: sections.length,
-      firstSection: sections[0],
-      firstGroup: sections[0]?.groups?.[0],
-      firstCharacteristics: sections[0]?.groups?.[0]?.characteristics
-    })
     
     sections.forEach(section => {
       if (section.groups) {
@@ -103,13 +97,6 @@ export default function ProductCharacteristicsMinimal({ sections }: ProductChara
                     });
                   
                   // Логируем для отладки
-                  if (index === 0) {
-                    console.log('🔍 First group characteristics:', {
-                      groupName: group.group_name,
-                      rawCharacteristics: group.characteristics,
-                      filteredCharacteristics: sortedCharacteristics
-                    });
-                  }
                   
                   // Пропускаем группу, если в ней нет характеристик с значениями
                   if (sortedCharacteristics.length === 0) {

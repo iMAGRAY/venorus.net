@@ -46,7 +46,7 @@ export function WarehouseStockManager({
 
   const fetchWarehouses = useCallback(async () => {
       try {
-        const response = await fetch('/api/warehouses')
+        const response = await fetch('/api/warehouse/warehouses')
         if (response.ok) {
           const data = await response.json()
           setWarehouses(data)

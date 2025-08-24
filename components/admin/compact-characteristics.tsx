@@ -68,11 +68,6 @@ function CompactCharacteristicsComponent({ productId, onSave, readonly = false, 
   // Логирование для отладки
   useEffect(() => {
     if (mode === 'configurable') {
-      console.log('🔍 CompactCharacteristics (configurable mode):', {
-        productId,
-        initialCharacteristics,
-        selectedCharacteristics
-      })
     }
   }, [mode, productId, initialCharacteristics, selectedCharacteristics])
   const [loading, setLoading] = useState(true)

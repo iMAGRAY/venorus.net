@@ -58,21 +58,9 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       try {
         setLoading(true)
         const url = `/api/v2/product-variants?master_id=${productId}&include_images=true&include_characteristics=true&only_active=false`
-        console.log('🔍 VARIANTS MANAGER - Запрос:', url)
         
         const response = await fetch(url)
         const data = await response.json()
-        
-        console.log('📊 VARIANTS MANAGER - Ответ:', {
-          success: data.success,
-          totalCount: data.data?.length || 0,
-          rawVariants: data.data?.map((v: any) => ({
-            id: v.id,
-            name: v.name,
-            is_active: v.is_active,
-            master_id: v.master_id
-          }))
-        })
         
         if (data.success && data.data) {
           // Преобразуем данные из нового формата в старый для совместимости
@@ -83,11 +71,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
             
             // Ищем характеристику "Размер" в массиве характеристик
             const characteristics = v.attributes?.characteristics || v.characteristics || [];
-            console.log(`🔍 Variant ${v.id} characteristics:`, {
-              fromAttributes: v.attributes?.characteristics,
-              fromDirect: v.characteristics,
-              final: characteristics
-            });
             const sizeChar = characteristics.find((char: any) => 
               char.template_name === 'Размер' || 
               char.name === 'Размер' ||
@@ -140,16 +123,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
             }
           })
           
-          console.log('🔄 VARIANTS MANAGER - После трансформации:', {
-            transformedCount: transformedVariants.length,
-            transformedVariants: transformedVariants.map((v: ProductVariant) => ({
-              id: v.id,
-              sizeName: v.sizeName,
-              name: v.name,
-              isAvailable: v.isAvailable
-            }))
-          })
-          
           setVariants(transformedVariants)
         }
       } catch (error) {
@@ -169,12 +142,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
   }, [fetchVariants])
 
   const handleOpenForm = (variant?: ProductVariant) => {
-    console.log('Opening variant form:', {
-      variant,
-      variantImages: variant?.images,
-      isNewVariant: !variant,
-      productId
-    })
     setEditingVariant(variant)
     setIsFormOpen(true)
   }
@@ -232,17 +199,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       if (!variant.id) {
         variantData.master_id = productId
       }
-
-      // Детальное логирование перед отправкой
-      console.log('Sending variant data:', {
-        url,
-        method: _method,
-        variantId: variant.id,
-        images: variantData.images,
-        imagesType: typeof variantData.images,
-        imagesIsArray: Array.isArray(variantData.images),
-        fullData: variantData
-      })
 
       const response = await fetch(url, {
         method: _method,
