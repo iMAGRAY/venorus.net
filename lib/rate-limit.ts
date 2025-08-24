@@ -18,7 +18,7 @@ export interface RateLimitConfig {
 // Конфигурации для разных типов API
 export const RATE_LIMITS = {
   login: { windowMs: 15 * 60 * 1000, maxRequests: 5 }, // 5 попыток за 15 минут
-  api: { windowMs: 60 * 1000, maxRequests: 100 }, // 100 запросов в минуту
+  api: { windowMs: 60 * 1000, maxRequests: 2000 }, // 2000 запросов в минуту (увеличено для нормального использования)
   strict: { windowMs: 60 * 1000, maxRequests: 10 }, // 10 запросов в минуту для чувствительных API
 }
 
