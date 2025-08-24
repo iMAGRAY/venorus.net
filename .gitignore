@@ -30,6 +30,10 @@ pnpm-lock.yaml
 # Environment variables and secrets
 .env.local
 .env
+.env.production
+.env.development
+deploy-commands.txt
+trigger-clean-deploy.js
 
 # Database
 *.sqlite
@@ -222,10 +226,54 @@ tsconfig.tsbuildinfo
 *.rar
 *.7z
 *.tar.gz
+*.tgz
+
+# Report and analysis files  
+*-report.json
+*-report.md
+*-REPORT.md
+*REPORT.md
+*report.json
+comprehensive-test-report.json
+database-state-report.md
+testing-plan-comprehensive.md
+deployment-guide.md
+
+# Generated documentation files
+COMPREHENSIVE_*.md
+DEPLOYMENT_*.md
+TESTING_*.md
+FINAL_*.md
+DNS_*.md
+SSL_*.md
+
+# Deploy and setup scripts (keep in separate repo)
+deploy-*.sh
+setup-*.sh
+update-*.sh
+*.env.example.*
+
+# Output directories
+/out/
+/data/
+/logs/
+
+# Log files everywhere
+*.log
+dev.log
+py_server.log
 
 # Test files in root
 test-*.js
 *-test.js
+
+# Backup and temporary files
+*-backup.*
+*.backup
+*_backup.*
+cart-cookies.txt
+api_response.json
+100
 
 # Other temporary files
 *.1751964407036

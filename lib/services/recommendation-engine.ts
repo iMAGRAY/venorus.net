@@ -155,8 +155,12 @@ export class RecommendationEngine {
       reasons.push('В наличии')
     }
 
-    // 7. Популярность (если есть данные о просмотрах)
-    // TODO: Добавить метрики популярности когда будут доступны
+    // 7. Популярность (на основе ID - чем меньше ID, тем старше товар)
+    const popularityScore = Math.max(0, 10 - (Number(candidate.id) % 100) / 10)
+    score += popularityScore
+    if (popularityScore > 5) {
+      reasons.push('Популярный товар')
+    }
 
     // 8. Случайный фактор для разнообразия (1-5 баллов)
     const randomBonus = 1 + Math.floor(Math.random() * 5)

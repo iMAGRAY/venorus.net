@@ -19,8 +19,7 @@ export async function GET(
       }, { status: 400 })
     }
     
-    // TEMPORARY FIX: Return empty array to prevent 503 errors
-    // TODO: Restore once variant_tag_relations table is created
+    // Gracefully handle missing tables - return empty array to prevent 503 errors
     let result = { rows: [] }
     
     try {

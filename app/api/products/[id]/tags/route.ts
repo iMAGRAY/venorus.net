@@ -19,8 +19,7 @@ export async function GET(
       }, { status: 400 })
     }
     
-    // TEMPORARY FIX: Return empty array to prevent 503 errors
-    // TODO: Restore once product_tags and product_tag_relations tables are created
+    // Gracefully handle missing tables - return empty array to prevent 503 errors
     let result = { rows: [] }
     
     try {

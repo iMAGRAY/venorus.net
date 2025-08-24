@@ -66,8 +66,11 @@ export function ProductRecommendations({
     setIsVisible(false)
     setCurrentRecommendationIndex(0) // Сбрасываем на первую группу рекомендаций
 
-    const timer = setTimeout(() => setIsVisible(true), 300)
-    return () => clearTimeout(timer)
+    const animationFrame = requestAnimationFrame(() => {
+      const timer = setTimeout(() => setIsVisible(true), 300)
+      return timer
+    })
+    return () => cancelAnimationFrame(animationFrame)
   }, [currentProduct?.id]) // Добавляем зависимость от ID товара
 
   // Если нет рекомендаций, не показываем компонент

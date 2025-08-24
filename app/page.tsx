@@ -33,15 +33,6 @@ import { CatalogDownloadButtons } from "@/components/catalog-download-buttons"
 import { useI18n } from "@/components/i18n-provider"
 
 // Строгие интерфейсы для типизации
-interface _Category {
-  id: number
-  name: string
-  parent_id: number | null
-  level: number
-  full_path: string
-  is_active: boolean
-}
-
 interface CategoryGroup {
   id: number
   name: string
@@ -127,19 +118,6 @@ export default function HomePage() {
     logger.log("HomePage: Categories:", adminCategories.length)
   }, [allProducts, adminCategories])
 
-  // Функция для принудительного обновления данных
-  const _handleForceRefresh = async () => {
-    _setRefreshing(true)
-    try {
-      await refreshAll()
-
-    } catch (error) {
-      logger.error('❌ Ошибка при обновлении данных:', error)
-    } finally {
-      _setRefreshing(false)
-    }
-  }
-
   // Функция для прокрутки к каталогу
   const scrollToCatalog = () => {
     const catalogSection = document.getElementById('products')
@@ -155,7 +133,6 @@ export default function HomePage() {
   const [_specGroups, _setSpecGroups] = useState<any[]>([])
   const [catalogMenuItems, setCatalogMenuItems] = useState<any[]>([])
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set()) // Для отображения/скрытия подкатегорий
-  const [_refreshing, _setRefreshing] = useState(false)
 
   // Функция для переключения раскрытия категории
   const toggleCategoryExpansion = useCallback((categoryId: number) => {
@@ -807,10 +784,6 @@ export default function HomePage() {
     }
   }, [loadMoreProducts])
 
-  const _handleFilterChange = useCallback((filters: any) => {
-    setAppliedFilters(filters)
-    if (isFilterDrawerOpen) setIsFilterDrawerOpen(false)
-  }, [isFilterDrawerOpen])
 
   const handleQuickView = useCallback((product: any) => {
     setQuickViewProduct(product)

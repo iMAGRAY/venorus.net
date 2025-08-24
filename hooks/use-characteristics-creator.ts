@@ -146,7 +146,6 @@ export function useCharacteristicsCreator(
           // Enum not found in spec groups
         }
       }
-      // TODO: Handle template_ IDs for text characteristics if needed
          })
 
      return characteristics

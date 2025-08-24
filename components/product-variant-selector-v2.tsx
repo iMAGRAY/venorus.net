@@ -87,7 +87,7 @@ export function ProductVariantSelectorV2({
     onVariantChange(variant)
     
     // Имитация загрузки изображения
-    setTimeout(() => setImageLoading(false), 300)
+    setTimeout(() => setImageLoading(false), 200)
   }, [onVariantChange, setSelectedVariant, setImageLoading])
 
   const fetchVariants = useCallback(async () => {
