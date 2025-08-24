@@ -91,6 +91,9 @@ export default function HomePage() {
   const isInitialized = useAdminStore(state => state.initialized.products && state.initialized.categories && state.initialized.settings)
   const initializeAll = useAdminStore(state => state.initializeAll)
   const refreshAll = useAdminStore(state => state.refreshAll)
+  
+  // Мемоизированные адаптированные продукты для стабильности
+  const adaptedProducts = useAdminStore(state => state.getAdaptedProducts())
 
   // Initialize data on mount
   useEffect(() => {
@@ -810,12 +813,10 @@ export default function HomePage() {
   }, [isFilterDrawerOpen])
 
   const handleQuickView = useCallback((product: any) => {
-
     setQuickViewProduct(product)
   }, [])
 
   const handleProductChange = useCallback((newProduct: any) => {
-
     setQuickViewProduct(newProduct)
   }, [])
 
@@ -1394,6 +1395,7 @@ export default function HomePage() {
           isOpen={!!quickViewProduct}
           onClose={() => setQuickViewProduct(null)}
           onProductChange={handleProductChange}
+          allProducts={adaptedProducts}
         />
 
         <Footer />

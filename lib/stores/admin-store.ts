@@ -8,6 +8,13 @@ import { CACHE_TAGS } from '../cache/types'
 import { logger } from '../logger'
 import { ApiClient } from '../api-client'
 
+// Кеш для мемоизации адаптированных продуктов
+let adaptedProductsCache: {
+  products: Product[]
+  categories: Category[]
+  result: Prosthetic[]
+} | null = null
+
 // Константы для кеш ключей
 const CACHE_KEYS = {
   PRODUCTS: 'admin:products',
@@ -216,6 +223,8 @@ export const useAdminStore = create<AdminStore>()(
             state.initialized.products = true
             state.lastFetch.products = Date.now()
           })
+          
+          adaptedProductsCache = null // Сброс кеша при обновлении продуктов
 
           logger.info('Products initialized', { count: products.length })
         } catch (error) {
@@ -258,6 +267,8 @@ export const useAdminStore = create<AdminStore>()(
             state.initialized.categories = true
             state.lastFetch.categories = Date.now()
           })
+          
+          adaptedProductsCache = null // Сброс кеша при обновлении категорий
 
           logger.info('Categories initialized', { count: categories.length })
         } catch (error) {
@@ -718,15 +729,32 @@ export const useAdminStore = create<AdminStore>()(
         return get().products.filter((p: any) => p.inStock !== false).length
       },
       
-      // Обратная совместимость: адаптирует Product[] в Prosthetic[]
+      // Обратная совместимость: адаптирует Product[] в Prosthetic[] с мемоизацией
       getAdaptedProducts: () => {
         const state = get()
-        return adaptProductsToProsthetics(state.products, state.categories)
+        
+        // Проверяем, нужно ли пересчитывать
+        if (adaptedProductsCache && 
+            adaptedProductsCache.products === state.products &&
+            adaptedProductsCache.categories === state.categories) {
+          return adaptedProductsCache.result
+        }
+        
+        // Пересчитываем и кешируем
+        const result = adaptProductsToProsthetics(state.products, state.categories)
+        adaptedProductsCache = {
+          products: state.products,
+          categories: state.categories,
+          result
+        }
+        
+        return result
       },
 
       // === УТИЛИТЫ ===
 
       reset: () => {
+        adaptedProductsCache = null // Сброс кеша
         set(() => ({ ...initialState }))
       },
 

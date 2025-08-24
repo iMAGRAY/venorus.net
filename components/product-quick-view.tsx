@@ -22,6 +22,7 @@ interface ProductQuickViewProps {
   isOpen: boolean
   onClose: () => void
   onProductChange?: (product: Prosthetic) => void
+  allProducts?: Prosthetic[] // Добавляем пропс для избежания использования store
 }
 
 interface ProductVariant {
@@ -57,13 +58,13 @@ interface ProductVariant {
 
 
 
-export function ProductQuickView({ product, isOpen, onClose, onProductChange }: ProductQuickViewProps) {
+export function ProductQuickView({ product, isOpen, onClose, onProductChange, allProducts }: ProductQuickViewProps) {
   const { t } = useI18n()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)
   const { addItem } = useCart()
-  const _products = useAdminStore(state => state.products)
-  const adaptedProducts = useAdminStore(state => state.getAdaptedProducts())
+  // Используем переданные products или fallback на пустой массив
+  const adaptedProducts = allProducts || []
 
   // Получаем изображения из выбранного варианта или товара
   const images = useMemo(() => {
@@ -76,7 +77,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
       return [selectedVariant.imageUrl]
     }
     return product.images || (product.imageUrl ? [product.imageUrl] : [])
-  }, [selectedVariant, product])
+  }, [selectedVariant?.images, selectedVariant?.imageUrl, product?.images, product?.imageUrl, product?.id])
 
   // Вычисляем актуальную цену с учетом выбранного варианта
   const actualPrice = useMemo(() => {
@@ -86,7 +87,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
       return selectedVariant.discountPrice || selectedVariant.price || null
     }
     return getActualPrice(product)
-  }, [selectedVariant, product])
+  }, [selectedVariant?.discountPrice, selectedVariant?.price, product?.price, product?.discount_price, product?.id])
 
   // Проверяем доступность с учетом выбранного варианта
   const _isAvailable = useMemo(() => {
@@ -96,7 +97,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange }: 
       return selectedVariant.isAvailable && !isProductOutOfStock(selectedVariant as any)
     }
     return isProductAvailable(product)
-  }, [selectedVariant, product])
+  }, [selectedVariant?.isAvailable, selectedVariant?.stockQuantity, product?.stock_quantity, product?.id])
 
   if (!product) return null
 
