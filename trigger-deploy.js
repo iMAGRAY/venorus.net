@@ -15,10 +15,10 @@ const WEBHOOK_SECRET = 'your-webhook-secret'
 // Создаем тестовую payload как от GitHub
 const payload = JSON.stringify({
   ref: 'refs/heads/main',
-  after: '31e8920', // Исправленная сборка webpack
+  after: '14e087f', // Глобальный экспорт UI компонентов
   head_commit: {
-    id: '31e8920',
-    message: 'Исправить ошибки сборки webpack для успешного развертывания',
+    id: '14e087f',
+    message: 'Добавить глобальный экспорт UI компонентов для стабильной сборки',
     author: {
       name: 'Claude Code',
       email: 'noreply@anthropic.com'
