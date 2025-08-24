@@ -10,7 +10,7 @@ const https = require('https')
 
 // Конфигурация
 const WEBHOOK_URL = 'https://venorus.net/api/webhook/github'
-const WEBHOOK_SECRET = 'ef03777b5b336374db2ba728217139d7b84dd272eade2fe6a249aa2967e1030d'
+const WEBHOOK_SECRET = 'your-webhook-secret'
 
 // Создаем тестовую payload как от GitHub
 const payload = JSON.stringify({
