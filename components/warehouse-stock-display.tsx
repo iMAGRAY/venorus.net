@@ -47,7 +47,7 @@ export function WarehouseStockDisplay({
         }
       }
     } catch (error) {
-      console.error('Error fetching warehouse stocks:', error)
+      // Error fetching warehouse stocks
     } finally {
       setLoading(false)
     }

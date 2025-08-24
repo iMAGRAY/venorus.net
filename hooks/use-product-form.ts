@@ -123,7 +123,7 @@ export function useProductForm(product?: any): ProductFormHookReturn {
         setIsDirty(false)
       }
     } catch (error) {
-      console.error('Error loading product:', error)
+      // Error loading product
       toast.error('Ошибка загрузки продукта')
     } finally {
       setIsLoading(false)
@@ -214,7 +214,7 @@ export function useProductForm(product?: any): ProductFormHookReturn {
       toast.success(formData.id ? 'Товар успешно обновлен!' : 'Товар успешно создан!')
       return productId
     } catch (error) {
-      console.error('Error saving product:', error)
+      // Error saving product
       toast.error('Ошибка сохранения продукта')
       return null
     } finally {

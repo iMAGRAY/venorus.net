@@ -36,7 +36,7 @@ export function useWarehouse() {
       actions.setSections(data.sections)
 
     } catch (error) {
-      console.error('❌ Ошибка загрузки данных склада:', error)
+      // Ошибка загрузки данных склада
       actions.setError(error instanceof Error ? error.message : 'Неизвестная ошибка')
       toast.error('Не удалось загрузить данные склада')
     } finally {
@@ -51,7 +51,7 @@ export function useWarehouse() {
       actions.setAnalyticsData(analyticsData)
 
     } catch (error) {
-      console.error('❌ Ошибка загрузки аналитики:', error)
+      // Ошибка загрузки аналитики
       toast.error('Не удалось загрузить аналитику')
     }
   }, [actions, warehouseService])
@@ -70,7 +70,7 @@ export function useWarehouse() {
       actions.setBulkData(uniqueData)
 
     } catch (error) {
-      console.error('❌ Ошибка загрузки bulk данных:', error)
+      // Ошибка загрузки bulk данных
       toast.error('Не удалось загрузить данные для массовых операций')
     } finally {
       actions.setBulkLoading(false)
@@ -85,7 +85,7 @@ export function useWarehouse() {
       actions.setDialog('region', false)
       toast.success('Регион успешно создан')
     } catch (error) {
-      console.error('Ошибка создания региона:', error)
+      // Ошибка создания региона
       toast.error('Не удалось создать регион')
     }
   }, [actions, loadAllData, warehouseService])
@@ -97,7 +97,7 @@ export function useWarehouse() {
       actions.setDialog('city', false)
       toast.success('Город успешно создан')
     } catch (error) {
-      console.error('Ошибка создания города:', error)
+      // Ошибка создания города
       toast.error('Не удалось создать город')
     }
   }, [actions, loadAllData, warehouseService])
@@ -109,7 +109,7 @@ export function useWarehouse() {
       actions.setDialog('warehouse', false)
       toast.success('Склад успешно создан')
     } catch (error) {
-      console.error('Ошибка создания склада:', error)
+      // Ошибка создания склада
       toast.error('Не удалось создать склад')
     }
   }, [actions, loadAllData, warehouseService])
@@ -121,7 +121,7 @@ export function useWarehouse() {
       actions.setDialog('zone', false)
       toast.success('Зона успешно создана')
     } catch (error) {
-      console.error('Ошибка создания зоны:', error)
+      // Ошибка создания зоны
       toast.error('Не удалось создать зону')
     }
   }, [actions, loadAllData, warehouseService])
@@ -133,7 +133,7 @@ export function useWarehouse() {
       actions.setDialog('section', false)
       toast.success('Секция успешно создана')
     } catch (error) {
-      console.error('Ошибка создания секции:', error)
+      // Ошибка создания секции
       toast.error('Не удалось создать секцию')
     }
   }, [actions, loadAllData, warehouseService])
@@ -145,7 +145,7 @@ export function useWarehouse() {
       await loadAllData()
       toast.success(`${node.type} успешно удален`)
     } catch (error) {
-      console.error('Ошибка удаления:', error)
+      // Ошибка удаления
       toast.error(error instanceof Error ? error.message : 'Не удалось удалить элемент')
     }
   }, [loadAllData, warehouseService])
@@ -188,7 +188,7 @@ export function useWarehouse() {
         toast.error(result.message)
       }
     } catch (error) {
-      console.error('Ошибка массовой операции:', error)
+      // Ошибка массовой операции
       toast.error('Не удалось выполнить операцию')
     }
   }, [state.bulkOperationsData, warehouseService, loadAllData, loadBulkOperationsData])

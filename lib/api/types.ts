@@ -29,7 +29,7 @@ export interface TimestampFields {
 export interface Product extends TimestampFields {
   id: number;
   name: string;
-  slug: string;
+  slug?: string; // Не обязательное, генерируется из name
   sku?: string;
   description?: string;
   category_id: number;
@@ -39,14 +39,20 @@ export interface Product extends TimestampFields {
   price?: number;
   discount_price?: number;
   stock_quantity: number;
-  is_active: boolean;
-  is_featured: boolean;
-  is_new: boolean;
-  is_bestseller: boolean;
-  main_image_url?: string;
+  stock_status?: string;
+  in_stock?: boolean;
+  is_deleted: boolean;
+  show_price: boolean;
+  is_bestseller?: boolean; // Оставляем как опциональное для будущего использования
+  image_url?: string; // Соответствует полю БД
+  article_number?: string;
+  weight?: string;
+  battery_life?: string;
+  warranty?: string;
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string;
+  specs_cache?: Record<string, any>;
   
   // Связанные данные (опционально загружаются)
   category?: ProductCategory;
@@ -60,37 +66,49 @@ export interface ProductVariant extends TimestampFields {
   id: number;
   master_id: number;
   name: string;
-  slug: string;
+  slug?: string;
   sku?: string;
   description?: string;
+  short_description?: string;
   price?: number;
   discount_price?: number;
+  cost_price?: number;
   stock_quantity: number;
   reserved_quantity: number;
+  min_stock_level?: number;
+  max_stock_level?: number;
+  stock_status?: string;
   attributes: Record<string, any>;
   primary_image_url?: string;
   images?: string[];
+  videos?: string[];
+  documents?: string[];
   is_active: boolean;
   is_featured: boolean;
   is_new: boolean;
   is_bestseller: boolean;
+  is_recommended?: boolean;
+  is_deleted: boolean;
+  show_price: boolean;
   sort_order: number;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
+  warranty_months?: number;
+  battery_life_hours?: number;
+  custom_fields?: Record<string, any>;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  category_id?: number;
+  short_name?: string;
   
   // Legacy product_sizes fields для backward compatibility
   size_name?: string;
   size_value?: string;
   dimensions?: Record<string, any>;
   specifications?: Record<string, any>;
-  
-  // Дополнительные поля из migration schema
-  weight?: number;
-  warranty_months?: number;
-  battery_life_hours?: number;
-  meta_title?: string;
-  meta_description?: string;
-  meta_keywords?: string;
-  custom_fields?: Record<string, any>;
-  cost_price?: number;
   
   // Связанные данные
   characteristics?: VariantCharacteristic[];

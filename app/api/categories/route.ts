@@ -353,9 +353,9 @@ export async function DELETE(request: NextRequest) {
         );
 
       } else {
-        // Если категория "Аксессуары" не найдена, помечаем товары как неактивные
+        // Если категория "Аксессуары" не найдена, помечаем товары как удаленные
         await executeQuery(
-          'UPDATE products SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE category_id = $1',
+          'UPDATE products SET is_deleted = true, updated_at = CURRENT_TIMESTAMP WHERE category_id = $1',
           [id]
         );
 

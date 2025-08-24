@@ -62,7 +62,7 @@ export function useProductFormData() {
       setCategories(data.data)
       return data.data
     } catch (err) {
-      console.error('❌ Error loading categories:', err)
+      // Error loading categories
       const errorMessage = err instanceof Error ? err.message : 'Failed to load categories'
       setError(errorMessage)
       toast.error(`Ошибка загрузки категорий: ${errorMessage}`)
@@ -89,7 +89,7 @@ export function useProductFormData() {
       setManufacturers(data.data)
       return data.data
     } catch (err) {
-      console.error('❌ Error loading manufacturers:', err)
+      // Error loading manufacturers
       const errorMessage = err instanceof Error ? err.message : 'Failed to load manufacturers'
       setError(errorMessage)
       toast.error(`Ошибка загрузки производителей: ${errorMessage}`)

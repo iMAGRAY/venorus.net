@@ -12,7 +12,8 @@ export const productionConfig = {
     },
     // SSL для безопасности
     ssl: {
-      rejectUnauthorized: false // В продакшене должно быть true с валидным сертификатом
+      rejectUnauthorized: process.env.NODE_ENV === 'production',
+      ca: process.env.DATABASE_SSL_CA || undefined
     }
   },
 
@@ -53,7 +54,7 @@ export const productionConfig = {
     },
     // CORS
     cors: {
-      origin: process.env.ALLOWED_ORIGINS?.split(',') || ['https://prosthetic-store.ru'],
+      origin: process.env.ALLOWED_ORIGINS?.split(',') || ['https://venorus.net'],
       credentials: true,
       maxAge: 86400,
     },
@@ -171,8 +172,8 @@ export const productionConfig = {
       }
     },
     from: {
-      name: 'Prosthetic Store',
-      email: 'noreply@prosthetic-store.ru',
+      name: 'Venorus',
+      email: 'noreply@venorus.net',
     },
     templates: {
       orderConfirmation: 'order-confirmation',
@@ -204,7 +205,7 @@ export const productionConfig = {
   // CDN
   cdn: {
     enabled: true,
-    url: process.env.CDN_URL || 'https://cdn.prosthetic-store.ru',
+    url: process.env.CDN_URL || 'https://cdn.venorus.net',
     // Какие файлы отдавать через CDN
     patterns: [
       '/images/**',
@@ -236,7 +237,7 @@ export const productionConfig = {
       userAgent: '*',
       allow: ['/'],
       disallow: ['/admin', '/api', '/auth'],
-      sitemap: 'https://prosthetic-store.ru/sitemap.xml',
+      sitemap: 'https://venorus.net/sitemap.xml',
     }
   }
 };

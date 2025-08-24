@@ -143,7 +143,7 @@ export function useCharacteristicsCreator(
             characteristics.push(newChar)
           }
         } else {
-          console.error(`❌ Enum ${enumId} not found in spec groups!`)
+          // Enum not found in spec groups
         }
       }
       // TODO: Handle template_ IDs for text characteristics if needed
