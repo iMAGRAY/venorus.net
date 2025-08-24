@@ -50,6 +50,8 @@ export const productionConfig = {
         '/api/auth/login': { windowMs: 15 * 60 * 1000, max: 5 },
         '/api/auth/register': { windowMs: 60 * 60 * 1000, max: 3 },
         '/api/upload': { windowMs: 60 * 60 * 1000, max: 20 },
+        '/api/cache/clear': { windowMs: 5 * 60 * 1000, max: 50 }, // 50 запросов за 5 минут для очистки кеша
+        '/api/cache/*': { windowMs: 5 * 60 * 1000, max: 200 }, // 200 запросов за 5 минут для всех cache операций
       }
     },
     // CORS
