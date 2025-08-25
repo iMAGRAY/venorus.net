@@ -2,17 +2,19 @@ module.exports = {
   apps: [
     {
       name: 'venorus-net',
-      script: 'npm',
+      script: 'node_modules/.bin/next',
       args: 'start',
       cwd: '/opt/venorus',
       instances: 1,
       exec_mode: 'fork',
+      interpreter: 'node',
       
-      // Environment
+      // Environment - ВАЖНО для правильной работы
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
-        DISABLE_RATE_LIMIT: 'false'
+        DISABLE_RATE_LIMIT: 'false',
+        NEXT_TELEMETRY_DISABLED: 1
       },
       
       // Auto restart configuration
@@ -41,8 +43,9 @@ module.exports = {
       
       // Node.js optimization for production
       node_args: [
-        '--max-old-space-size=2048',
-        '--optimize-for-size'
+        '--max-old-space-size=4096',
+        '--optimize-for-size',
+        '--no-warnings'
       ],
       
       // Process monitoring

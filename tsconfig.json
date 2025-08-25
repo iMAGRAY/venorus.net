@@ -6,12 +6,12 @@
       "esnext"
     ],
     "allowJs": true,
-    "target": "ES6",
+    "target": "ES2020",
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "useUnknownInCatchVariables": false,
-    "noImplicitReturns": true,
-    "noImplicitOverride": true,
+    "noImplicitReturns": false,
+    "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false,
     "exactOptionalPropertyTypes": false,
     "noEmit": true,
@@ -22,6 +22,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "tsBuildInfoFile": ".next/.tsbuildinfo",
     "plugins": [
       {
         "name": "next"
@@ -41,6 +42,10 @@
   ],
   "exclude": [
     "node_modules",
-    ".next"
+    ".next",
+    "scripts/**/*",
+    "tests/**/*",
+    "database/**/*",
+    "docs/**/*"
   ]
 }

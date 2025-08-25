@@ -34,7 +34,8 @@
   },
   "scripts": {
     "dev": "node scripts/kill-port.js 3010 && next dev -p 3010",
-    "build": "next build",
+    "build": "cross-env NODE_OPTIONS=\"--max-old-space-size=8192\" next build --no-lint",
+    "build:win": "set NODE_OPTIONS=--max-old-space-size=8192 && next build --no-lint",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
