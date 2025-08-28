@@ -60,6 +60,7 @@ const adminApi = {
     const response = await fetch('/api/products', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(product)
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -70,6 +71,7 @@ const adminApi = {
     const response = await fetch(`/api/admin/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(updates)
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -77,8 +79,9 @@ const adminApi = {
   },
 
   async deleteProduct(id: number): Promise<void> {
-    const response = await fetch(`/api/admin/products/${id}`, {
-      method: 'DELETE'
+    const response = await fetch(`/api/products/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
   },
@@ -87,6 +90,7 @@ const adminApi = {
     const response = await fetch('/api/categories', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(category)
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -94,18 +98,21 @@ const adminApi = {
   },
 
   async updateCategory(id: number, updates: Partial<Category>): Promise<Category> {
-    const response = await fetch(`/api/admin/categories/${id}`, {
+    const response = await fetch(`/api/categories`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
+      credentials: 'include',
+      body: JSON.stringify({ id, ...updates })
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
-    return response.json()
+    const result = await response.json()
+    return result.success ? result.data : result
   },
 
   async deleteCategory(id: number): Promise<void> {
-    const response = await fetch(`/api/admin/categories/${id}`, {
-      method: 'DELETE'
+    const response = await fetch(`/api/categories?id=${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
   },
@@ -114,6 +121,7 @@ const adminApi = {
     const response = await fetch('/api/site-settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(settings)
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)

@@ -23,7 +23,11 @@
       "Bash(scp:*)",
       "mcp__postgresql-api-ssh__mcp_ssh_manager",
       "Bash(tar:*)",
-      "Bash(npx depcheck:*)"
+      "Bash(npx depcheck:*)",
+      "Bash(time curl:*)",
+      "mcp__postgresql-api-ssh__mcp_psql_manager",
+      "Bash(cat:*)",
+      "mcp__playwright-mcp__browser_navigate"
     ],
     "deny": [],
     "ask": [],

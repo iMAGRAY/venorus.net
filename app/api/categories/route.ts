@@ -1,10 +1,10 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server'
 import { executeQuery } from '@/lib/database/db-connection'
 import { withCache, invalidateApiCache } from '@/lib/cache/cache-middleware'
 import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
 import { guardDbOr503, tablesExist } from '@/lib/api-guards'
 import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
+import { requireAuth, hasPermission } from '@/lib/database-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -160,8 +160,18 @@ export const GET = withCache(async function GET(request: NextRequest) {
 })
 
 export async function POST(request: NextRequest) {
-
   try {
+    const session = await requireAuth(request)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!hasPermission(session.user, 'categories.create') &&
+        !hasPermission(session.user, 'categories.*') &&
+        !hasPermission(session.user, '*')) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
     const data = await request.json();
 
     // Валидация обязательных полей
@@ -218,8 +228,18 @@ export async function POST(request: NextRequest) {
 
 // PUT /api/categories - Обновить категорию
 export async function PUT(request: NextRequest) {
-
   try {
+    const session = await requireAuth(request)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!hasPermission(session.user, 'categories.update') &&
+        !hasPermission(session.user, 'categories.*') &&
+        !hasPermission(session.user, '*')) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
     const body = await request.json();
     const { id, name, description, parent_id, image_url: _image_url, sort_order } = body;
 
@@ -267,8 +287,18 @@ export async function PUT(request: NextRequest) {
 
 // DELETE /api/categories - Удалить категорию
 export async function DELETE(request: NextRequest) {
-
   try {
+    const session = await requireAuth(request)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!hasPermission(session.user, 'categories.delete') &&
+        !hasPermission(session.user, 'categories.*') &&
+        !hasPermission(session.user, '*')) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const force = searchParams.get('force') === 'true';
