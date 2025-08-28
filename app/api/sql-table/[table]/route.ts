@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db-connection"
+import { requireAuth, hasPermission } from "@/lib/database-auth"
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,9 +21,21 @@ const ALLOWED_TABLES = [
 ]
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ table: string }> }
 ) {
+  // КРИТИЧЕСКАЯ ПРОВЕРКА БЕЗОПАСНОСТИ
+  const session = await requireAuth(req)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Только суперадмины могут читать прямые данные из БД
+  if (!hasPermission(session.user, 'system.debug') &&
+      !hasPermission(session.user, '*')) {
+    return NextResponse.json({ error: 'Access denied - admin privileges required' }, { status: 403 })
+  }
+
   const resolvedParams = await params
   const { table } = resolvedParams
   if (!ALLOWED_TABLES.includes(table)) {

@@ -100,19 +100,16 @@ export function VariantWarehouseStockManager({
 
   const handleQuantityChange = (warehouseId: number, quantity: string) => {
     const numQuantity = parseInt(quantity) || 0
-    setWarehouseStocks(prev => 
-      prev.map(stock => 
-        stock.warehouse_id === warehouseId
-          ? { ...stock, quantity: numQuantity }
-          : stock
-      )
+    const updatedStocks = warehouseStocks.map(stock => 
+      stock.warehouse_id === warehouseId
+        ? { ...stock, quantity: numQuantity }
+        : stock
     )
+    setWarehouseStocks(updatedStocks)
     setIsDirty(true)
 
-    // Вычисляем общее количество
-    const total = warehouseStocks.reduce((sum, stock) => {
-      return sum + (stock.warehouse_id === warehouseId ? numQuantity : stock.quantity)
-    }, 0)
+    // Вычисляем общее количество на основе обновленных данных
+    const total = updatedStocks.reduce((sum, stock) => sum + stock.quantity, 0)
     onTotalChange?.(total)
   }
 
@@ -129,6 +126,7 @@ export function VariantWarehouseStockManager({
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(warehouseStocks)
       })
 

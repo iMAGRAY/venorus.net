@@ -2360,6 +2360,7 @@ ALTER SEQUENCE public.product_view_stats_id_seq OWNED BY public.product_view_sta
 CREATE TABLE public.products (
     id integer NOT NULL,
     name character varying(500) NOT NULL,
+    short_name character varying(255),
     category_id integer,
     description text,
     image_url text,

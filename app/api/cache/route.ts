@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
+import { requireAuth, hasPermission } from '@/lib/database-auth'
 
 // Серверный кеш для API endpoints
 const serverCache = new Map<string, { data: any; expires: number }>()
@@ -88,6 +89,19 @@ export async function GET(request: NextRequest) {
 
 // POST - установить значение в кеш
 export async function POST(request: NextRequest) {
+  // Проверяем аутентификацию
+  const session = await requireAuth(request)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Проверяем права доступа
+  if (!hasPermission(session.user, 'cache.manage') &&
+      !hasPermission(session.user, 'system.*') &&
+      !hasPermission(session.user, '*')) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+  }
+
   try {
     const { action, key, value, ttl } = await request.json()
 
@@ -133,6 +147,19 @@ export async function POST(request: NextRequest) {
 
 // DELETE - удалить значение из кеша
 export async function DELETE(request: NextRequest) {
+  // Проверяем аутентификацию
+  const session = await requireAuth(request)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Проверяем права доступа
+  if (!hasPermission(session.user, 'cache.manage') &&
+      !hasPermission(session.user, 'system.*') &&
+      !hasPermission(session.user, '*')) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+  }
+
   try {
     const { key, action } = await request.json()
 

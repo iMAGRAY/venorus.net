@@ -299,6 +299,7 @@ export const MediaGallery = forwardRef<MediaGalleryRef>((_props, ref) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ url }),
       })
 
@@ -373,6 +374,7 @@ export const MediaGallery = forwardRef<MediaGalleryRef>((_props, ref) => {
             headers: {
               'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({ url: imageUrl }),
           })
 

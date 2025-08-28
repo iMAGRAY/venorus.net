@@ -1,21 +1,44 @@
 import { NextRequest, NextResponse } from "next/server"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import { requireAuth, hasPermission } from "@/lib/database-auth"
+
+// Validate required environment variables
+const S3_ENDPOINT = process.env.S3_ENDPOINT || 'https://s3.amazonaws.com'
+const S3_REGION = process.env.S3_REGION || 'us-east-1'
+const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY
+const S3_SECRET_KEY = process.env.S3_SECRET_KEY
+const S3_BUCKET = process.env.S3_BUCKET
+
+if (!S3_ACCESS_KEY || !S3_SECRET_KEY || !S3_BUCKET) {
+  throw new Error('Missing required S3 environment variables')
+}
 
 // Initialize S3 client
 const s3Client = new S3Client({
-  endpoint: process.env.S3_ENDPOINT || 'https://s3.amazonaws.com',
-  region: process.env.S3_REGION || 'us-east-1',
+  endpoint: S3_ENDPOINT,
+  region: S3_REGION,
   credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY!,
-    secretAccessKey: process.env.S3_SECRET_KEY!,
+    accessKeyId: S3_ACCESS_KEY,
+    secretAccessKey: S3_SECRET_KEY,
   },
   forcePathStyle: true,
 })
 
-const S3_BUCKET = process.env.S3_BUCKET!
-
 // POST /api/upload - Upload image files to S3
 export async function POST(request: NextRequest) {
+  // КРИТИЧЕСКАЯ ПРОВЕРКА БЕЗОПАСНОСТИ
+  const session = await requireAuth(request)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Проверяем права на загрузку файлов
+  if (!hasPermission(session.user, 'media.upload') &&
+      !hasPermission(session.user, 'products.*') &&
+      !hasPermission(session.user, '*')) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+  }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File

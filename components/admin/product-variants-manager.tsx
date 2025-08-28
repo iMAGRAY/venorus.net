@@ -240,7 +240,8 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
 
     try {
       const response = await fetch(`/api/v2/product-variants/${variantId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
 
       if (response.ok) {

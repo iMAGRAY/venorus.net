@@ -306,12 +306,12 @@ export async function POST(request: NextRequest) {
 
     const query = `
       INSERT INTO products (
-        name, description, sku, article_number, price, discount_price,
+        name, short_name, description, sku, article_number, price, discount_price,
         image_url, images, series_id, manufacturer_id, category_id,
         in_stock, stock_quantity, stock_status, weight, battery_life, warranty,
         show_price, created_by
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
       ) RETURNING *
     `;
 
@@ -350,6 +350,7 @@ export async function POST(request: NextRequest) {
 
     const values = [
       requestData.name,
+      requestData.short_name || requestData.name,
       requestData.description || null,
       requestData.sku || null,
       requestData.article_number || null,

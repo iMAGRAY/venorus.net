@@ -1,63 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { exec } from 'child_process'
-import { promisify } from 'util'
 import { logger } from '@/lib/logger'
+import { requireAuth, hasPermission } from '@/lib/database-auth'
 
-const execAsync = promisify(exec)
-
-// Simple restart API with basic authentication
-const RESTART_TOKEN = process.env.RESTART_TOKEN || 'restart-secret-2024'
+// КРИТИЧЕСКИ ВАЖНО: Этот endpoint отключен из соображений безопасности
+// Remote Code Execution через /api/restart представляет крайнюю угрозу
 
 export async function POST(request: NextRequest) {
-  try {
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '')
-    
-    if (token !== RESTART_TOKEN) {
-      return NextResponse.json(
-        { error: 'Unauthorized' }, 
-        { status: 401 }
-      )
-    }
+  // КРИТИЧЕСКАЯ ПРОВЕРКА БЕЗОПАСНОСТИ
+  const session = await requireAuth(request)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-    logger.info('🔄 Manual restart requested...')
+  // Только суперадмины с системными правами
+  if (!hasPermission(session.user, 'system.deploy') &&
+      !hasPermission(session.user, '*')) {
+    return NextResponse.json({ error: 'Access denied - system deployment privileges required' }, { status: 403 })
+  }
+
+  try {
+    logger.warn('🚫 RESTART ENDPOINT DISABLED FOR SECURITY')
+    logger.warn(`User ${session.user.username} attempted to use disabled restart endpoint`)
     
-    // Выполняем команды перезапуска
-    const commands = [
-      'git pull origin main',
-      'npm install --production',
-      'npm run build',
-      'pm2 restart venorus || pkill -f "next start" && nohup npm start > /dev/null 2>&1 &'
-    ]
-    
-    for (const command of commands) {
-      try {
-        logger.info(`Executing: ${command}`)
-        const { stdout, stderr } = await execAsync(command, {
-          cwd: process.cwd(),
-          timeout: 120000 // 2 минуты на каждую команду
-        })
-        
-        if (stderr) {
-          logger.warn(`STDERR for ${command}: ${stderr}`)
-        }
-        logger.info(`SUCCESS: ${command}`)
-      } catch (error) {
-        logger.error(`Failed command: ${command}`, error)
-        return NextResponse.json({
-          error: `Command failed: ${command}`,
-          details: error instanceof Error ? error.message : 'Unknown error'
-        }, { status: 500 })
-      }
-    }
-    
-    logger.info('✅ Manual restart completed successfully')
-    
-    return NextResponse.json({ 
-      message: 'Restart completed successfully',
-      timestamp: new Date().toISOString(),
-      commands: commands.length
-    })
+    return NextResponse.json({
+      error: 'Restart endpoint disabled for security reasons',
+      message: 'Use proper CI/CD deployment instead of remote command execution',
+      security_note: 'This endpoint was disabled due to Remote Code Execution vulnerability',
+      timestamp: new Date().toISOString()
+    }, { status: 501 })
     
   } catch (error) {
     logger.error('❌ Restart API error:', error)

@@ -204,7 +204,8 @@ export default function CategoriesAdmin() {
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
-        }
+        },
+        credentials: 'include'
       })
 
       if (res.ok) {

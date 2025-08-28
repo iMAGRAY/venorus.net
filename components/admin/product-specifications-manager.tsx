@@ -317,12 +317,14 @@ export function ProductSpecificationsManager({
         response = await fetch(`/api/spec-groups`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
           body: JSON.stringify({ id: groupId, ...requestData })
           })
         } else {
         response = await fetch('/api/spec-groups', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
           body: JSON.stringify(requestData)
         })
       }
@@ -367,6 +369,7 @@ export function ProductSpecificationsManager({
       const response = await fetch(`/api/spec-groups`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id: _id })
       })
 
@@ -453,12 +456,14 @@ export function ProductSpecificationsManager({
         response = await fetch(`/api/spec-enums`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
           body: JSON.stringify({ id: editingEnum.id, ...requestData })
           })
         } else {
         response = await fetch('/api/spec-enums', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
           body: JSON.stringify(requestData)
         })
       }
@@ -487,6 +492,7 @@ export function ProductSpecificationsManager({
       const response = await fetch(`/api/spec-enums`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id: enumId })
       })
 

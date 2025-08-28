@@ -155,6 +155,7 @@ export function SpecificationsTemplates({ productId, onSpecificationsAdded }: Sp
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ characteristics: [spec] }),
     })
 
@@ -172,6 +173,7 @@ export function SpecificationsTemplates({ productId, onSpecificationsAdded }: Sp
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ characteristics: specs }),
     })
 

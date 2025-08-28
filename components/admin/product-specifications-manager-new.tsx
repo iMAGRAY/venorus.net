@@ -257,8 +257,9 @@ export function ProductSpecificationsManagerNew({
           setActiveStep('manage')
         }
       }
-    } catch (_error) {
-      // Error loading product characteristics
+    } catch (error) {
+      console.error('Failed to load product characteristics:', error)
+      toast.error('Ошибка загрузки характеристик товара')
     }
   }, [productId, isNewProduct, processApiCharacteristics])
 
@@ -272,8 +273,9 @@ export function ProductSpecificationsManagerNew({
       } else {
         // Failed to load templates
       }
-    } catch (_error) {
-      // Error loading templates
+    } catch (error) {
+      console.error('Failed to load templates:', error)
+      toast.error('Ошибка загрузки шаблонов')
     }
   }, [])
 
@@ -451,6 +453,7 @@ export function ProductSpecificationsManagerNew({
       const res = await fetch('/api/form-templates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(templateData)
       })
 
@@ -478,7 +481,8 @@ export function ProductSpecificationsManagerNew({
     try {
 
       const res = await fetch(`/api/form-templates/${templateId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
 
       if (res.ok) {
@@ -1377,7 +1381,10 @@ export function ProductSpecificationsManagerNew({
                         onClick={async () => {
                           try {
 
-                            const res = await fetch('/api/form-templates/test', { method: 'POST' });
+                            const res = await fetch('/api/form-templates/test', { 
+                              method: 'POST',
+                              credentials: 'include'
+                            });
                             const result = await res.json();
                             if (result.success) {
                               toast.success('Тестовый шаблон создан');

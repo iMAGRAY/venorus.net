@@ -100,6 +100,7 @@ export default function ManufacturerModelLinesPage() {
     try {
       const response = await fetch(`/api/model-lines/${id}`, {
         method: 'DELETE',
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -139,6 +140,7 @@ export default function ManufacturerModelLinesPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           name: formData.name.trim(),
           description: formData.description.trim() || null,

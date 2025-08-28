@@ -618,6 +618,7 @@ function CompactCharacteristicsComponent({ productId, onSave, readonly = false, 
       const res = await fetch('/api/characteristics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: newGroupName.trim(),
           description: newGroupDesc.trim() || undefined,
@@ -673,6 +674,7 @@ function CompactCharacteristicsComponent({ productId, onSave, readonly = false, 
       const res = await fetch('/api/characteristics/values', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           group_id: valueDialogGroup,
           value: newValueName.trim(),

@@ -255,6 +255,7 @@ try {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           zones: updatedZones.map(zone => ({
             name: zone.name,

@@ -165,6 +165,7 @@ export default function ModelLineProductsPage() {
 
       const response = await fetch(`/api/products/${id}`, {
         method: 'DELETE',
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -224,6 +225,7 @@ export default function ModelLineProductsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           name: formData.name.trim(),
           description: formData.description.trim() || null,

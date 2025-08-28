@@ -200,7 +200,10 @@ export class ClientCacheManager {
     this.keyToTags.clear()
 
     // Очищаем сервер асинхронно
-    fetch('/api/cache/clear', { method: 'POST' }).catch(error => {
+    fetch('/api/cache/clear', { 
+      method: 'POST',
+      credentials: 'include'
+    }).catch(error => {
       logger.error('Failed to clear server cache:', error)
     })
 

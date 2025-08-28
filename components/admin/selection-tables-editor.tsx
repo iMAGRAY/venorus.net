@@ -176,6 +176,7 @@ export function SelectionTablesEditor({
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           sku: productSku,
           tables: selectionTables

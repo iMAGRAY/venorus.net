@@ -92,6 +92,7 @@ export function OrderForm({ isOpen, onClose, items, totalPrice, onOrderComplete 
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(orderData),
       })
 

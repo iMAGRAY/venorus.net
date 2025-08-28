@@ -46,8 +46,8 @@ export class MediaManager {
     region: process.env.NEXT_PUBLIC_S3_REGION || process.env.S3_REGION || "ru-1",
     bucket: process.env.NEXT_PUBLIC_S3_BUCKET || process.env.S3_BUCKET || RUNTIME_CONFIG.MEDIA.S3.BUCKET_ID,
     credentials: {
-      accessKeyId: process.env.NEXT_PUBLIC_S3_ACCESS_KEY || process.env.S3_ACCESS_KEY || "IA1BWYIMK9CDTD4H32ZG",
-      secretAccessKey: process.env.NEXT_PUBLIC_S3_SECRET_KEY || process.env.S3_SECRET_KEY || "qDtZCRN0t9WIYxEe2PbA7yfT0wcNlom1dIMHMR4p",
+      accessKeyId: process.env.NEXT_PUBLIC_S3_ACCESS_KEY || process.env.S3_ACCESS_KEY || "",
+      secretAccessKey: process.env.NEXT_PUBLIC_S3_SECRET_KEY || process.env.S3_SECRET_KEY || "",
     },
   }
 
@@ -97,8 +97,9 @@ export class MediaManager {
         lastModified: response.LastModified,
         contentType: response.ContentType,
       }
-    } catch (_error) {
-      return { exists: false }
+    } catch (error) {
+      console.error('Failed to get file info:', error)
+      throw error
     }
   }
 
@@ -112,9 +113,9 @@ export class MediaManager {
 
       const response = await this.s3Client.send(command)
       return response.Contents?.map(obj => obj.Key || "") || []
-    } catch (_error) {
-
-      return []
+    } catch (error) {
+      console.error('Failed to list files:', error)
+      throw error
     }
   }
 
@@ -132,6 +133,7 @@ export class MediaManager {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           hash,
           originalName: file.name,
@@ -166,6 +168,7 @@ export class MediaManager {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           hash: metadata.hash,
           originalName: metadata.originalName,
@@ -201,89 +204,112 @@ export class MediaManager {
     }
   }
 
+  // Validate file before upload
+  private validateFile(file: File): UploadResult | null {
+    if (!file) {
+      return { success: false, error: "No file provided" }
+    }
+
+    if (file.size > RUNTIME_CONFIG.MEDIA.FILE_LIMITS.MAX_FILE_SIZE) {
+      return { success: false, error: "File size must be less than 10MB" }
+    }
+
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
+    if (!allowedTypes.includes(file.type)) {
+      return { success: false, error: "Only image files are allowed (JPEG, PNG, WebP, GIF)" }
+    }
+
+    return null // No validation errors
+  }
+
+  // Handle duplicate file logic
+  private async handleDuplicateCheck(file: File, options: UploadOptions): Promise<UploadResult | null> {
+    if (!options.checkDuplicates || options.forceUpload) {
+      return null // Skip duplicate check
+    }
+
+    const duplicateCheck = await this.checkDuplicate(file)
+    
+    if (!duplicateCheck.isDuplicate || !duplicateCheck.existingFile) {
+      return null // No duplicate found
+    }
+
+    if (options.onDuplicateFound) {
+      const userChoice = await options.onDuplicateFound(duplicateCheck)
+
+      if (userChoice === 'cancel') {
+        return { success: false, error: "Upload cancelled by user" }
+      } else if (userChoice === 'use-existing') {
+        return {
+          success: true,
+          url: duplicateCheck.existingFile.s3_url,
+          key: duplicateCheck.existingFile.s3_url.split('/').pop() || '',
+          isDuplicate: true,
+          existingFile: duplicateCheck.existingFile,
+          hash: duplicateCheck.hash
+        }
+      }
+    } else {
+      return {
+        success: false,
+        isDuplicate: true,
+        existingFile: duplicateCheck.existingFile,
+        hash: duplicateCheck.hash,
+        requiresUserChoice: true,
+        error: "Duplicate file found - user choice required"
+      }
+    }
+
+    return null // Continue with upload
+  }
+
+  // Generate appropriate file key
+  private async generateUploadKey(file: File, options: UploadOptions): Promise<string> {
+    if (options.checkDuplicates && !options.forceUpload) {
+      const hash = await calculateFileHashClient(file)
+      const extension = getFileExtension(file.name)
+      return generateS3KeyFromHash(hash, extension, options.folder)
+    } else {
+      return this.generateFileKey(file, options.folder)
+    }
+  }
+
   // Upload file to S3 with deduplication support
   async uploadFile(
     file: File,
     options: UploadOptions | string = {},
     legacyOnProgress?: (progress: number) => void
   ): Promise<UploadResult> {
-    // Support legacy signature (file, folder, onProgress)
+    // Support legacy signature
     let uploadOptions: UploadOptions
     if (typeof options === 'string') {
-      const _folder = options
-      uploadOptions = { folder: _folder, onProgress: legacyOnProgress, checkDuplicates: true }
+      uploadOptions = { folder: options, onProgress: legacyOnProgress, checkDuplicates: true }
     } else {
       uploadOptions = { folder: "products", checkDuplicates: true, ...options }
     }
 
     try {
-      // Validate file
-      if (!file) {
-        return { success: false, error: "No file provided" }
+      // Step 1: Validate file
+      const validationError = this.validateFile(file)
+      if (validationError) {
+        return validationError
       }
 
-      // Check file size (max 10MB)
-      if (file.size > RUNTIME_CONFIG.MEDIA.FILE_LIMITS.MAX_FILE_SIZE) {
-        return { success: false, error: "File size must be less than 10MB" }
+      // Step 2: Handle duplicate check
+      const duplicateResult = await this.handleDuplicateCheck(file, uploadOptions)
+      if (duplicateResult) {
+        return duplicateResult
       }
 
-      // Check file type
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
-      if (!allowedTypes.includes(file.type)) {
-        return { success: false, error: "Only image files are allowed (JPEG, PNG, WebP, GIF)" }
-      }
+      // Step 3: Generate file key
+      const fileKey = await this.generateUploadKey(file, uploadOptions)
 
-      // Check for duplicates if enabled
-      if (uploadOptions.checkDuplicates && !uploadOptions.forceUpload) {
-        const duplicateCheck = await this.checkDuplicate(file)
-
-        if (duplicateCheck.isDuplicate && duplicateCheck.existingFile) {
-          if (uploadOptions.onDuplicateFound) {
-            const userChoice = await uploadOptions.onDuplicateFound(duplicateCheck)
-
-            if (userChoice === 'cancel') {
-              return { success: false, error: "Upload cancelled by user" }
-            } else if (userChoice === 'use-existing') {
-              return {
-                success: true,
-                url: duplicateCheck.existingFile.s3_url,
-                key: duplicateCheck.existingFile.s3_url.split('/').pop() || '',
-                isDuplicate: true,
-                existingFile: duplicateCheck.existingFile,
-                hash: duplicateCheck.hash
-              }
-            }
-            // If 'upload-new', continue with upload
-          } else {
-            // Return duplicate info for UI to handle
-            return {
-              success: false,
-              isDuplicate: true,
-              existingFile: duplicateCheck.existingFile,
-              hash: duplicateCheck.hash,
-              requiresUserChoice: true,
-              error: "Duplicate file found - user choice required"
-            }
-          }
-        }
-      }
-
-      // Generate file key
-      let fileKey: string
-      if (uploadOptions.checkDuplicates && !uploadOptions.forceUpload) {
-        const hash = await calculateFileHashClient(file)
-        const extension = getFileExtension(file.name)
-        fileKey = generateS3KeyFromHash(hash, extension, uploadOptions.folder)
-      } else {
-        fileKey = this.generateFileKey(file, uploadOptions.folder)
-      }
-
-      // Check if upload is already in progress
+      // Step 4: Check upload queue
       if (this.uploadQueue.has(fileKey)) {
         return await this.uploadQueue.get(fileKey)!
       }
 
-      // Start upload process
+      // Step 5: Start upload
       const uploadPromise = this.performUploadWithDeduplication(file, fileKey, uploadOptions)
       this.uploadQueue.set(fileKey, uploadPromise)
 
@@ -291,9 +317,9 @@ export class MediaManager {
       this.uploadQueue.delete(fileKey)
 
       return result
-    } catch (_error) {
-
-      return { success: false, error: "Upload failed. Please try again." }
+    } catch (error) {
+      console.error('Upload file failed:', error)
+      throw new Error(error instanceof Error ? error.message : 'Upload failed')
     }
   }
 
@@ -398,9 +424,9 @@ export class MediaManager {
       await this.s3Client.send(command)
 
       return true
-    } catch (_error) {
-
-      return false
+    } catch (error) {
+      console.error('Delete file failed:', error)
+      throw error
     }
   }
 
@@ -414,9 +440,8 @@ export class MediaManager {
 
       const signedUrl = await getSignedUrl(this.s3Client, command, { expiresIn: _expiresIn })
       return signedUrl
-    } catch (_error) {
-
-      // Fallback to public URL
+    } catch (error) {
+      console.error('Get signed URL failed, using public URL:', error)
       return this.getPublicUrl(key)
     }
   }

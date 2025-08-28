@@ -179,6 +179,7 @@ export default function ManufacturersAdminPage() {
       setIsSubmitting(true)
       const response = await fetch(`/api/manufacturers/${id}`, {
         method: 'DELETE',
+        credentials: 'include'
       })
 
       const data = await response.json()

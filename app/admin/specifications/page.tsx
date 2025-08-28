@@ -590,7 +590,8 @@ allGroups.push({
   const performDelete = async (groupId: string | number, force: boolean = false) => {
     try {
       const res = await fetch(`/api/characteristics?id=${groupId}${force ? '&force=true' : ''}`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: 'include'
       })
 
       if (res.ok) {
@@ -713,7 +714,8 @@ allGroups.push({
 
     try {
       const res = await fetch(`/api/characteristics/values?id=${enumId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: 'include'
       })
 
       if (res.ok) {
@@ -750,7 +752,8 @@ allGroups.push({
     setIsForceDialogOpen(false)
     try {
       const res = await fetch(`/api/characteristics/values?id=${forceDeleteInfo.id}&force=true`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: 'include'
       })
       if (res.ok) {
         const response = await res.json()

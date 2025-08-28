@@ -78,6 +78,7 @@ export default function SettingsAdmin() {
     try {
       if (!settings) {
         toast.error("Ошибка: настройки не загружены")
+        setIsSaving(false)
         return
       }
 
@@ -182,6 +183,7 @@ export default function SettingsAdmin() {
 
       const response = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include',
         body: uploadFormData
       })
 
@@ -221,6 +223,7 @@ export default function SettingsAdmin() {
       const response = await fetch(endpoint, {
         method: editingCatalog ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData)
       })
 
@@ -241,7 +244,8 @@ export default function SettingsAdmin() {
   const handleDeleteCatalog = async (catalogId: number) => {
     try {
       const response = await fetch(`/api/catalog-files/${catalogId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
 
       const data = await response.json()

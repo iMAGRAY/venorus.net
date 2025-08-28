@@ -114,7 +114,10 @@ export default function RedisMonitorPage() {
         url += `${cacheType ? '&' : '?'}pattern=${pattern}`
       }
 
-      const response = await fetch(url, { method: 'DELETE' })
+      const response = await fetch(url, { 
+        method: 'DELETE',
+        credentials: 'include'
+      })
       const result = await response.json()
 
       setOperationResult(result)
@@ -159,6 +162,7 @@ export default function RedisMonitorPage() {
       const response = await fetch('/api/redis-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           action: 'set',
           cache_type: cacheType,

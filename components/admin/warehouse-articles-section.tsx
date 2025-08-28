@@ -129,6 +129,7 @@ export function WarehouseArticlesSection() {
       const response = await fetch('/api/warehouse/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           product_id: selectedProduct.id,
           sku: form.sku,
@@ -214,6 +215,7 @@ export function WarehouseArticlesSection() {
       const response = await fetch(`/api/warehouse/inventory/${selectedItem.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           quantity: editForm.quantity,
           min_stock: editForm.min_stock,
@@ -249,7 +251,8 @@ export function WarehouseArticlesSection() {
 
     try {
       const response = await fetch(`/api/warehouse/inventory/${selectedItem.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
 
       if (!response.ok) {

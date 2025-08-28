@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db-connection"
+import { requireAuth, hasPermission } from "@/lib/database-auth"
 
 export const dynamic = 'force-dynamic'
 
@@ -63,6 +64,18 @@ export async function POST(_request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  // Проверяем аутентификацию
+  const session = await requireAuth(request)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders() })
+  }
+
+  // Проверяем права доступа
+  if (!hasPermission(session.user, 'settings.update') &&
+      !hasPermission(session.user, 'settings.*') &&
+      !hasPermission(session.user, '*')) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403, headers: corsHeaders() })
+  }
 
   let body
   try {

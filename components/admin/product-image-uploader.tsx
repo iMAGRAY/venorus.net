@@ -169,6 +169,7 @@ export function ProductImageUploader({
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({
             variantId: parseInt(resolvedProductId),
             images: images
@@ -185,6 +186,7 @@ export function ProductImageUploader({
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({
             productId: parseInt(resolvedProductId),
             images: images
@@ -302,6 +304,7 @@ export function ProductImageUploader({
               headers: {
                 'Content-Type': 'application/json',
               },
+              credentials: 'include',
               body: JSON.stringify({ url: oldImageUrl })
             })
           } catch (error) {
@@ -337,6 +340,7 @@ export function ProductImageUploader({
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ url: imageUrl })
       })
 
@@ -442,6 +446,7 @@ export function ProductImageUploader({
               headers: {
                 'Content-Type': 'application/json',
               },
+              credentials: 'include',
               body: JSON.stringify({ url: imageUrl })
             })
 

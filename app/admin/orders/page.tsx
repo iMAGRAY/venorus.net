@@ -173,6 +173,7 @@ export default function OrdersPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ status: newStatus, notes }),
       })
 
@@ -224,6 +225,7 @@ export default function OrdersPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(updates),
       })
 
@@ -287,6 +289,7 @@ export default function OrdersPage() {
       setDeleting(orderId)
       const response = await fetch(`/api/orders/${orderId}`, {
         method: 'DELETE',
+        credentials: 'include'
       })
 
       const data = await response.json()
