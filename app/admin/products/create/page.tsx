@@ -36,59 +36,39 @@ export default function CreateProductPage() {
   }
 
   const handleSave = async (_savedProduct: any) => {
-
-    // Принудительно обновляем список товаров в admin store
+    // Немедленно перенаправляем на страницу товаров
+    router.push('/admin/products')
+    
+    // Очищаем кэш в фоне после редиректа
     try {
-      // Сначала очищаем кэш
-
       const { apiClient } = await import('@/lib/api-client')
       apiClient.clearCache()
 
-      // Принудительно очищаем Redis кэш
-      try {
-        const response = await fetch('/api/cache/clear', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            patterns: [
-              'medsip:products:*',
-              'products:*',
-              'product:*',
-              'products-fast:*',
-              'products-full:*',
-              'products-detailed:*',
-              'products-basic:*'
-            ]
-          })
+      // Очищаем Redis кэш
+      fetch('/api/cache/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          patterns: [
+            'medsip:products:*',
+            'products:*',
+            'product:*',
+            'products-fast:*',
+            'products-full:*',
+            'products-detailed:*',
+            'products-basic:*'
+          ]
         })
+      }).catch(err => console.warn('Failed to clear cache:', err))
 
-        if (response.ok) {
-
-        }
-      } catch (cacheError) {
-        console.warn('⚠️ Failed to clear cache via API:', cacheError)
-      }
-
-      // Используем метод принудительного обновления
-      setTimeout(async () => {
-        try {
-          // Принудительно обновляем store через глобальный кеш
-          // Используем новый admin store
-          refreshAll().catch(console.warn)
-          // Note: В данном контексте мы не можем использовать React Hook
-
-        } catch (refreshError) {
-          console.error('❌ Error refreshing products after creation:', refreshError)
-        }
-      }, 500)
-    } catch (storeError) {
-      console.error('❌ Error accessing admin store:', storeError)
+      // Обновляем store в фоне
+      setTimeout(() => {
+        refreshAll().catch(console.warn)
+      }, 100)
+    } catch (error) {
+      console.error('Error in post-save cleanup:', error)
     }
-
-    // Перенаправляем на страницу товаров с большей задержкой
-    setTimeout(() => {
-      router.push('/admin/products?refresh=true')
-    }, 1000)
   }
 
   const handleCancel = () => {

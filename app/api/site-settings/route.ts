@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db-connection"
 import { requireAuth, hasPermission } from "@/lib/database-auth"
+import { withCache, invalidateCache } from '@/lib/cache/cache-middleware'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +14,7 @@ function isDbConfigured() {
 }
 
 // Add a simple handler for all methods to debug
-export async function GET(_request: NextRequest) {
+export const GET = withCache(async function GET(_request: NextRequest) {
 
   try {
     if (!isDbConfigured()) {
@@ -55,9 +57,10 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json(mappedSettings, { headers: corsHeaders() })
   } catch (_error) {
+    logger.error('Failed to fetch site settings:', _error);
     return NextResponse.json(getFallbackSettings(), { status: 503, headers: corsHeaders() })
   }
-}
+})
 
 export async function POST(_request: NextRequest) {
   return new NextResponse(null, { status: 405, headers: corsHeaders() })

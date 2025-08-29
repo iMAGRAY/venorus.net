@@ -41,7 +41,7 @@ export class ProductService {
       let result
       if (isUpdate) {
         // Увеличиваем таймаут для обновления продукта до 30 секунд
-        result = await this.api.put('/products', productData, {
+        result = await this.api.put(`/products/${productData.id}`, productData, {
           timeout: 30_000, // 30 секунд
           retries: 2
         })

@@ -1,13 +1,108 @@
-import { 
-  CacheEntry, 
-  CacheOptions, 
-  CacheStats, 
-  CacheLayer, 
-  CacheConfig, 
-  CacheMetrics, 
-  CACHE_TAGS
-} from './types'
+/**
+ * UNIFIED CACHE SYSTEM
+ * Единая унифицированная система кеширования для всего приложения
+ */
+
 import { logger } from '../logger'
+
+// ========================================================================================
+// TYPES & INTERFACES
+// ========================================================================================
+
+export interface CacheEntry<T = any> {
+  data: T
+  expires: number
+  tags: Set<string>
+  metadata?: {
+    created: number
+    accessed: number
+    hits: number
+  }
+}
+
+// Тип для сериализованной в Redis структуры
+interface SerializedCacheEntry<T = any> {
+  data: T
+  expires: number
+  tags: string[]
+  metadata?: {
+    created: number
+    accessed: number
+    hits: number
+  }
+}
+
+export interface CacheStats {
+  totalEntries: number
+  memoryUsage: number
+  hitRate: number
+  missRate: number
+  tagStats: Record<string, number>
+}
+
+export interface CacheOptions {
+  ttl?: number
+  tags?: string[]
+  compress?: boolean
+  fallback?: boolean
+}
+
+export enum CacheLayer {
+  MEMORY = 'memory',
+  REDIS = 'redis'
+}
+
+export interface CacheConfig {
+  layers: CacheLayer[]
+  defaultTTL: number
+  maxMemoryEntries: number
+  maxMemorySize: number
+  namespace: string
+  enableMetrics: boolean
+  enableDebug: boolean
+}
+
+export interface CacheMetrics {
+  hits: number
+  misses: number
+  sets: number
+  deletes: number
+  invalidations: number
+  layers: Record<CacheLayer, { hits: number; misses: number; errors: number }>
+}
+
+// ========================================================================================
+// CACHE TAGS
+// ========================================================================================
+
+export const CACHE_TAGS = {
+  // Entity tags
+  PRODUCTS: 'products',
+  CATEGORIES: 'categories',
+  MANUFACTURERS: 'manufacturers',
+  USERS: 'users',
+  ORDERS: 'orders',
+  MEDIA: 'media',
+  SETTINGS: 'settings',
+  
+  // Specific entity tags
+  PRODUCT: (id: string) => `product:${id}`,
+  CATEGORY: (id: string) => `category:${id}`,
+  MANUFACTURER: (id: string) => `manufacturer:${id}`,
+  USER: (id: string) => `user:${id}`,
+  ORDER: (id: string) => `order:${id}`,
+  
+  // Page tags
+  PAGE_HOME: 'page:home',
+  PAGE_PRODUCTS: 'page:products',
+  PAGE_CATEGORIES: 'page:categories',
+  PAGE_ADMIN: 'page:admin',
+  
+  // API tags
+  API_PRODUCTS: 'api:products',
+  API_CATEGORIES: 'api:categories',
+  API_SETTINGS: 'api:settings'
+} as const
 
 /**
  * Unified Cache Manager - объединяет все уровни кеширования
@@ -41,7 +136,6 @@ export class UnifiedCacheManager {
       invalidations: 0,
       layers: {
         [CacheLayer.MEMORY]: { hits: 0, misses: 0, errors: 0 },
-        [CacheLayer.SERVER]: { hits: 0, misses: 0, errors: 0 },
         [CacheLayer.REDIS]: { hits: 0, misses: 0, errors: 0 }
       }
     }
@@ -58,6 +152,8 @@ export class UnifiedCacheManager {
 
   /**
    * Получение данных из кеша с fallback по слоям
+   * @param key - Ключ для поиска в кеше
+   * @returns Данные из кеша или null если не найдено
    */
   async get<T>(key: string): Promise<T | null> {
     const fullKey = this.buildKey(key)
@@ -91,7 +187,11 @@ export class UnifiedCacheManager {
   }
 
   /**
-   * Сохранение данных во все доступные слои
+   * Сохранение данных во все доступные слои кеша
+   * @param key - Ключ для сохранения
+   * @param data - Данные для кеширования
+   * @param options - Опции кеширования (ttl, tags)
+   * @returns true если сохранено хотя бы в один слой
    */
   async set<T>(key: string, data: T, options: CacheOptions = {}): Promise<boolean> {
     const fullKey = this.buildKey(key)
@@ -164,9 +264,40 @@ export class UnifiedCacheManager {
 
     return success
   }
+  
+  /**
+   * Внутренний метод удаления по полному ключу (с namespace)
+   */
+  private async deleteByFullKey(fullKey: string): Promise<boolean> {
+    let success = false
+
+    // Удаляем из всех слоев
+    for (const layer of this.config.layers) {
+      try {
+        const result = await this.deleteFromLayer(fullKey, layer)
+        if (result) {
+          success = true
+        }
+      } catch (error) {
+        this.recordError(layer)
+        if (this.config.enableDebug) {
+          logger.error(`Cache layer ${layer} delete error:`, error)
+        }
+      }
+    }
+
+    if (success) {
+      this.removeFromTagIndex(fullKey)
+      this.metrics.deletes++
+    }
+
+    return success
+  }
 
   /**
-   * Инвалидация по тегам - ОСНОВНАЯ ФИЧА!
+   * Инвалидация кеша по тегам - удаляет все записи с указанными тегами
+   * @param tags - Массив тегов для инвалидации
+   * @returns Количество удаленных записей
    */
   async invalidateByTags(tags: string[]): Promise<number> {
     let invalidatedCount = 0
@@ -180,9 +311,9 @@ export class UnifiedCacheManager {
       }
     }
 
-    // Удаляем каждый ключ
+    // Удаляем каждый ключ (используем внутренний метод с полным ключом)
     for (const key of keysToInvalidate) {
-      const deleted = await this.delete(key)
+      const deleted = await this.deleteByFullKey(key)
       if (deleted) {
         invalidatedCount++
       }
@@ -365,10 +496,14 @@ export class UnifiedCacheManager {
 
     try {
       const { redis } = await import('../redis-client')
-      const data = await redis.getJson<CacheEntry<T>>(key)
+      const data = await redis.getJson<SerializedCacheEntry<T>>(key)
       
       if (data && data.expires > Date.now()) {
-        return data
+        // Конвертируем tags обратно из Array в Set
+        return {
+          ...data,
+          tags: new Set(data.tags || [])
+        } as CacheEntry<T>
       }
       
       if (data) {
@@ -460,6 +595,46 @@ export class UnifiedCacheManager {
       }
       this.tagToKeys.get(tag)!.add(key)
     }
+  }
+
+  async getKeysByPattern(pattern: string): Promise<string[]> {
+    const keys: string[] = []
+    
+    // Проверяем ключи в памяти
+    for (const layer of this.config.layers) {
+      if (layer === CacheLayer.MEMORY) {
+        const cache = this.memoryCache
+        if (cache) {
+          for (const key of cache.keys()) {
+            if (this.matchPattern(key, pattern)) {
+              keys.push(key)
+            }
+          }
+        }
+      } else if (layer === CacheLayer.REDIS && typeof window === 'undefined') {
+        try {
+          const { redis } = await import('../redis-client')
+          const fullPattern = `${this.config.namespace}:${pattern}`
+          const redisKeys = await redis.keys(fullPattern)
+          keys.push(...redisKeys.map(k => k.replace(`${this.config.namespace}:`, '')))
+        } catch (error) {
+          if (this.config.enableDebug) {
+            logger.error('Redis pattern search error:', error)
+          }
+        }
+      }
+    }
+    
+    return [...new Set(keys)] // Убираем дубликаты
+  }
+
+  private matchPattern(key: string, pattern: string): boolean {
+    // Простая реализация pattern matching
+    const regexPattern = pattern
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.')
+    const regex = new RegExp(`^${regexPattern}$`)
+    return regex.test(key)
   }
 
   private removeFromTagIndex(key: string): void {

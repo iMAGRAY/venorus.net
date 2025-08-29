@@ -156,6 +156,7 @@ export class ApiClient {
           method: options.method || 'GET',
           headers: { ...this.config.defaultHeaders, ...options.headers },
           body: options.body ? JSON.stringify(options.body) : undefined,
+          credentials: 'include',
           signal
         })
 

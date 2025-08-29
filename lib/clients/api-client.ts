@@ -96,15 +96,24 @@ export class ApiClient {
 
     // Добавляем логирование для PUT запросов к selection-tables
     if (options.method === 'PUT' && endpoint.includes('selection-tables')) {
-
       try {
         const _body = JSON.parse(options.body as string)
-
-      } catch (_e) {
+        console.debug('Selection tables PUT request:', { endpoint, body: _body })
+      } catch (error) {
+        console.error('Failed to parse selection-tables request body:', error)
       }
     }
 
-    const shouldCache = enabled && !skipCache
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Отключаем кеш для:
+    // 1. Всех мутирующих операций (POST, PUT, DELETE, PATCH)
+    // 2. Всех админских роутов
+    // 3. Роутов с параметром nocache
+    const normalizedMethod = (options.method || 'GET').toUpperCase()
+    const isMutatingOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(normalizedMethod)
+    const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')
+    const hasNoCacheParam = endpoint.includes('nocache=true')
+    
+    const shouldCache = enabled && !skipCache && !isMutatingOperation && !isAdminRoute && !hasNoCacheParam
     const cacheKey = key || `${endpoint}-${JSON.stringify(options)}`
 
     // Проверяем кеш
@@ -134,6 +143,64 @@ export class ApiClient {
       if (shouldCache && response) {
         cacheUtils.set(cacheKey, response, ttl)
 
+      }
+
+      // АВТОМАТИЧЕСКАЯ ОЧИСТКА КЕША ПОСЛЕ МУТАЦИЙ
+      if (isMutatingOperation && response) {
+        console.log(`[CACHE] Mutation detected (${normalizedMethod}), clearing related caches for: ${endpoint}`)
+        
+        // Извлекаем основные сущности из endpoint для очистки
+        const patterns: string[] = []
+        
+        // Продукты
+        if (endpoint.includes('/products')) {
+          patterns.push('products')
+          this.clearProductsCache()
+        }
+        
+        // Категории
+        if (endpoint.includes('/categories')) {
+          patterns.push('categories')
+          cacheUtils.delete('categories')
+          cacheUtils.delete('site-settings') // Может содержать информацию о категориях
+        }
+        
+        // Характеристики
+        if (endpoint.includes('/characteristics') || endpoint.includes('/characteristic-')) {
+          patterns.push('characteristics', 'characteristic-groups', 'characteristic-templates')
+        }
+        
+        // Медиа
+        if (endpoint.includes('/media')) {
+          patterns.push('media')
+        }
+        
+        // Производители
+        if (endpoint.includes('/manufacturers')) {
+          patterns.push('manufacturers')
+        }
+        
+        // Настройки сайта
+        if (endpoint.includes('/site-settings')) {
+          cacheUtils.delete('site-settings')
+        }
+        
+        // Очищаем все найденные паттерны из кеша
+        for (const pattern of patterns) {
+          for (const key of clientApiCache.keys()) {
+            if (key.includes(pattern)) {
+              cacheUtils.delete(key)
+              console.log(`[CACHE] Cleared cache key: ${key}`)
+            }
+          }
+        }
+        
+        // Для критичных операций очищаем весь кеш
+        if (endpoint.includes('/products') || endpoint.includes('/categories')) {
+          const stats = cacheUtils.getStats()
+          console.log(`[CACHE] Critical mutation - clearing entire cache (${stats.total} entries)`)
+          cacheUtils.clear()
+        }
       }
 
       return response
@@ -223,7 +290,12 @@ export class ApiClient {
       // Добавляем mode только для браузера
       if (typeof window !== 'undefined') {
         fetchOptions.mode = 'same-origin'
-        fetchOptions.credentials = 'same-origin'
+        // Используем 'include' только для same-origin запросов к API
+        if (fullUrl.startsWith(window.location.origin) || fullUrl.startsWith('/api')) {
+          fetchOptions.credentials = 'include'
+        } else {
+          fetchOptions.credentials = 'same-origin'
+        }
       }
 
       // Тестируем сначала простой запрос без всех опций для диагностики
@@ -316,10 +388,18 @@ export class ApiClient {
   }
 
   // Site Settings
-  async getSiteSettings() {
-    return this.request("/site-settings", {}, {
+  async getSiteSettings(options: { forceRefresh?: boolean } = {}) {
+    const { forceRefresh = false } = options
+    
+    let endpoint = "/site-settings"
+    if (forceRefresh) {
+      endpoint += `?nocache=true&_t=${Date.now()}`
+    }
+    
+    return this.request(endpoint, {}, {
       ttl: 10 * 60 * 1000, // кешируем на 10 минут
-      key: 'site-settings'
+      key: 'site-settings',
+      skipCache: forceRefresh
     })
   }
 
@@ -351,10 +431,19 @@ export class ApiClient {
   }
 
   // Categories
-  async getCategories() {
-    return this.request("/categories", {}, {
+  async getCategories(options: { forceRefresh?: boolean } = {}) {
+    const { forceRefresh = false } = options
+    
+    let endpoint = "/categories"
+    if (forceRefresh) {
+      // Добавляем cache-busting параметры для форсирования свежих данных
+      endpoint += `?nocache=true&_t=${Date.now()}`
+    }
+    
+    return this.request(endpoint, {}, {
       ttl: 5 * 60 * 1000, // кешируем на 5 минут
-      key: 'categories'
+      key: 'categories',
+      skipCache: forceRefresh // Пропускаем локальный кеш если нужны свежие данные
     })
   }
 
@@ -419,8 +508,8 @@ export class ApiClient {
   }
 
   // Products
-  async getProducts(options: { fast?: boolean; limit?: number; detailed?: boolean } = {}) {
-    const { fast = false, limit, detailed = false } = options
+  async getProducts(options: { fast?: boolean; limit?: number; detailed?: boolean; forceRefresh?: boolean } = {}) {
+    const { fast = false, limit, detailed = false, forceRefresh = false } = options
 
     let endpoint = "/products"
     const params = new URLSearchParams()
@@ -428,6 +517,12 @@ export class ApiClient {
     if (fast) params.append("fast", "true")
     if (limit) params.append("limit", limit.toString())
     if (detailed) params.append("detailed", "true")
+    
+    // Cache-busting параметры для форсированного обновления
+    if (forceRefresh) {
+      params.append("nocache", "true")
+      params.append("_t", Date.now().toString())
+    }
 
     if (params.toString()) {
       endpoint += `?${params.toString()}`
@@ -435,7 +530,8 @@ export class ApiClient {
 
     return this.request(endpoint, {}, {
       ttl: fast ? 1 * 60 * 1000 : 3 * 60 * 1000, // fast: 1 мин, обычный: 3 мин
-      key: `products-${fast ? 'fast' : 'full'}-${limit || 'all'}-${detailed ? 'detailed' : 'basic'}`
+      key: `products-${fast ? 'fast' : 'full'}-${limit || 'all'}-${detailed ? 'detailed' : 'basic'}`,
+      skipCache: forceRefresh // Пропускаем локальный кеш если нужны свежие данные
     })
   }
 

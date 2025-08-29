@@ -63,25 +63,23 @@ export default function EditProductPage() {
   }, [loadProduct])
 
   const handleSave = async (savedProduct: any, isManualSave?: boolean) => {
-
-            // Обновляем данные товара в состоянии
-
-    setProduct(savedProduct)
-
-    // ОПТИМИЗАЦИЯ: Обновляем админ store только при ручном сохранении
+    // Перенаправляем на страницу товаров после успешного сохранения
+    router.push('/admin/products')
+    
+    // Обновляем админ store в фоне после редиректа
     if (isManualSave !== false) {
-    try {
-
-      await initializeAll()
-
-    } catch (err) {
-      console.error('⚠️ Failed to refresh admin store:', err)
-      }
-    } else {
-
+      setTimeout(async () => {
+        try {
+          await initializeAll()
+        } catch (err) {
+          console.error('Failed to refresh admin store:', err)
+          // Уведомляем пользователя только если критично
+          if (err instanceof Error && err.message.includes('network')) {
+            toast.error('Не удалось обновить данные. Обновите страницу.')
+          }
+        }
+      }, 100)
     }
-
-    // Не делаем редирект - остаемся на странице редактирования
   }
 
   const handleCancel = () => {

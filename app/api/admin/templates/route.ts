@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/secure-auth'
 import { pool } from '@/lib/database/db-connection';
 import { logger } from '@/lib/logger'
-import { userDataCache } from '@/lib/cache-manager'
+import { unifiedCache } from '@/lib/cache/unified-cache'
 
 interface Template {
   id: number
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     // Проверяем кеш
     const cacheKey = `templates:all:${session.username}`
-    const cached = await userDataCache.get<Template[]>(cacheKey)
+    const cached = await unifiedCache.get<Template[]>(cacheKey)
     if (cached) {
       return NextResponse.json({ templates: cached })
     }
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     const templates = result.rows
 
     // Кешируем результат
-    await userDataCache.set(cacheKey, templates, 600) // 10 минут
+    await unifiedCache.set(cacheKey, templates, { ttl: 600000 }) // 10 минут
 
     logger.info('Templates retrieved', {
       count: templates.length,
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     const newTemplate = result.rows[0]
 
     // Инвалидируем кеш
-    await userDataCache.delete(`templates:all:${session.username}`)
+    await unifiedCache.delete(`templates:all:${session.username}`)
 
     logger.info('Template created', {
       templateId: newTemplate.id,
@@ -152,8 +152,8 @@ export async function PUT(request: NextRequest) {
     const updatedTemplate = result.rows[0]
 
     // Инвалидируем кеш
-    await userDataCache.delete(`templates:all:${session.username}`)
-    await userDataCache.delete(`template:${id}`)
+    await unifiedCache.delete(`templates:all:${session.username}`)
+    await unifiedCache.delete(`template:${id}`)
 
     logger.info('Template updated', {
       templateId: id,
@@ -210,8 +210,8 @@ export async function DELETE(request: NextRequest) {
     const deletedTemplate = result.rows[0]
 
     // Инвалидируем кеш
-    await userDataCache.delete(`templates:all:${session.username}`)
-    await userDataCache.delete(`template:${id}`)
+    await unifiedCache.delete(`templates:all:${session.username}`)
+    await unifiedCache.delete(`template:${id}`)
 
     logger.info('Template deleted', {
       templateId: id,

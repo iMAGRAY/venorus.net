@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db-connection';
 import { requireAuth, hasPermission } from '@/lib/database-auth';
-import { invalidateRelated } from '@/lib/cache-manager';
+import { invalidateRelated } from '@/lib/cache/cache-utils';
 import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {

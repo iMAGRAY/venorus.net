@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
 import { executeQuery } from "@/lib/db-connection"
 import { requireAuth, hasPermission } from "@/lib/database-auth"
 
@@ -21,7 +21,7 @@ const ALLOWED_TABLES = [
 ]
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ table: string }> }
 ) {
   // КРИТИЧЕСКАЯ ПРОВЕРКА БЕЗОПАСНОСТИ

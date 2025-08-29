@@ -27,7 +27,7 @@ export * from './admin-data'
 // export * from './admin-store' - deprecated, moved to ./stores
 
 // Cache
-export { SecureCacheManager, apiCache as secureCacheManager } from './cache-manager'
+export { unifiedCache } from './cache/unified-cache'
 export * from './api-cache-headers'
 
 // Performance

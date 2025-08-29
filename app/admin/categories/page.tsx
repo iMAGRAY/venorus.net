@@ -118,6 +118,7 @@ export default function CategoriesAdmin() {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
         },
+        credentials: 'include',
         body: JSON.stringify(body)
       })
 

@@ -42,7 +42,8 @@ const apiClient = ApiClient.getInstance()
 // API методы используют единый клиент
 const adminApi = {
   async fetchProducts(): Promise<Product[]> {
-    const result = await apiClient.getProducts({ detailed: true })
+    // Всегда запрашиваем свежие данные с сервера, обходя кеш
+    const result = await apiClient.getProducts({ detailed: true, forceRefresh: true })
     return result.success ? result.data : []
   },
 
@@ -516,19 +517,29 @@ export const useAdminStore = create<AdminStore>()(
         try {
           await adminApi.deleteProduct(id)
           
-          set((state) => {
-            state.products = state.products.filter(p => p.id !== id)
-            state.loading.products = false
-          })
-
-          // Инвалидируем кеш
+          // Инвалидируем кеш ДО обновления состояния
           const cache = await getCache()
           await cache.invalidateByTags([
             CACHE_TAGS.PRODUCTS,
             CACHE_TAGS.PRODUCT(id.toString())
           ])
 
-          logger.info('Product deleted', { id })
+          // Принудительно перезагружаем список товаров с сервера
+          const products = await adminApi.fetchProducts()
+          
+          // ВАЖНО: Обновляем кеш новыми данными
+          await cache.set(CACHE_KEYS.PRODUCTS, products, {
+            ttl: 5 * 60 * 1000,
+            tags: [CACHE_TAGS.PRODUCTS]
+          })
+          
+          set((state) => {
+            state.products = products
+            state.loading.products = false
+            state.lastFetch.products = Date.now()
+          })
+
+          logger.info('Product deleted, list refreshed and cache updated', { id, newCount: products.length })
         } catch (error) {
           set((state) => {
             state.loading.products = false

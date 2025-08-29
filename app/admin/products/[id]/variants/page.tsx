@@ -428,6 +428,7 @@ export default function ProductVariantsPage() {
       const response = await fetch(url, {
         method: _method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload)
       })
 
@@ -482,6 +483,7 @@ export default function ProductVariantsPage() {
             const charResponse = await fetch(`/api/product-variants/${variantId}/characteristics-simple`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
               body: JSON.stringify({
                 characteristics: formData.characteristics
               })
@@ -545,7 +547,8 @@ export default function ProductVariantsPage() {
 
     try {
       const response = await fetch(`/api/v2/product-variants/${variantId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -585,6 +588,7 @@ export default function ProductVariantsPage() {
       const response = await fetch(`/api/v2/product-variants/${variantId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ is_active: !isActive })
       })
 

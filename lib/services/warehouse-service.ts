@@ -166,6 +166,7 @@ export class WarehouseService {
     const response = await fetch('/api/warehouse/regions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(data)
     })
 
@@ -182,6 +183,7 @@ export class WarehouseService {
     const response = await fetch('/api/warehouse/cities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(data)
     })
 
@@ -198,6 +200,7 @@ export class WarehouseService {
     const response = await fetch('/api/warehouse/warehouses', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(data)
     })
 
@@ -214,6 +217,7 @@ export class WarehouseService {
     const response = await fetch('/api/warehouse/zones', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(data)
     })
 
@@ -230,6 +234,7 @@ export class WarehouseService {
     const response = await fetch('/api/warehouse/sections', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(data)
     })
 
@@ -257,7 +262,8 @@ export class WarehouseService {
     }
 
     const response = await fetch(`${endpoint}/${node.data.id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      credentials: 'include'
     })
 
     if (!response.ok) {
@@ -276,6 +282,7 @@ export class WarehouseService {
       const response = await fetch('/api/warehouse/bulk-operations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           operation: _operation,
           itemIds: _itemIds,

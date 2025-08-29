@@ -48,19 +48,14 @@ function createPool(): Pool {
     // Агрессивные настройки для облачной БД
     application_name: 'venorus_web_app', // Идентификация приложения
     
-    // SSL настройки для облачных БД - ИСПРАВЛЕНА ПОДДЕРЖКА ВСЕХ SSL РЕЖИМОВ
+    // SSL настройки для облачных БД - ВРЕМЕННОЕ РЕШЕНИЕ ДЛЯ ПРОДАКШЕН
     ssl: (process.env.PGSSL === "true" || 
           process.env.DATABASE_SSL === "true" || 
           process.env.DATABASE_URL?.includes("sslmode=require") || 
           process.env.DATABASE_URL?.includes("sslmode=prefer") ||
           process.env.DATABASE_URL?.includes("sslmode=allow") ||
           (process.env.PGSSLMODE && process.env.PGSSLMODE !== "disable")) ? { 
-      rejectUnauthorized: false,
-      checkServerIdentity: () => undefined,
-      requestCert: false,
-      ca: undefined,
-      cert: undefined,
-      key: undefined
+      rejectUnauthorized: false // Временно разрешаем самоподписанные сертификаты для продакшен
     } : false,
   }
 

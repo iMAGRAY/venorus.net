@@ -28,7 +28,9 @@
       "mcp__postgresql-api-ssh__mcp_psql_manager",
       "Bash(cat:*)",
       "mcp__playwright-mcp__browser_navigate",
-      "mcp__postgresql-api-ssh__mcp_api_client"
+      "mcp__postgresql-api-ssh__mcp_api_client",
+      "Bash(rg:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": [],

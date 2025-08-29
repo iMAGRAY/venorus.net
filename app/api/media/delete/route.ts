@@ -196,8 +196,8 @@ export async function DELETE(request: NextRequest) {
 
       // Очищаем кеш медиатеки
       try {
-        const { apiCache } = await import('../../../../lib/cache-manager')
-        apiCache.clear()
+        const { invalidateCache } = await import('../../../../lib/cache/cache-middleware')
+        await invalidateCache.media()
 
       } catch (_cacheError) {
       }

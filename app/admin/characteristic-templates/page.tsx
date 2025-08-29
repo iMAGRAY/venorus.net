@@ -185,6 +185,7 @@ export default function CharacteristicTemplatesAdmin() {
       const response = await fetch(url, {
         method: _method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(templateForm)
       })
 
@@ -207,7 +208,8 @@ export default function CharacteristicTemplatesAdmin() {
 
     try {
       const response = await fetch(`/api/admin/characteristic-templates/${template.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
 
       if (response.ok) {

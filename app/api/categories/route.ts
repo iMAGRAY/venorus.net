@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
       cachePatterns.allCategories,
       'api:*categories*'
     ]);
-    await invalidateApiCache(['/categories']);
+    await invalidateApiCache(['categories']);
 
     return NextResponse.json(category, { status: 201 });
 
@@ -271,7 +271,7 @@ export async function PUT(request: NextRequest) {
       cachePatterns.category(id),
       'api:*categories*'
     ]);
-    await invalidateApiCache(['/categories']);
+    await invalidateApiCache(['categories']);
 
     return NextResponse.json({
       success: true,
@@ -422,7 +422,7 @@ export async function DELETE(request: NextRequest) {
       cachePatterns.category(parseInt(id)),
       'api:*categories*'
     ]);
-    await invalidateApiCache(['/categories']);
+    await invalidateApiCache(['categories']);
 
     return NextResponse.json({
       success: true,

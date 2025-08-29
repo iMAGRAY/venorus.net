@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db-connection';
 import { getCacheManager } from '@/lib/dependency-injection';
-import { invalidateRelated } from '@/lib/cache-manager';
+import { invalidateRelated } from '@/lib/cache/cache-utils';
+import { invalidateCache } from '@/lib/cache/cache-middleware';
 
 // GET - получить инвентарь склада
 export async function GET(request: NextRequest) {
@@ -186,7 +187,7 @@ export async function POST(request: NextRequest) {
                 'inventory:*'
             ]);
 
-            cacheManager.clear();
+            await invalidateCache.all();
 
         } catch (_cacheError) {
         }
@@ -295,7 +296,7 @@ export async function PUT(request: NextRequest) {
                 'inventory:*'
             ]);
 
-            cacheManager.clear();
+            await invalidateCache.all();
 
         } catch (_cacheError) {
         }

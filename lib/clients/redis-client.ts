@@ -100,7 +100,8 @@ class RedisManager {
     }
 
     try {
-      return await this.client.get(key)
+      const result = await this.client.get(key)
+      return typeof result === 'string' ? result : null
     } catch (error) {
       logger.error('Redis GET error:', error)
       return null

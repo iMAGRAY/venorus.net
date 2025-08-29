@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db-connection';
 import { getCacheManager } from '@/lib/dependency-injection';
-import { invalidateRelated } from '@/lib/cache-manager';
+import { invalidateRelated } from '@/lib/cache/cache-utils';
+import { invalidateCache } from '@/lib/cache/cache-middleware';
 
 // POST - синхронизировать данные о товарах между складом и каталогом
 export async function POST(_request: NextRequest) {
@@ -54,7 +55,7 @@ export async function POST(_request: NextRequest) {
                 'product:*'
             ]);
 
-            cacheManager.clear();
+            await invalidateCache.all();
 
         } catch (_cacheError) {
         }

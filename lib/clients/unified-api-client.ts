@@ -154,6 +154,7 @@ class UnifiedApiClient {
     this.defaultConfig = {
       timeout: RUNTIME_CONFIG.NETWORK.TIMEOUTS.DEFAULT_FETCH,
       retries: RUNTIME_CONFIG.NETWORK.RETRY.MAX_ATTEMPTS,
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       }

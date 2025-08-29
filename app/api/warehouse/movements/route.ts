@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery, } from '@/lib/db-connection';
 import { pool } from '@/lib/database/db-connection';
 import { getCacheManager } from '@/lib/dependency-injection';
-import { invalidateRelated } from '@/lib/cache-manager';
+import { invalidateRelated } from '@/lib/cache/cache-utils';
+import { invalidateCache } from '@/lib/cache/cache-middleware';
 
 // GET - получить движения товаров
 export async function GET(request: NextRequest) {
@@ -211,7 +212,7 @@ export async function POST(request: NextRequest) {
                     'inventory:*'
                 ]);
 
-                cacheManager.clear();
+                await invalidateCache.all();
 
             } catch (_cacheError) {
             }

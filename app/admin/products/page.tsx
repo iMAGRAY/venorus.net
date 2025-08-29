@@ -161,9 +161,16 @@ export default function ProductsAdmin() {
     if (confirm("Вы уверены, что хотите удалить этот товар? Это действие нельзя отменить.")) {
       try {
         await deleteProduct(productId)
+        // Принудительно обновляем список после удаления
+        await refreshProducts()
       } catch (error) {
         console.error('Error deleting product:', error)
-        alert('Ошибка при удалении товара')
+        // Если товар уже удален, всё равно обновляем список
+        if (error.message && error.message.includes('404')) {
+          await refreshProducts()
+        } else {
+          alert('Ошибка при удалении товара')
+        }
       }
     }
   }

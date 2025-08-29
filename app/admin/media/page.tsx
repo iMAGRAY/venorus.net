@@ -36,7 +36,8 @@ export default function MediaAdmin() {
     setIsSyncing(true)
     try {
       const response = await fetch('/api/media/sync', {
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include'
       })
 
       const result = await response.json()

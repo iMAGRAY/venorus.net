@@ -1,4 +1,4 @@
-import { apiCache, productCache, categoryCache, pageCache, mediaCache } from '@/lib/redis-client'
+import { unifiedCache } from './unified-cache'
 import { logger } from '@/lib/logger'
 
 // Время жизни кеша в секундах - ОПТИМИЗИРОВАНО для лучшей производительности
@@ -73,22 +73,14 @@ export function cached<T extends (...args: any[]) => Promise<any>>(
 
     descriptor.value = async function (...args: Parameters<T>): Promise<ReturnType<T>> {
       const cacheKey = cacheKeyFn(...args)
+      const tags = [cacheType] // Используем тип кеша как тег
       
-      // Выбираем нужный кеш
-      const cache = {
-        api: apiCache,
-        product: productCache,
-        category: categoryCache,
-        page: pageCache,
-        media: mediaCache
-      }[cacheType]
-
       try {
         // Пробуем получить из кеша
-        const cached = await cache.get(cacheKey)
+        const cached = await unifiedCache.get(cacheKey)
         if (cached !== null) {
           logger.debug(`Cache hit: ${cacheKey}`)
-          return cached
+          return cached as ReturnType<T>
         }
       } catch (error) {
         logger.error('Cache get error:', error)
@@ -97,10 +89,10 @@ export function cached<T extends (...args: any[]) => Promise<any>>(
       // Если нет в кеше, выполняем оригинальный метод
       const result = await originalMethod.apply(this, args)
       
-      // Сохраняем в кеш
+      // Сохраняем в кеш с тегами
       try {
-        await cache.set(cacheKey, result, ttl)
-        logger.debug(`Cache set: ${cacheKey}, TTL: ${ttl}s`)
+        await unifiedCache.set(cacheKey, result, { ttl: ttl * 1000, tags }) // TTL в миллисекундах
+        logger.debug(`Cache set: ${cacheKey}, TTL: ${ttl}s, tags: ${tags}`)
       } catch (error) {
         logger.error('Cache set error:', error)
       }
@@ -119,29 +111,35 @@ export async function cacheRemember<T>(
   callback: () => Promise<T>,
   cacheType: 'api' | 'product' | 'category' | 'page' | 'media' = 'api'
 ): Promise<T> {
-  const cache = {
-    api: apiCache,
-    product: productCache,
-    category: categoryCache,
-    page: pageCache,
-    media: mediaCache
-  }[cacheType]
-
-  return cache.remember(key, callback, ttl)
+  // Пробуем получить из кеша
+  const cached = await unifiedCache.get(key)
+  if (cached !== null) {
+    return cached as T
+  }
+  
+  // Если нет в кеше, выполняем callback
+  const result = await callback()
+  
+  // Сохраняем в кеш с тегом
+  await unifiedCache.set(key, result, { ttl: ttl * 1000, tags: [cacheType] })
+  
+  return result
 }
 
-// Инвалидация кеша
+// Инвалидация кеша - использует новую унифицированную систему
 export async function invalidateCache(patterns: string | string[]): Promise<number> {
   const patternsArray = Array.isArray(patterns) ? patterns : [patterns]
   let totalDeleted = 0
 
   for (const pattern of patternsArray) {
     try {
-      // Импортируем redisClient только когда нужно
-      const { redisClient } = await import('@/lib/redis-client')
-      const deleted = await redisClient.flushPattern(pattern)
-      totalDeleted += deleted
-      logger.info(`Cache invalidated: ${pattern}, deleted: ${deleted}`)
+      // Используем унифицированную систему кеша
+      const keys = await unifiedCache.getKeysByPattern(pattern)
+      for (const key of keys) {
+        const deleted = await unifiedCache.delete(key)
+        if (deleted) totalDeleted++
+      }
+      logger.info(`Cache invalidated: ${pattern}, deleted: ${totalDeleted}`)
     } catch (error) {
       logger.error('Cache invalidation error:', error)
     }
@@ -156,7 +154,7 @@ export async function warmupCache(items: Array<{ key: string; loader: () => Prom
     items.map(async ({ key, loader, ttl = CACHE_TTL.MEDIUM }) => {
       try {
         const data = await loader()
-        await apiCache.set(key, data, ttl)
+        await unifiedCache.set(key, data, { ttl: ttl * 1000 }) // TTL в миллисекундах
         return { key, status: 'success' }
       } catch (error) {
         logger.error(`Cache warmup failed for ${key}:`, error)
@@ -172,36 +170,34 @@ export async function warmupCache(items: Array<{ key: string; loader: () => Prom
   return { success, failed, total: results.length }
 }
 
+/**
+ * Legacy функция для совместимости со старым API
+ * @deprecated Используйте invalidateCache вместо этого
+ * @param patterns Массив паттернов для инвалидации
+ * @returns Количество удаленных ключей
+ */
+export async function invalidateRelated(patterns: string[]): Promise<number> {
+  return invalidateCache(patterns)
+}
+
 // Мониторинг кеша
 export async function getCacheStats() {
-  const { redisClient } = await import('@/lib/redis-client')
+  const stats = unifiedCache.getStats()
+  const metrics = unifiedCache.getMetrics()
   
-  const stats = {
-    connected: await redisClient.ping(),
+  return {
+    connected: true, // Унифицированный кеш всегда доступен
     keys: {
-      api: (await redisClient.keys('api:*')).length,
-      product: (await redisClient.keys('product:*')).length,
-      category: (await redisClient.keys('category:*')).length,
-      page: (await redisClient.keys('page:*')).length,
-      media: (await redisClient.keys('media:*')).length,
-      total: 0
+      total: stats.totalEntries,
+      api: stats.tagStats?.api || 0,
+      product: stats.tagStats?.product || 0,
+      category: stats.tagStats?.category || 0,
+      page: stats.tagStats?.page || 0,
+      media: stats.tagStats?.media || 0
     },
-    memory: null as any
+    memory: {
+      used: stats.memoryUsage
+    },
+    metrics
   }
-
-  stats.keys.total = Object.values(stats.keys).reduce((sum: number, count) => 
-    typeof count === 'number' ? sum + count : sum, 0
-  )
-
-  try {
-    // Получаем информацию о памяти (если доступно)
-    // Примечание: метод info может быть недоступен в некоторых конфигурациях Redis
-    stats.memory = {
-      used: 'N/A' // Заглушка, так как client является private
-    }
-  } catch (_error) {
-    // Игнорируем ошибки получения информации о памяти
-  }
-
-  return stats
 }

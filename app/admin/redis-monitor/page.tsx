@@ -215,6 +215,7 @@ export default function RedisMonitorPage() {
       const response = await fetch('/api/redis-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           action: 'get',
           cache_type: cacheType,
@@ -256,6 +257,7 @@ export default function RedisMonitorPage() {
       const response = await fetch('/api/redis-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ action: 'ping' })
       })
 

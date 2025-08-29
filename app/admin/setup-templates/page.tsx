@@ -38,7 +38,8 @@ export default function SetupTemplatesPage() {
     try {
       setIsLoading(true)
       const response = await fetch('/api/form-templates/setup', {
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include'
       })
       const data = await response.json()
 

@@ -74,6 +74,7 @@ container.register('apiClient', () => {
             'Content-Type': 'application/json',
             ...options.headers,
           },
+          credentials: 'include',
           ...options,
         });
 

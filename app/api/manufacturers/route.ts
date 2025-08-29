@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { executeQuery } from '@/lib/database/db-connection'
 import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
+import { withCache, invalidateCache } from '@/lib/cache/cache-middleware'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,7 +12,7 @@ function isDbConfigured() {
   )
 }
 
-export async function GET(request: NextRequest) {
+export const GET = withCache(async function GET(request: NextRequest) {
 
   try {
     if (!isDbConfigured()) {
@@ -74,12 +76,13 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
+    logger.error('Failed to fetch manufacturers:', error);
     return NextResponse.json(
       { error: 'Failed to fetch manufacturers', details: (error as any).message, success: false },
       { status: 500 }
     );
   }
-}
+})
 
 export async function POST(request: NextRequest) {
 
@@ -150,6 +153,14 @@ export async function POST(request: NextRequest) {
 
     const result = await executeQuery(query, values)
     const manufacturer = result.rows[0]
+    
+    // Инвалидируем кеш производителей
+    try {
+      await invalidateCache.manufacturers();
+      logger.info('Cache invalidated after manufacturer creation', { id: manufacturer.id });
+    } catch (cacheError) {
+      logger.warn('Failed to invalidate cache', { error: cacheError });
+    }
 
     return NextResponse.json({
       success: true,

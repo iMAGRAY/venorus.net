@@ -216,6 +216,7 @@ export function useCharacteristicsManager(productId?: number | null, isNewProduc
          headers: {
            'Content-Type': 'application/json',
          },
+         credentials: 'include',
          body: JSON.stringify(apiData),
        })
 

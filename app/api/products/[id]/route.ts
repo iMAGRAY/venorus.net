@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { executeQuery } from '@/lib/db-connection'
 import { getCacheManager } from '@/lib/dependency-injection'
-import { invalidateRelated } from '@/lib/cache-manager'
+import { invalidateRelated } from '@/lib/cache/cache-utils'
+import { invalidateCache } from '@/lib/cache/cache-middleware';
 import { requireAuth, hasPermission } from '@/lib/database-auth'
 import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
 
@@ -354,7 +355,7 @@ export async function DELETE(
 
       try {
         await invalidateRelated(['medsip:products:*','products:*','product:*','products-fast:*','products-full:*','products-detailed:*','products-basic:*'])
-        cacheManager.clear()
+        await invalidateCache.all()
         try { const { redisClient } = await import('@/lib/redis-client'); await redisClient.flushPattern('products-*'); await redisClient.flushPattern('product-*'); await redisClient.flushPattern('medsip:products-*') } catch {}
       } catch {}
 
