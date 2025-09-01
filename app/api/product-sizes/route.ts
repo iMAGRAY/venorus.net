@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { pool } from '@/lib/database/db-connection';
-import { executeQuery } from "@/lib/db-connection"
+import { executeQuery } from "@/lib/database/db-connection"
 
 /**
  * @deprecated This API is deprecated. Use /api/admin/products/[id]/sizes instead

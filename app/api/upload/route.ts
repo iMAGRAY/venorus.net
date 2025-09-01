@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
-import { requireAuth, hasPermission } from "@/lib/database-auth"
+import { requireAuth, hasPermission } from "@/lib/auth/database-auth"
 
 // Validate required environment variables
 const S3_ENDPOINT = process.env.S3_ENDPOINT || 'https://s3.amazonaws.com'

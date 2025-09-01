@@ -1,31 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/database/db-connection'
 import { logger } from '@/lib/logger'
 import { getCacheManager } from '@/lib/dependency-injection'
-import { invalidateCache } from '@/lib/cache/cache-middleware'
+import { invalidateCache as invalidateApiCache } from '@/lib/cache/cache-middleware'
+import { invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
 
-async function clearProductsCache(): Promise<void> {
+async function clearProductsCache(): Promise<{ success: boolean; errors: string[] }> {
+  const errors: string[] = []
+  let apiCacheCleared = false
+  let unifiedCacheCleared = false
+
+  // Try API cache invalidation with fallback
   try {
-    // Очищаем через унифицированную систему
-    await invalidateCache.products()
-    
-    // Очищаем дополнительные паттерны для совместимости
-    try {
-      const { redisClient } = await import('@/lib/redis-client')
-      await redisClient.flushPattern('products-*')
-      await redisClient.flushPattern('product-*')
-      await redisClient.flushPattern('medsip:products-*')
-      logger.info('Legacy Redis cache cleared for products')
-    } catch (redisError) {
-      const errorMsg = redisError instanceof Error ? redisError.message : 'Unknown Redis error'
-      logger.warn('Failed to clear legacy Redis cache', { error: errorMsg })
-    }
-    
-    logger.info('Products cache cleared successfully')
-  } catch (cacheError) {
-    const errorMsg = cacheError instanceof Error ? cacheError.message : 'Unknown cache error'
-    logger.warn('Failed to clear cache', { error: errorMsg })
+    await invalidateApiCache.products()
+    apiCacheCleared = true
+    logger.debug('API cache cleared for products')
+  } catch (apiError) {
+    const errorMsg = apiError instanceof Error ? apiError.message : 'Unknown API cache error'
+    errors.push(`API cache: ${errorMsg}`)
+    logger.warn('Failed to clear API cache, continuing with unified cache', { error: errorMsg })
   }
+
+  // Try unified cache invalidation with selective patterns
+  try {
+    const patterns = [
+      cachePatterns.allProducts,
+      cachePatterns.searchResults,
+      'api:products:*'
+    ]
+    await invalidateCache(patterns)
+    unifiedCacheCleared = true
+    logger.debug('Unified cache cleared for products')
+  } catch (unifiedError) {
+    const errorMsg = unifiedError instanceof Error ? unifiedError.message : 'Unknown unified cache error'
+    errors.push(`Unified cache: ${errorMsg}`)
+    logger.warn('Failed to clear unified cache', { error: errorMsg })
+  }
+
+  const success = apiCacheCleared || unifiedCacheCleared
+  if (success) {
+    logger.info('Products cache cleared successfully', { 
+      apiCacheCleared, 
+      unifiedCacheCleared, 
+      errorsCount: errors.length 
+    })
+  } else {
+    logger.error('Failed to clear any cache layers', { errors })
+  }
+
+  return { success, errors }
 }
 
 async function fetchLatestProducts() {
@@ -53,8 +76,15 @@ export async function POST(_request: NextRequest) {
   try {
     logger.info('Forcing products cache refresh')
 
-    // Очищаем кеш продуктов
-    await clearProductsCache()
+    // Очищаем кеш продуктов с fallback логикой
+    const cacheResult = await clearProductsCache()
+    
+    // Если кеш полностью не очистился, логируем предупреждение но продолжаем
+    if (!cacheResult.success) {
+      logger.warn('Cache clearing failed completely, proceeding with data refresh', { 
+        errors: cacheResult.errors 
+      })
+    }
 
     // Получаем актуальные данные
     const products = await fetchLatestProducts()
@@ -63,14 +93,24 @@ export async function POST(_request: NextRequest) {
       success: true,
       count: products.length,
       data: products,
-      cache_refreshed: true
+      cache_refreshed: cacheResult.success,
+      cache_warnings: cacheResult.errors.length > 0 ? cacheResult.errors : undefined
     }
 
     // Кэшируем обновленные данные
-    const cacheKey = 'products:refresh:latest'
-    cacheManager.set(cacheKey, responseData, 5 * 60 * 1000) // 5 минут
+    try {
+      const cacheKey = 'products:refresh:latest'
+      cacheManager.set(cacheKey, responseData, 5 * 60 * 1000) // 5 минут
+    } catch (cacheError) {
+      logger.warn('Failed to cache refreshed data', cacheError)
+      // Не блокируем ответ если не можем закешировать
+    }
 
-    logger.info('Products refreshed successfully', { count: products.length })
+    logger.info('Products refreshed successfully', { 
+      count: products.length,
+      cacheCleared: cacheResult.success,
+      cacheErrors: cacheResult.errors.length
+    })
 
     return NextResponse.json(responseData)
 

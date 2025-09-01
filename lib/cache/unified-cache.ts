@@ -5,6 +5,23 @@
 
 import { logger } from '../logger'
 
+// Кеш для Redis клиента для предотвращения множественных импортов
+let cachedRedisClient: any = null
+
+// Функция для получения Redis клиента с кешированием
+async function getRedisClient() {
+  if (!cachedRedisClient) {
+    try {
+      const { redis } = await import('../clients/redis-client')
+      cachedRedisClient = redis
+    } catch (error) {
+      logger.debug('Redis client not available:', error)
+      return null
+    }
+  }
+  return cachedRedisClient
+}
+
 // ========================================================================================
 // TYPES & INTERFACES
 // ========================================================================================
@@ -69,6 +86,11 @@ export interface CacheMetrics {
   deletes: number
   invalidations: number
   layers: Record<CacheLayer, { hits: number; misses: number; errors: number }>
+  hitRate?: number
+  memoryUsage?: number
+  stampedePrevented?: number
+  inflightRequests?: number
+  tagStats?: Record<string, number>
 }
 
 // ========================================================================================
@@ -105,8 +127,40 @@ export const CACHE_TAGS = {
 } as const
 
 /**
+ * Singleflight паттерн для предотвращения cache stampede
+ */
+class SingleflightGroup {
+  private inflight = new Map<string, Promise<any>>()
+  private stampedePrevented = 0
+  
+  async do<T>(key: string, fn: () => Promise<T>): Promise<T> {
+    const existing = this.inflight.get(key)
+    if (existing) {
+      this.stampedePrevented++
+      return existing
+    }
+    
+    const promise = fn().finally(() => {
+      this.inflight.delete(key)
+    })
+    
+    this.inflight.set(key, promise)
+    return promise
+  }
+  
+  getInflightCount(): number {
+    return this.inflight.size
+  }
+  
+  getStampedePrevented(): number {
+    return this.stampedePrevented
+  }
+}
+
+/**
  * Unified Cache Manager - объединяет все уровни кеширования
  * Memory -> Server -> Redis с автоматическим fallback
+ * Включает singleflight для предотвращения stampede
  */
 export class UnifiedCacheManager {
   private memoryCache = new Map<string, CacheEntry>()
@@ -115,6 +169,7 @@ export class UnifiedCacheManager {
   private metrics: CacheMetrics
   private config: CacheConfig
   private cleanupInterval?: NodeJS.Timeout
+  private singleflight = new SingleflightGroup()
 
   constructor(config: Partial<CacheConfig> = {}) {
     this.config = {
@@ -233,6 +288,44 @@ export class UnifiedCacheManager {
     }
 
     return success
+  }
+
+  /**
+   * Get or Set с использованием singleflight для предотвращения stampede
+   * @param key - Ключ кеша
+   * @param fetcher - Функция для получения данных
+   * @param options - Опции кеширования
+   * @returns Данные из кеша или результат fetcher
+   */
+  async getOrSet<T>(
+    key: string, 
+    fetcher: () => Promise<T>, 
+    options: CacheOptions = {}
+  ): Promise<T> {
+    const fullKey = this.buildKey(key)
+    
+    // Сначала пробуем получить из кеша
+    const cached = await this.get<T>(key)
+    if (cached !== null) {
+      return cached
+    }
+    
+    // Используем singleflight для предотвращения stampede
+    return this.singleflight.do(fullKey, async () => {
+      // Проверяем еще раз после получения lock
+      const cachedAgain = await this.get<T>(key)
+      if (cachedAgain !== null) {
+        return cachedAgain
+      }
+      
+      // Получаем данные
+      const data = await fetcher()
+      
+      // Сохраняем в кеш
+      await this.set(key, data, options)
+      
+      return data
+    })
   }
 
   /**
@@ -383,10 +476,60 @@ export class UnifiedCacheManager {
   }
 
   /**
-   * Получение метрик для мониторинга
+   * Получение расширенных метрик для мониторинга
    */
   getMetrics(): CacheMetrics {
-    return { ...this.metrics }
+    const totalRequests = this.metrics.hits + this.metrics.misses
+    const hitRate = totalRequests > 0 ? this.metrics.hits / totalRequests : 0
+    
+    return { 
+      ...this.metrics,
+      hitRate,
+      memoryUsage: this.calculateMemoryUsage(),
+      stampedePrevented: this.singleflight.getStampedePrevented(),
+      inflightRequests: this.singleflight.getInflightCount(),
+      tagStats: this.getTagStats()
+    }
+  }
+  
+  /**
+   * Получение детальной статистики производительности
+   */
+  getPerformanceStats(): {
+    hitRate: number
+    missRate: number
+    memoryUsageMB: number
+    entriesCount: number
+    stampedePrevented: number
+    avgHitsPerEntry: number
+    topTags: Array<{ tag: string; count: number }>
+  } {
+    const totalRequests = this.metrics.hits + this.metrics.misses
+    const hitRate = totalRequests > 0 ? this.metrics.hits / totalRequests : 0
+    const memoryUsageMB = this.calculateMemoryUsage() / (1024 * 1024)
+    
+    let totalHits = 0
+    for (const entry of this.memoryCache.values()) {
+      totalHits += entry.metadata?.hits || 0
+    }
+    
+    const avgHitsPerEntry = this.memoryCache.size > 0 ? totalHits / this.memoryCache.size : 0
+    
+    const tagStats = this.getTagStats()
+    const topTags = Object.entries(tagStats)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([tag, count]) => ({ tag, count }))
+    
+    return {
+      hitRate,
+      missRate: 1 - hitRate,
+      memoryUsageMB,
+      entriesCount: this.memoryCache.size,
+      stampedePrevented: this.singleflight.getStampedePrevented(),
+      avgHitsPerEntry,
+      topTags
+    }
   }
 
   /**
@@ -495,8 +638,9 @@ export class UnifiedCacheManager {
     if (typeof window !== 'undefined') return null
 
     try {
-      const { redis } = await import('../redis-client')
-      const data = await redis.getJson<SerializedCacheEntry<T>>(key)
+      const redis = await getRedisClient()
+      if (!redis) return null
+      const data = await redis.getJson(key) as SerializedCacheEntry<T> | null
       
       if (data && data.expires > Date.now()) {
         // Конвертируем tags обратно из Array в Set
@@ -523,7 +667,7 @@ export class UnifiedCacheManager {
     if (typeof window !== 'undefined') return false
 
     try {
-      const { redis } = await import('../redis-client')
+      const { redis } = await import('../clients/redis-client')
       const ttlSeconds = Math.ceil((entry.expires - Date.now()) / 1000)
       
       if (ttlSeconds <= 0) return false
@@ -547,7 +691,7 @@ export class UnifiedCacheManager {
     if (typeof window !== 'undefined') return false
 
     try {
-      const { redis } = await import('../redis-client')
+      const { redis } = await import('../clients/redis-client')
       return await redis.del(key)
     } catch (error) {
       if (this.config.enableDebug) {
@@ -561,7 +705,7 @@ export class UnifiedCacheManager {
     if (typeof window !== 'undefined') return
 
     try {
-      const { redis } = await import('../redis-client')
+      const { redis } = await import('../clients/redis-client')
       await redis.flushPattern(`${this.config.namespace}:*`)
     } catch (error) {
       if (this.config.enableDebug) {
@@ -613,7 +757,8 @@ export class UnifiedCacheManager {
         }
       } else if (layer === CacheLayer.REDIS && typeof window === 'undefined') {
         try {
-          const { redis } = await import('../redis-client')
+          const redis = await getRedisClient()
+          if (!redis) continue
           const fullPattern = `${this.config.namespace}:${pattern}`
           const redisKeys = await redis.keys(fullPattern)
           keys.push(...redisKeys.map(k => k.replace(`${this.config.namespace}:`, '')))
@@ -672,7 +817,12 @@ export class UnifiedCacheManager {
     let size = 0
     for (const [key, entry] of this.memoryCache.entries()) {
       size += key.length * 2 // UTF-16
-      size += JSON.stringify(entry.data).length * 2
+      try {
+        size += JSON.stringify(entry.data).length * 2
+      } catch (error) {
+        // Если сериализация не удалась, используем приблизительный размер
+        size += 100 // Примерная оценка для несериализуемых объектов
+      }
       size += 64 // metadata overhead
     }
     return size
@@ -705,17 +855,75 @@ export class UnifiedCacheManager {
   destroy(): void {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval)
+      this.cleanupInterval = undefined
     }
-    this.clear()
+    // Синхронная очистка memory cache
+    this.memoryCache.clear()
+    this.keyToTags.clear()
+    this.tagToKeys.clear()
+    
+    // Асинхронная очистка Redis в фоне (fire and forget)
+    this.clearRedisCache().catch(error => {
+      logger.debug('Failed to clear Redis cache during destroy:', error)
+    })
+  }
+  
+  private async clearRedisCache(): Promise<void> {
+    try {
+      const redis = await getRedisClient()
+      if (redis && redis.flushPattern) {
+        // Используем более эффективный метод очистки по паттерну если доступен
+        await redis.flushPattern(`${this.config.namespace}:*`)
+      } else if (redis) {
+        // Fallback: используем SCAN вместо KEYS для большей производительности
+        const pattern = `${this.config.namespace}:*`
+        let cursor = 0
+        do {
+          const result = await redis.scan(cursor, { MATCH: pattern, COUNT: 100 })
+          cursor = result.cursor
+          if (result.keys && result.keys.length > 0) {
+            await redis.del(result.keys)
+          }
+        } while (cursor !== 0)
+      }
+    } catch (error) {
+      logger.debug('Redis cleanup during destroy failed:', error)
+    }
   }
 }
 
+// Singleton паттерн для предотвращения множественной инициализации
+// Используем глобальный объект для сохранения состояния при HMR в dev режиме
+const globalForCache = globalThis as unknown as {
+  unifiedCacheInstance: UnifiedCacheManager | undefined
+}
+
 // Экспортируем предконфигурированный экземпляр
-export const unifiedCache = new UnifiedCacheManager({
-  namespace: 'venorus',
-  enableDebug: process.env.NODE_ENV === 'development',
-  enableMetrics: true
-})
+export const unifiedCache = (() => {
+  if (!globalForCache.unifiedCacheInstance) {
+    globalForCache.unifiedCacheInstance = new UnifiedCacheManager({
+      namespace: 'venorus',
+      enableDebug: process.env.NODE_ENV === 'development',
+      enableMetrics: true,
+      // ОПТИМИЗИРОВАНО: Адаптивные настройки для удаленной БД с высокой латентностью
+      // Увеличенный TTL снижает частоту обращений к БД
+      defaultTTL: 900000, // 15 минут - баланс между актуальностью и производительностью
+      
+      // Умеренные лимиты памяти с мониторингом для предотвращения перегрузки
+      // При среднем размере записи ~10KB это дает ~20MB использования
+      maxMemoryEntries: 2000, // Оптимальное количество для быстрого доступа
+      
+      // Жесткий лимит памяти с запасом для пиковых нагрузок
+      // Автоматическая очистка при достижении 80% лимита
+      maxMemorySize: 100 * 1024 * 1024, // 100MB - безопасный предел для Node.js
+      
+      // Приоритет слоев: сначала локальная память, затем Redis
+      // Это минимизирует сетевые задержки для горячих данных
+      layers: [CacheLayer.MEMORY, CacheLayer.REDIS]
+    })
+  }
+  return globalForCache.unifiedCacheInstance
+})()
 
 // Утилитарные функции для удобства
 export const CacheHelpers = {

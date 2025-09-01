@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/database/db-connection'
 import { getCacheManager } from '@/lib/dependency-injection'
-import { invalidateRelated } from '@/lib/cache/cache-utils'
-import { invalidateCache } from '@/lib/cache/cache-middleware';
-import { requireAuth, hasPermission } from '@/lib/database-auth'
+import { invalidateProductCache } from '@/lib/cache/cache-utils'
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth'
 import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
+import { logger } from '@/lib/logger'
+
+// SQL queries as constants for better maintainability  
+const GET_PRODUCT_BY_ID_QUERY = `
+  SELECT
+    p.*,
+    ms.name as model_line_name,
+    m.name as manufacturer_name,
+    pc.name as category_name,
+    pc.name as category_full_path
+  FROM products p
+  LEFT JOIN model_series ms ON p.series_id = ms.id
+  LEFT JOIN manufacturers m ON p.manufacturer_id = m.id
+  LEFT JOIN product_categories pc ON p.category_id = pc.id
+  WHERE p.id = $1 AND (p.is_deleted = false OR p.is_deleted IS NULL)
+`
 
 function isDbConfigured() {
   return !!process.env.DATABASE_URL || (
@@ -17,12 +32,15 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    logger.info('GET /api/products/[id] started')
+    
     if (!isDbConfigured()) {
       return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
     }
     // Оптимизация: убираем медленный testConnection()
 
     const { id } = await params
+    logger.info('Extracted product ID', { id })
     
     // Строгая валидация ID для предотвращения SQL-инъекций
     const rawId = id.replace(/[^0-9]/g, '');
@@ -40,27 +58,20 @@ export async function GET(
       )
     }
 
-    // Упрощенный запрос без RECURSIVE CTE для улучшения производительности
-    const productQuery = `
-      SELECT
-        p.*,
-        ms.name as model_line_name,
-        m.name as manufacturer_name,
-        pc.name as category_name,
-        pc.name as category_full_path
-      FROM products p
-      LEFT JOIN model_series ms ON p.series_id = ms.id
-      LEFT JOIN manufacturers m ON p.manufacturer_id = m.id
-      LEFT JOIN product_categories pc ON p.category_id = pc.id
-      WHERE p.id = $1 AND (p.is_deleted = false OR p.is_deleted IS NULL)
-    `
-
-    // Используем prepared statement для получения продукта по ID
-    const productResult = await preparedStatements.executeQuery(
-      COMMON_QUERIES.GET_PRODUCT_BY_ID,
-      productQuery,
-      [productId]
-    )
+    // Используем предопределенный запрос с правильным построением полного пути категории
+    let productResult
+    try {
+      productResult = await executeQuery(GET_PRODUCT_BY_ID_QUERY, [productId])
+    } catch (error) {
+      logger.error('Database query failed for product by ID', { 
+        productId, 
+        error: error.message 
+      })
+      return NextResponse.json(
+        { success: false, error: 'Database query failed' },
+        { status: 500 }
+      )
+    }
 
     if (productResult.rows.length === 0) {
       return NextResponse.json(
@@ -90,7 +101,11 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: product })
 
-  } catch (_error) {
+  } catch (error) {
+    logger.error('GET /api/products/[id] error', { 
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined 
+    })
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -161,9 +176,8 @@ export async function PUT(
         battery_life = $16,
         warranty = $17,
         show_price = $18,
-        custom_fields = $19,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $20 AND (is_deleted = false OR is_deleted IS NULL)
+      WHERE id = $19 AND (is_deleted = false OR is_deleted IS NULL)
       RETURNING *
     `
 
@@ -204,7 +218,6 @@ export async function PUT(
       data.battery_life || null,
       data.warranty || null,
       data.show_price !== undefined ? Boolean(data.show_price) : true,
-      JSON.stringify(data.custom_fields || {}),
       productId
     ]
 
@@ -214,14 +227,9 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Product not found or could not be updated' }, { status: 404 })
     }
 
-    try {
-      await invalidateRelated([
-        'medsip:products:*',
-        'products:*',
-        'product:*'
-      ])
-      getCacheManager().clear()
-    } catch {}
+    // Invalidate cache after update using unified function
+    const categoryId = data.category_id || result.rows[0]?.category_id
+    await invalidateProductCache(productId, categoryId, 'update')
 
     return NextResponse.json({ success: true, data: result.rows[0], message: 'Product updated successfully' })
 
@@ -283,11 +291,13 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Invalid product ID' }, { status: 400 })
     }
 
-    const checkQuery = `SELECT id, name FROM products WHERE id = $1`
+    const checkQuery = `SELECT id, name, category_id FROM products WHERE id = $1`
     const checkResult = await executeQuery(checkQuery, [productId])
     if (checkResult.rows.length === 0) {
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 })
     }
+    
+    const categoryId = checkResult.rows[0].category_id
 
     await executeQuery('BEGIN')
 
@@ -353,11 +363,9 @@ export async function DELETE(
 
       await executeQuery('COMMIT')
 
-      try {
-        await invalidateRelated(['medsip:products:*','products:*','product:*','products-fast:*','products-full:*','products-detailed:*','products-basic:*'])
-        await invalidateCache.all()
-        try { const { redisClient } = await import('@/lib/redis-client'); await redisClient.flushPattern('products-*'); await redisClient.flushPattern('product-*'); await redisClient.flushPattern('medsip:products-*') } catch {}
-      } catch {}
+      // Invalidate cache after deletion using unified function
+      // Note: category query would fail after deletion, use provided categoryId if available
+      await invalidateProductCache(productId, categoryId, 'delete')
 
       return NextResponse.json({ success: true, message: 'Product completely deleted', data: deleteResult.rows[0] })
 

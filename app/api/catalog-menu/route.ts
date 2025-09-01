@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { executeQuery } from "@/lib/db-connection"
+import { executeQuery } from "@/lib/database/db-connection"
 import { guardDbOr503Fast, tablesExist } from '@/lib/api-guards'
 
 export async function GET() {

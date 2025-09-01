@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getPool } from "@/lib/db-connection"
+import { getPool } from "@/lib/database/db-connection"
 
 // POST /api/media/check-duplicate - Проверка дубликата по хешу файла
 export async function POST(request: NextRequest) {

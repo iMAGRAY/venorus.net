@@ -3,7 +3,7 @@
  * Обеспечивает уникальность и SEO-дружественность
  */
 
-import { executeQuery } from '@/lib/db-connection';
+import { executeQuery } from '@/lib/database/db-connection';
 
 /**
  * Конвертирует строку в slug формат

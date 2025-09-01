@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/database/db-connection';
-import { requireAuth, hasPermission } from '@/lib/database-auth';
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth';
 
 // GET /api/products/[id]/characteristics - получить характеристики товара из EAV системы
 export async function GET(

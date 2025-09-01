@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server"
-import { executeQuery } from "@/lib/db-connection"
-import { requireAuth, hasPermission } from "@/lib/database-auth"
+import { executeQuery } from "@/lib/database/db-connection"
+import { requireAuth, hasPermission } from "@/lib/auth/database-auth"
 import { withCache, invalidateCache } from '@/lib/cache/cache-middleware'
 import { logger } from '@/lib/logger'
 

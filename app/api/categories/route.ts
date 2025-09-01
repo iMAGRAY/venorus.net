@@ -4,7 +4,7 @@ import { withCache, invalidateApiCache } from '@/lib/cache/cache-middleware'
 import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
 import { guardDbOr503, tablesExist } from '@/lib/api-guards'
 import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
-import { requireAuth, hasPermission } from '@/lib/database-auth'
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -107,12 +107,12 @@ export const GET = withCache(async function GET(request: NextRequest) {
     }
 
     if (!flat) {
-      const categoriesMap = new Map();
-      categories.forEach(cat => {
+      const categoriesMap = new Map<number, any>();
+      categories.forEach((cat: any) => {
         categoriesMap.set(cat.id, { ...cat, children: [] });
       });
 
-      const rootCategories = [];
+      const rootCategories: any[] = [];
       categories.forEach(cat => {
         if (cat.parent_id) {
           const parent = categoriesMap.get(cat.parent_id);

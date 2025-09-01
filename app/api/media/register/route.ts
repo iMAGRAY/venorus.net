@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getPool } from "@/lib/db-connection"
+import { getPool } from "@/lib/database/db-connection"
 
 // POST /api/media/register - Регистрация нового медиафайла в системе дедупликации
 export async function POST(request: NextRequest) {

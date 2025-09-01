@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getDatabaseMetrics, getDatabaseReport } from '@/lib/db-connection'
+import { getDatabaseMetrics, getDatabaseReport } from '@/lib/database/db-connection'
 import { performanceMonitor } from '@/lib/performance-monitor'
 
 // Маршрут использует request.url, поэтому должен быть динамическим

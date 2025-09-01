@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3"
-import { getPool } from "@/lib/db-connection"
+import { getPool } from "@/lib/database/db-connection"
+import { invalidateCache } from '@/lib/cache/cache-utils'
+import { logger } from '@/lib/logger'
 
 // Initialize S3 client
 const s3Client = new S3Client({
@@ -202,12 +204,11 @@ export async function DELETE(request: NextRequest) {
       } catch (_cacheError) {
       }
 
-      // Очищаем кеш продуктов, чтобы интерфейс сразу обновился
+      // Очищаем кеш продуктов через унифицированную систему
       try {
-        const { redisClient } = await import('../../../../lib/redis-client')
-        await redisClient.flushPattern('products-*')
-
-      } catch (_prodCacheErr) {
+        await invalidateCache(['products:*', 'product:*', 'api:products:*'])
+      } catch (prodCacheErr) {
+        logger.error('Failed to invalidate product cache after media deletion', prodCacheErr)
       }
 
       return NextResponse.json({

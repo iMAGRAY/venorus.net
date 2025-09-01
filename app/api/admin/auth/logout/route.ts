@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { destroyUserSession, AUTH_CONFIG } from '@/lib/database-auth'
+import { destroyUserSession, AUTH_CONFIG } from '@/lib/auth/database-auth'
 import { logger } from '@/lib/logger'
 
 // Принудительно делаем маршрут динамическим

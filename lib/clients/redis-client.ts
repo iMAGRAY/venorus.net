@@ -11,6 +11,8 @@ class RedisManager {
   private circuitBreakerOpen = false
   private lastFailTime = 0
   private circuitBreakerTimeout = 60000 // 1 минута для circuit breaker
+  private lastErrorLogTime = 0
+  private isConnecting = false
 
   constructor() {
     // Отключаем аварийный режим только если явно указан EMERGENCY_NO_REDIS
@@ -25,6 +27,12 @@ class RedisManager {
   }
 
   private async connect(): Promise<void> {
+    if (this.isConnecting) {
+      return // Предотвращаем множественные одновременные подключения
+    }
+    
+    this.isConnecting = true
+    
     try {
       if (this.client) {
         await this.client.disconnect()
@@ -42,7 +50,12 @@ class RedisManager {
       })
 
       this.client.on('error', (err) => {
-        logger.error('Redis Client Error:', err)
+        const now = Date.now()
+        // Логируем ошибки Redis не чаще чем раз в 5 секунд
+        if (now - this.lastErrorLogTime > 5000) {
+          logger.error('Redis Client Error:', err)
+          this.lastErrorLogTime = now
+        }
         this.isConnected = false
       })
 
@@ -74,6 +87,8 @@ class RedisManager {
         this.lastFailTime = Date.now()
         logger.warn('Redis circuit breaker activated - falling back to in-memory cache')
       }
+    } finally {
+      this.isConnecting = false
     }
   }
 

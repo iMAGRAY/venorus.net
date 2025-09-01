@@ -1,59 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
-import { requireAuth, hasPermission } from '@/lib/database-auth'
-
-// Серверный кеш для API endpoints
-const serverCache = new Map<string, { data: any; expires: number }>()
-
-// Утилиты для работы с серверным кешем
-const cacheUtils = {
-  get: (key: string) => {
-    const cached = serverCache.get(key)
-    if (cached && cached.expires > Date.now()) {
-      return cached.data
-    }
-    if (cached) {
-      serverCache.delete(key) // Удаляем истекший кеш
-    }
-    return null
-  },
-
-  set: (key: string, data: any, ttl: number = 300) => { // TTL в секундах
-    serverCache.set(key, {
-      data,
-      expires: Date.now() + (ttl * 1000)
-    })
-  },
-
-  delete: (key: string) => {
-    return serverCache.delete(key)
-  },
-
-  clear: () => {
-    serverCache.clear()
-  },
-
-  getStats: () => {
-    let validEntries = 0
-    let expiredEntries = 0
-    const now = Date.now()
-
-    for (const [, value] of serverCache.entries()) {
-      if (value.expires > now) {
-        validEntries++
-      } else {
-        expiredEntries++
-      }
-    }
-
-    return {
-      total: serverCache.size,
-      valid: validEntries,
-      expired: expiredEntries,
-      memoryUsage: `${serverCache.size * 100}B`
-    }
-  }
-}
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth'
+import { unifiedCache } from '@/lib/cache/unified-cache'
+import { getCacheStats } from '@/lib/cache/cache-utils'
 
 // GET - получить значение из кеша
 export async function GET(request: NextRequest) {
@@ -68,7 +17,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const data = cacheUtils.get(key)
+    const data = await unifiedCache.get(key)
 
     logger.debug('Cache GET request', { key, found: data !== null })
 
@@ -113,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'set') {
-      cacheUtils.set(key, value, ttl || 300)
+      await unifiedCache.set(key, value, { ttl: (ttl || 300) * 1000 }) // TTL в миллисекундах
 
       logger.debug('Cache SET request', { key, ttl: ttl || 300 })
 
@@ -124,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'stats') {
-      const stats = cacheUtils.getStats()
+      const stats = await getCacheStats()
       return NextResponse.json({
         success: true,
         stats
@@ -164,7 +113,7 @@ export async function DELETE(request: NextRequest) {
     const { key, action } = await request.json()
 
     if (action === 'clear') {
-      cacheUtils.clear()
+      await unifiedCache.clear()
       logger.info('Cache cleared completely')
 
       return NextResponse.json({
@@ -180,7 +129,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const success = cacheUtils.delete(key)
+    const success = await unifiedCache.delete(key)
 
     logger.debug('Cache DELETE request', { key, deleted: success })
 

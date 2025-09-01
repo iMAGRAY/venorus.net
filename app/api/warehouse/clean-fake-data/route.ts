@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db-connection';
+import { executeQuery } from '@/lib/database/db-connection';
 
 // POST - очистить все фейковые данные из складской системы
 export async function POST(_request: NextRequest) {

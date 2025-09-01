@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/database/db-connection'
 
 // GET - скачать каталог с подсчетом статистики
 export async function GET(

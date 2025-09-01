@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { executeQuery, isDatabaseAvailable } from '@/lib/db-connection'
+import { executeQuery, isDatabaseAvailableSync } from '@/lib/database/db-connection'
 
 export function isDbConfigured(): boolean {
   return !!process.env.DATABASE_URL || (
@@ -21,35 +21,89 @@ export function guardDbOr503Fast(): NextResponse | null {
   if (!isDbConfigured()) {
     return NextResponse.json({ success: false, error: 'Database config is not provided' }, { status: 503 })
   }
-  if (!isDatabaseAvailable()) {
+  if (!isDatabaseAvailableSync()) {
     return NextResponse.json({ success: false, error: 'Database connection failed' }, { status: 503 })
   }
   return null
 }
 
+// Кеш для результатов проверки таблиц (живет 24 часа)
+const tablesCache = new Map<string, { result: Record<string, boolean>, timestamp: number }>()
+const TABLES_CACHE_TTL = 24 * 60 * 60 * 1000 // 24 часа
+
 export async function tablesExist(tableNames: string[]): Promise<Record<string, boolean>> {
   if (!tableNames || tableNames.length === 0) return {}
-  if (!isDatabaseAvailable()) {
+  if (!isDatabaseAvailableSync()) {
     const map: Record<string, boolean> = {}
     for (const t of tableNames) map[t] = false
     return map
   }
-  const placeholders = tableNames.map((_, i) => `$${i + 1}`).join(', ')
+  
+  // Создаем уникальный набор нормализованных имен для запроса
+  const uniqueNormalized = new Set<string>()
+  const nameMapping: Array<{ original: string, normalized: string }> = []
+  
+  for (const name of tableNames) {
+    const normalized = name.toLowerCase().trim()
+    uniqueNormalized.add(normalized)
+    nameMapping.push({ original: name, normalized })
+  }
+  
+  // Проверяем кеш по уникальным нормализованным именам
+  const sortedUnique = Array.from(uniqueNormalized).sort()
+  const cacheKey = JSON.stringify(sortedUnique)
+  const cached = tablesCache.get(cacheKey)
+  
+  if (cached && Date.now() - cached.timestamp < TABLES_CACHE_TTL) {
+    // Восстанавливаем результат с оригинальными именами
+    const map: Record<string, boolean> = {}
+    for (const { original, normalized } of nameMapping) {
+      map[original] = cached.result[normalized] || false
+    }
+    return map
+  }
+  
+  // Оптимизированный запрос с LIMIT (используем уникальные нормализованные имена)
   const sql = `
-    SELECT table_name
+    SELECT LOWER(table_name) as table_name
     FROM information_schema.tables
-    WHERE table_schema='public' AND table_name IN (${placeholders})
+    WHERE table_schema='public' AND LOWER(table_name) = ANY($1::text[])
+    LIMIT ${sortedUnique.length}
   `
-  const res = await executeQuery(sql, tableNames)
+  const res = await executeQuery(sql, [sortedUnique])
   const set = new Set(res.rows.map((r: any) => r.table_name))
+  
+  // Создаем результат с нормализованными именами для кеша
+  const normalizedResult: Record<string, boolean> = {}
+  for (const n of sortedUnique) {
+    normalizedResult[n] = set.has(n)
+  }
+  
+  // Сохраняем в кеш
+  tablesCache.set(cacheKey, { result: normalizedResult, timestamp: Date.now() })
+  
+  // Возвращаем результат с оригинальными именами
   const map: Record<string, boolean> = {}
-  for (const t of tableNames) map[t] = set.has(t)
+  for (const { original, normalized } of nameMapping) {
+    map[original] = normalizedResult[normalized]
+  }
+  
+  // Очищаем старые записи из кеша
+  if (tablesCache.size > 100) {
+    const now = Date.now()
+    for (const [key, value] of tablesCache.entries()) {
+      if (now - value.timestamp > TABLES_CACHE_TTL) {
+        tablesCache.delete(key)
+      }
+    }
+  }
+  
   return map
 }
 
 export async function columnsExist(table: string, columns: string[]): Promise<Record<string, boolean>> {
   if (!columns || columns.length === 0) return {}
-  if (!isDatabaseAvailable()) {
+  if (!isDatabaseAvailableSync()) {
     const map: Record<string, boolean> = {}
     for (const c of columns) map[c] = false
     return map

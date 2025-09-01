@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { S3Client, ListObjectsV2Command, HeadObjectCommand } from '@aws-sdk/client-s3'
-import { getPool } from "@/lib/db-connection"
+import { getPool } from "@/lib/database/db-connection"
 import { calculateFileHashFromUrl } from "@/lib/file-hash"
 
 // Initialize S3 client

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db-connection';
+import { executeQuery } from '@/lib/database/db-connection';
 import { getCacheManager } from '@/lib/dependency-injection';
 import { invalidateRelated } from '@/lib/cache/cache-utils';
 import { invalidateCache } from '@/lib/cache/cache-middleware';

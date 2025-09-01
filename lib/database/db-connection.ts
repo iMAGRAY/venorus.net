@@ -7,6 +7,49 @@ let _pool: Pool | null = null
 
 // Add legacy synchronous availability flag for existing routes
 let connectionFailed = false
+let lastDbErrorLogTime = 0
+let dbReconnectAttempts = 0
+let lastDbReconnectTime = 0
+const MAX_DB_RECONNECT_ATTEMPTS = 5
+const DB_RECONNECT_BASE_DELAY = 2000 // 2 seconds base delay
+
+// Функция переподключения с exponential backoff
+async function tryReconnectDb(): Promise<void> {
+  const now = Date.now()
+  
+  // Не пытаемся переподключиться слишком часто
+  if (now - lastDbReconnectTime < DB_RECONNECT_BASE_DELAY) {
+    return
+  }
+  
+  if (dbReconnectAttempts >= MAX_DB_RECONNECT_ATTEMPTS) {
+    logger.error('Max DB reconnect attempts reached, giving up')
+    return
+  }
+  
+  dbReconnectAttempts++
+  lastDbReconnectTime = now
+  
+  const delay = DB_RECONNECT_BASE_DELAY * Math.pow(2, dbReconnectAttempts - 1)
+  
+  logger.info(`Attempting DB reconnection ${dbReconnectAttempts}/${MAX_DB_RECONNECT_ATTEMPTS} in ${delay}ms`)
+  
+  setTimeout(async () => {
+    try {
+      // Пересоздаем пул подключений с правильной инициализацией
+      if (_pool) {
+        await _pool.end()
+        _pool = null
+      }
+      // Используем getPool() для правильной инициализации всех обработчиков событий
+      _pool = null // Сбрасываем, чтобы getPool() создал новый пул
+      getPool() // Создает новый пул с правильными обработчиками событий
+      logger.info('Database pool recreated successfully')
+    } catch (error) {
+      logger.error('Failed to recreate database pool', error)
+    }
+  }, delay)
+}
 
 // Environment validation
 function validateEnvironment(): void {
@@ -34,22 +77,24 @@ function createPool(): Pool {
     user: process.env.DB_USER || process.env.POSTGRESQL_USER || "postgres",
     password: process.env.DB_PASSWORD || process.env.POSTGRESQL_PASSWORD || "",
     database: process.env.DB_NAME || process.env.POSTGRESQL_DBNAME || "medsip_protez",
-    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Увеличиваем pool для предотвращения connection exhaustion под нагрузкой
-    max: isBuildTime ? 2 : 5, // Увеличили до 5 для обработки параллельных запросов
-    min: isBuildTime ? 1 : 2,  // Минимум 2 соединения для стабильности
-    idleTimeoutMillis: 300_000, // 5 минут idle timeout для освобождения ресурсов
-    connectionTimeoutMillis: 5_000, // 5 секунд на подключение (уменьшили для быстрого failover)
-    query_timeout: 15_000, // 15 секунд на запрос (уменьшили для предотвращения блокировок)
-    statement_timeout: 15_000, // 15 секунд statement timeout (уменьшили)
+    // ОПТИМИЗИРОВАНО: Настройки для удаленной облачной БД с высокой латентностью
+    max: isBuildTime ? 2 : 15, // Увеличено до 15 для компенсации латентности
+    min: isBuildTime ? 1 : 5,  // Минимум 5 соединений для быстрого отклика
+    idleTimeoutMillis: 300_000, // 5 минут idle timeout (увеличено для стабильности)
+    connectionTimeoutMillis: 15_000, // 15 секунд на подключение (увеличено для облачной БД)
+    query_timeout: 30_000, // 30 секунд на запрос
+    statement_timeout: 30_000, // 30 секунд statement timeout
     keepAlive: true, // Включаем keepAlive
-    keepAliveInitialDelayMillis: 10_000, // Начинаем keepAlive быстрее - через 10 секунд
+    keepAliveInitialDelayMillis: 5_000, // Начинаем keepAlive через 5 секунд
     allowExitOnIdle: false, // Предотвращаем закрытие pool при idle
     
-    // Агрессивные настройки для облачной БД
+    // Дополнительные настройки для стабильности облачной БД
     application_name: 'venorus_web_app', // Идентификация приложения
     
     // SSL настройки для облачных БД - ВРЕМЕННОЕ РЕШЕНИЕ ДЛЯ ПРОДАКШЕН
-    ssl: (process.env.PGSSL === "true" || 
+    ssl: (process.env.DATABASE_URL?.includes("sslmode=disable") || 
+          process.env.DATABASE_SSL === "false") ? false : 
+         (process.env.PGSSL === "true" || 
           process.env.DATABASE_SSL === "true" || 
           process.env.DATABASE_URL?.includes("sslmode=require") || 
           process.env.DATABASE_URL?.includes("sslmode=prefer") ||
@@ -75,20 +120,30 @@ export function getPool(): Pool {
     
     // Улучшенная обработка ошибок пула
     _pool.on("error", (err) => {
-      logger.error("PostgreSQL Pool error", err)
+      const now = Date.now()
+      // Логируем ошибки БД не чаще чем раз в 10 секунд
+      if (now - lastDbErrorLogTime > 10000) {
+        logger.error("PostgreSQL Pool error", err)
+        lastDbErrorLogTime = now
+      }
       
       // Обрабатываем idle-session timeout специально
       if (err.message?.includes('idle-session timeout') || (err as any).code === '57P05') {
-        logger.warn('Idle session timeout detected, connection will be recreated automatically')
+        if (now - lastDbErrorLogTime > 10000) {
+          logger.warn('Idle session timeout detected, connection will be recreated automatically')
+        }
         connectionFailed = false // Не считаем это критической ошибкой
       } else {
         connectionFailed = true
+        // Пытаемся переподключиться с exponential backoff
+        tryReconnectDb()
       }
     })
     
     _pool.on("connect", (client) => {
       logger.debug("New database connection established")
       connectionFailed = false
+      dbReconnectAttempts = 0 // Сбрасываем счетчик при успешном подключении
       startKeepAlive() // Запускаем keepalive пинги
       
       // Устанавливаем keep-alive на уровне соединения
@@ -123,7 +178,7 @@ function startKeepAlive(): void {
         logger.warn('Keepalive ping failed', { error: error.message })
       }
     }
-  }, 120_000) // Ping every 2 minutes
+  }, 60_000) // Ping every 1 minute для удаленной БД
 }
 
 // Stop keepalive pings

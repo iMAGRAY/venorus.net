@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
-import { requireAuth, hasPermission } from '@/lib/database-auth'
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth'
 
 // КРИТИЧЕСКИ ВАЖНО: Этот endpoint отключен из соображений безопасности
 // Remote Code Execution через /api/restart представляет крайнюю угрозу

@@ -30,7 +30,13 @@
       "mcp__playwright-mcp__browser_navigate",
       "mcp__postgresql-api-ssh__mcp_api_client",
       "Bash(rg:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(ping:*)",
+      "Read(\\c\\Users\\1\\Documents\\GitHub/**)",
+      "Read(\\c\\Users\\1\\Documents\\GitHub/**)",
+      "Read(\\c\\Users\\1\\Documents\\GitHub/**)",
+      "Read(\\c\\Users\\1\\Documents\\GitHub/**)",
+      "Bash(export PGSSLROOTCERT=$HOME/.cloud-certs/root.crt)"
     ],
     "deny": [],
     "ask": [],

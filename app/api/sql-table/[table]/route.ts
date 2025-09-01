@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server"
-import { executeQuery } from "@/lib/db-connection"
-import { requireAuth, hasPermission } from "@/lib/database-auth"
+import { executeQuery } from "@/lib/database/db-connection"
+import { requireAuth, hasPermission } from "@/lib/auth/database-auth"
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

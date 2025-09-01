@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/database/db-connection';
 import { logger } from '@/lib/logger';
-import { requireAuth, hasPermission } from '@/lib/database-auth';
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth';
 
 // GET - получить конфигурируемые характеристики
 export async function GET(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
+import { executeQuery } from '@/lib/database/db-connection'
 import { withCache } from '@/lib/cache/cache-middleware'
 import { cacheKeys, CACHE_TTL, cacheRemember } from '@/lib/cache/cache-utils'
 import { logger } from '@/lib/logger'

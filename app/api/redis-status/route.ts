@@ -1,249 +1,437 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { redisClient, apiCache, pageCache, mediaCache, productCache, categoryCache } from '@/lib/redis-client'
+import { unifiedCache } from '@/lib/cache/unified-cache'
+import { getCacheStats } from '@/lib/cache/cache-utils'
+import { logger } from '@/lib/logger'
 
-// GET /api/redis-status - Получить статус Redis и информацию о кешах
+// GET /api/redis-status - теперь unified-cache-status
 export async function GET(_request: NextRequest) {
   try {
     const startTime = Date.now()
 
-    // Проверяем подключение к Redis
-    const connectionStatus = redisClient.getConnectionStatus()
-    const isConnected = await redisClient.ping()
+    // Проверяем доступность unified cache
+    const isConnected = await testUnifiedCacheConnection()
 
-    // Получаем информацию о всех кешах
-    const cacheInfo = {
-      api: {
-        keys: await redisClient.keys('api:*'),
-        count: (await redisClient.keys('api:*')).length
-      },
-      page: {
-        keys: await redisClient.keys('page:*'),
-        count: (await redisClient.keys('page:*')).length
-      },
-      media: {
-        keys: await redisClient.keys('media:*'),
-        count: (await redisClient.keys('media:*')).length
-      },
-      product: {
-        keys: await redisClient.keys('product:*'),
-        count: (await redisClient.keys('product:*')).length
-      },
-      category: {
-        keys: await redisClient.keys('category:*'),
-        count: (await redisClient.keys('category:*')).length
-      }
+    if (!isConnected.success) {
+      return NextResponse.json({
+        success: false,
+        error: 'Unified cache is not available',
+        details: isConnected.error,
+        timestamp: new Date().toISOString()
+      }, { status: 503 })
     }
 
-    // Общая статистика
-    const totalKeys = Object.values(cacheInfo).reduce((sum, cache) => sum + cache.count, 0)
+    // Получаем статистику unified cache
+    const cacheStats = await getCacheStats()
+    const cacheMetrics = unifiedCache.getMetrics()
+    const cacheInfo = unifiedCache.getStats()
 
-    // Получаем примеры TTL для каждого типа кеша
-    const ttlInfo = {
-      api: cacheInfo.api.keys.length > 0 ? await redisClient.ttl(cacheInfo.api.keys[0]) : -1,
-      page: cacheInfo.page.keys.length > 0 ? await redisClient.ttl(cacheInfo.page.keys[0]) : -1,
-      media: cacheInfo.media.keys.length > 0 ? await redisClient.ttl(cacheInfo.media.keys[0]) : -1,
-      product: cacheInfo.product.keys.length > 0 ? await redisClient.ttl(cacheInfo.product.keys[0]) : -1,
-      category: cacheInfo.category.keys.length > 0 ? await redisClient.ttl(cacheInfo.category.keys[0]) : -1
-    }
+    // Получаем информацию о ключах по типам (без раскрытия содержимого)
+    const keyStatsByType = await getKeyStatsByType()
 
     const responseTime = Date.now() - startTime
 
     return NextResponse.json({
       success: true,
-      redis: {
-        connected: isConnected,
-        connection_status: connectionStatus,
-        response_time_ms: responseTime
+      cache: {
+        type: 'unified',
+        connected: isConnected.success,
+        latency: isConnected.latency,
+        responseTime
       },
-      cache_stats: {
-        total_keys: totalKeys,
-        by_prefix: cacheInfo,
-        ttl_samples: ttlInfo
+      stats: cacheStats,
+      metrics: cacheMetrics,
+      info: cacheInfo,
+      keyStats: keyStatsByType,
+      features: {
+        unifiedCaching: true,
+        namespaceVersioning: true,
+        ttlJitter: true,
+        singleflightPattern: true,
+        negativeCaching: true,
+        swrCaching: true,
+        tagBasedInvalidation: true,
+        securityValidation: true
       },
       operations: [
-        'GET /api/redis-status - Получить статус',
-        'POST /api/redis-status - Управление кешем',
-        'DELETE /api/redis-status - Очистить кеш'
-      ]
+        'GET /api/redis-status - Get unified cache status',
+        'POST /api/redis-status - Manage cache operations',
+        'DELETE /api/redis-status - Clear cache'
+      ],
+      timestamp: new Date().toISOString()
     })
 
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    logger.error('Failed to get unified cache status', { error: errorMsg })
+    
     return NextResponse.json({
       success: false,
-      error: 'Ошибка получения статуса Redis',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Failed to get unified cache status',
+      details: errorMsg,
+      timestamp: new Date().toISOString()
     }, { status: 500 })
   }
 }
 
-// POST /api/redis-status - Управление кешированием
+// POST /api/redis-status - Управление unified cache
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { action, cache_type, key, data, ttl } = body
+    // Validate request body exists and is valid JSON
+    let body: any
+    try {
+      body = await request.json()
+    } catch (jsonError) {
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid JSON in request body',
+        details: jsonError instanceof Error ? jsonError.message : 'JSON parsing failed'
+      }, { status: 400 })
+    }
+
+    // Validate body is an object
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({
+        success: false,
+        error: 'Request body must be a valid JSON object'
+      }, { status: 400 })
+    }
+
+    // Safely destructure with validation
+    const { action, key, data, ttl, tags } = body
+
+    // Validate required action parameter
+    if (!action || typeof action !== 'string' || action.trim().length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'Action parameter is required and must be a non-empty string'
+      }, { status: 400 })
+    }
+
+    // Sanitize action parameter
+    const validActions = ['set', 'get', 'delete', 'test']
+    if (!validActions.includes(action)) {
+      return NextResponse.json({
+        success: false,
+        error: `Invalid action. Allowed actions: ${validActions.join(', ')}`
+      }, { status: 400 })
+    }
 
     switch (action) {
       case 'set':
-        if (!cache_type || !key || data === undefined) {
+        if (!key || data === undefined) {
           return NextResponse.json({
             success: false,
-            error: 'Требуются параметры: cache_type, key, data'
+            error: 'Parameters required: key, data'
           }, { status: 400 })
         }
 
-        let cache
-        switch (cache_type) {
-          case 'api': cache = apiCache; break
-          case 'page': cache = pageCache; break
-          case 'media': cache = mediaCache; break
-          case 'product': cache = productCache; break
-          case 'category': cache = categoryCache; break
-          default:
-            return NextResponse.json({
-              success: false,
-              error: 'Неизвестный тип кеша'
-            }, { status: 400 })
+        const setOptions = {
+          ttl: typeof ttl === 'number' ? ttl * 1000 : 300000, // Default 5 minutes
+          tags: Array.isArray(tags) ? tags : ['manual']
         }
 
-        const setResult = await cache.set(key, data, ttl || 300)
-        return NextResponse.json({
-          success: true,
-          action: 'set',
-          cache_type,
-          key,
-          ttl: ttl || 300,
-          result: setResult
-        })
+        try {
+          await unifiedCache.set(key, data, setOptions)
+          logger.info('Manual cache set operation', { key, ttl: setOptions.ttl, tags: setOptions.tags })
+          
+          return NextResponse.json({
+            success: true,
+            action: 'set',
+            key,
+            ttl: setOptions.ttl / 1000,
+            tags: setOptions.tags,
+            timestamp: new Date().toISOString()
+          })
+        } catch (setError) {
+          const errorMsg = setError instanceof Error ? setError.message : 'Set operation failed'
+          logger.error('Cache set operation failed', { key, error: errorMsg })
+          
+          return NextResponse.json({
+            success: false,
+            error: 'Set operation failed',
+            details: errorMsg
+          }, { status: 500 })
+        }
 
       case 'get':
-        if (!cache_type || !key) {
+        if (!key) {
           return NextResponse.json({
             success: false,
-            error: 'Требуются параметры: cache_type, key'
+            error: 'Key parameter is required'
           }, { status: 400 })
         }
 
-        let getCache
-        switch (cache_type) {
-          case 'api': getCache = apiCache; break
-          case 'page': getCache = pageCache; break
-          case 'media': getCache = mediaCache; break
-          case 'product': getCache = productCache; break
-          case 'category': getCache = categoryCache; break
-          default:
-            return NextResponse.json({
-              success: false,
-              error: 'Неизвестный тип кеша'
-            }, { status: 400 })
+        try {
+          const cachedData = await unifiedCache.get(key)
+          const exists = cachedData !== null && cachedData !== undefined
+          
+          return NextResponse.json({
+            success: true,
+            action: 'get',
+            key,
+            exists,
+            data: exists ? cachedData : null,
+            timestamp: new Date().toISOString()
+          })
+        } catch (getError) {
+          const errorMsg = getError instanceof Error ? getError.message : 'Get operation failed'
+          logger.error('Cache get operation failed', { key, error: errorMsg })
+          
+          return NextResponse.json({
+            success: false,
+            error: 'Get operation failed',
+            details: errorMsg
+          }, { status: 500 })
         }
 
-        const cachedData = await getCache.get(key)
-        return NextResponse.json({
-          success: true,
-          action: 'get',
-          cache_type,
-          key,
-          exists: cachedData !== null,
-          data: cachedData
-        })
+      case 'delete':
+        if (!key) {
+          return NextResponse.json({
+            success: false,
+            error: 'Key parameter is required'
+          }, { status: 400 })
+        }
 
-      case 'ping':
-        const pingResult = await redisClient.ping()
+        try {
+          const deleted = await unifiedCache.delete(key)
+          logger.info('Manual cache delete operation', { key, deleted })
+          
+          return NextResponse.json({
+            success: true,
+            action: 'delete',
+            key,
+            deleted,
+            timestamp: new Date().toISOString()
+          })
+        } catch (deleteError) {
+          const errorMsg = deleteError instanceof Error ? deleteError.message : 'Delete operation failed'
+          logger.error('Cache delete operation failed', { key, error: errorMsg })
+          
+          return NextResponse.json({
+            success: false,
+            error: 'Delete operation failed',
+            details: errorMsg
+          }, { status: 500 })
+        }
+
+      case 'test':
+        const testResult = await testUnifiedCacheConnection()
         return NextResponse.json({
           success: true,
-          action: 'ping',
-          result: pingResult
+          action: 'test',
+          result: testResult,
+          timestamp: new Date().toISOString()
         })
 
       default:
         return NextResponse.json({
           success: false,
-          error: 'Неизвестное действие. Доступные: set, get, ping'
+          error: 'Unknown action. Available: set, get, delete, test'
         }, { status: 400 })
     }
 
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    logger.error('Redis-status POST operation failed', { error: errorMsg })
+    
     return NextResponse.json({
       success: false,
-      error: 'Ошибка выполнения операции Redis',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Operation failed',
+      details: errorMsg
     }, { status: 500 })
   }
 }
 
-// DELETE /api/redis-status - Очистить кеш
+// DELETE /api/redis-status - Очистить unified cache
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const cacheType = searchParams.get('cache_type')
     const pattern = searchParams.get('pattern')
+    const tags = searchParams.get('tags')
+    const clearAll = searchParams.get('all') === 'true'
 
-    if (cacheType === 'all') {
-      // Очищаем все кеши
-      const results = await Promise.all([
-        apiCache.flush(),
-        pageCache.flush(),
-        mediaCache.flush(),
-        productCache.flush(),
-        categoryCache.flush()
-      ])
-
-      const totalDeleted = results.reduce((sum, count) => sum + count, 0)
-
-      return NextResponse.json({
-        success: true,
-        action: 'flush_all',
-        deleted_keys: totalDeleted,
-        caches_cleared: ['api', 'page', 'media', 'product', 'category']
-      })
+    if (clearAll) {
+      // Полная очистка unified cache
+      try {
+        await unifiedCache.clear()
+        logger.warn('Full unified cache cleared via API')
+        
+        return NextResponse.json({
+          success: true,
+          action: 'clear_all',
+          message: 'All unified cache cleared',
+          timestamp: new Date().toISOString()
+        })
+      } catch (clearError) {
+        const errorMsg = clearError instanceof Error ? clearError.message : 'Clear operation failed'
+        logger.error('Full cache clear failed', { error: errorMsg })
+        
+        return NextResponse.json({
+          success: false,
+          error: 'Clear operation failed',
+          details: errorMsg
+        }, { status: 500 })
+      }
     }
 
     if (pattern) {
-      // Очищаем по паттерну
-      const deleted = await redisClient.flushPattern(pattern)
-      return NextResponse.json({
-        success: true,
-        action: 'flush_pattern',
-        pattern,
-        deleted_keys: deleted
-      })
+      // Очистка по паттерну
+      try {
+        const keys = await unifiedCache.getKeysByPattern(pattern)
+        let deleted = 0
+        
+        for (const key of keys) {
+          const result = await unifiedCache.delete(key)
+          if (result) deleted++
+        }
+        
+        logger.info('Pattern-based cache clear', { pattern, deleted, total: keys.length })
+        
+        return NextResponse.json({
+          success: true,
+          action: 'clear_pattern',
+          pattern,
+          deletedKeys: deleted,
+          totalKeys: keys.length,
+          timestamp: new Date().toISOString()
+        })
+      } catch (patternError) {
+        const errorMsg = patternError instanceof Error ? patternError.message : 'Pattern clear failed'
+        logger.error('Pattern cache clear failed', { pattern, error: errorMsg })
+        
+        return NextResponse.json({
+          success: false,
+          error: 'Pattern clear failed',
+          details: errorMsg
+        }, { status: 500 })
+      }
     }
 
-    if (cacheType) {
-      // Очищаем конкретный тип кеша
-      let cache
-      switch (cacheType) {
-        case 'api': cache = apiCache; break
-        case 'page': cache = pageCache; break
-        case 'media': cache = mediaCache; break
-        case 'product': cache = productCache; break
-        case 'category': cache = categoryCache; break
-        default:
-          return NextResponse.json({
-            success: false,
-            error: 'Неизвестный тип кеша'
-          }, { status: 400 })
+    if (tags) {
+      // Очистка по тегам
+      try {
+        const tagList = tags.split(',').map(tag => tag.trim()).filter(Boolean)
+        await unifiedCache.invalidateByTags(tagList)
+        
+        logger.info('Tag-based cache invalidation', { tags: tagList })
+        
+        return NextResponse.json({
+          success: true,
+          action: 'invalidate_tags',
+          tags: tagList,
+          message: 'Cache invalidated by tags',
+          timestamp: new Date().toISOString()
+        })
+      } catch (tagsError) {
+        const errorMsg = tagsError instanceof Error ? tagsError.message : 'Tag invalidation failed'
+        logger.error('Tag cache invalidation failed', { tags, error: errorMsg })
+        
+        return NextResponse.json({
+          success: false,
+          error: 'Tag invalidation failed',
+          details: errorMsg
+        }, { status: 500 })
       }
-
-      const deleted = await cache.flush()
-      return NextResponse.json({
-        success: true,
-        action: 'flush_cache_type',
-        cache_type: cacheType,
-        deleted_keys: deleted
-      })
     }
 
     return NextResponse.json({
       success: false,
-      error: 'Требуется параметр cache_type, pattern или cache_type=all'
+      error: 'Required parameter: pattern, tags, or all=true'
     }, { status: 400 })
 
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+    logger.error('Cache delete operation failed', { error: errorMsg })
+    
     return NextResponse.json({
       success: false,
-      error: 'Ошибка очистки кеша Redis',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Delete operation failed',
+      details: errorMsg
     }, { status: 500 })
   }
+}
+
+// Вспомогательные функции
+interface CacheTestData {
+  test: boolean
+  timestamp: number
+}
+
+function isCacheTestData(obj: unknown): obj is CacheTestData {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    !Array.isArray(obj) &&
+    'test' in obj &&
+    'timestamp' in obj &&
+    typeof (obj as any).test === 'boolean' &&
+    typeof (obj as any).timestamp === 'number'
+  )
+}
+
+async function testUnifiedCacheConnection(): Promise<{ success: boolean; latency: number; error?: string }> {
+  try {
+    const testStart = Date.now()
+    const testKey = `connection_test_${Date.now()}_${Math.random().toString(36).substring(2)}`
+    const testData: CacheTestData = { test: true, timestamp: testStart }
+    
+    await unifiedCache.set(testKey, testData, { ttl: 5000 })
+    const retrieved = await unifiedCache.get(testKey)
+    await unifiedCache.delete(testKey)
+    
+    const latency = Date.now() - testStart
+    
+    // Проверяем корректность данных с proper типизацией
+    let isValid = false
+    if (retrieved !== null && retrieved !== undefined) {
+      if (isCacheTestData(retrieved) && retrieved.test === true) {
+        isValid = true
+      } else if (typeof retrieved === 'string') {
+        try {
+          const parsed = JSON.parse(retrieved)
+          if (isCacheTestData(parsed) && parsed.test === true) {
+            isValid = true
+          }
+        } catch (parseError) {
+          logger.warn('Cache connection test: failed to parse string response', { retrieved })
+        }
+      }
+    }
+    
+    return {
+      success: isValid,
+      latency,
+      error: isValid ? undefined : `Data integrity check failed - expected test object, got: ${typeof retrieved}`
+    }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Connection test failed'
+    logger.error('Cache connection test failed', { error: errorMsg })
+    
+    return {
+      success: false,
+      latency: -1,
+      error: errorMsg
+    }
+  }
+}
+
+async function getKeyStatsByType(): Promise<Record<string, number>> {
+  const keyTypes = ['product', 'products', 'category', 'categories', 'page', 'api', 'media', 'search']
+  const stats: Record<string, number> = {}
+  
+  try {
+    for (const type of keyTypes) {
+      try {
+        const keys = await unifiedCache.getKeysByPattern(`${type}:*`)
+        stats[type] = keys.length
+      } catch (typeError) {
+        logger.warn(`Failed to get key stats for type: ${type}`, { error: typeError.message })
+        stats[type] = 0
+      }
+    }
+  } catch (error) {
+    logger.error('Failed to get key stats by type', { error: error.message })
+  }
+  
+  return stats
 }

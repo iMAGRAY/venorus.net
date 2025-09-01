@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
-import { requireAuth, hasPermission } from '@/lib/database-auth'
+import { executeQuery } from '@/lib/database/db-connection'
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth'
 import { logger } from '@/lib/logger'
 import { withCache, invalidateApiCache } from '@/lib/cache/cache-middleware'
-import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns } from '@/lib/cache/cache-utils'
+import { cacheKeys, cacheRemember, CACHE_TTL, invalidateCache, cachePatterns, invalidateProductCache } from '@/lib/cache/cache-utils'
 import { guardDbOr503, tablesExist, okEmpty } from '@/lib/api-guards'
 import { preparedStatements, COMMON_QUERIES } from '@/lib/database/prepared-statements'
 
@@ -158,45 +158,48 @@ export const GET = withCache(async function GET(request: NextRequest) {
         ]) as any;
       }
 
-      // Если не fast режим, получаем варианты и характеристики отдельно для каждого продукта
+      // ОПТИМИЗИРОВАНО: Параллельное выполнение запросов для variants и characteristics
       if (!fast && result.rows.length > 0 && _detailed) {
         const productIds = result.rows.map((p: any) => p.id);
         
-        // Получаем варианты для всех продуктов одним запросом
-        const variantsQuery = `
-          SELECT 
-            pv.master_id,
-            JSON_AGG(
-              JSON_BUILD_OBJECT(
-                'id', pv.id,
-                'price', pv.price,
-                'discountPrice', pv.discount_price,
-                'isAvailable', pv.is_active,
-                'sizeName', COALESCE(pv.name, pv.sku),
-                'sizeValue', COALESCE(pv.sku, pv.name),
-                'stockQuantity', pv.stock_quantity,
-                'sku', pv.sku
-              ) ORDER BY pv.sort_order, pv.name
-            ) as variants
-          FROM product_variants pv
-          WHERE pv.master_id = ANY($1) 
-            AND pv.is_active = true 
-            AND (pv.is_deleted = false OR pv.is_deleted IS NULL)
-          GROUP BY pv.master_id
-        `;
+        // Запускаем все запросы параллельно для снижения общей латентности
+        const [variantsResult, charTables] = await Promise.all([
+          // Запрос вариантов
+          executeQuery(`
+            SELECT 
+              pv.master_id,
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'id', pv.id,
+                  'price', pv.price,
+                  'discountPrice', pv.discount_price,
+                  'isAvailable', pv.is_active,
+                  'sizeName', COALESCE(pv.name, pv.sku),
+                  'sizeValue', COALESCE(pv.sku, pv.name),
+                  'stockQuantity', pv.stock_quantity,
+                  'sku', pv.sku
+                ) ORDER BY pv.sort_order, pv.name
+              ) as variants
+            FROM product_variants pv
+            WHERE pv.master_id = ANY($1) 
+              AND pv.is_active = true 
+              AND (pv.is_deleted = false OR pv.is_deleted IS NULL)
+            GROUP BY pv.master_id
+          `, [productIds]),
+          // Проверка таблиц (теперь с кешем на 24 часа)
+          tablesExist(['product_characteristics_simple','characteristics_values_simple','characteristics_groups_simple'])
+        ]);
         
-        const variantsResult = await executeQuery(variantsQuery, [productIds]);
+        // Обрабатываем результаты вариантов
         const variantsByProductId: any = {};
         variantsResult.rows.forEach((row: any) => {
           variantsByProductId[row.master_id] = row.variants;
         });
         
-        // Проверяем таблицы характеристик и получаем их если нужно
-        const charTables = await tablesExist(['product_characteristics_simple','characteristics_values_simple','characteristics_groups_simple']);
+        // Получаем характеристики если таблицы существуют
         let specsByProductId: any = {};
-        
         if (charTables.product_characteristics_simple && charTables.characteristics_values_simple && charTables.characteristics_groups_simple) {
-          const specsQuery = `
+          const specsResult = await executeQuery(`
             SELECT 
               prch.product_id,
               JSON_AGG(
@@ -213,9 +216,8 @@ export const GET = withCache(async function GET(request: NextRequest) {
             LEFT JOIN characteristics_groups_simple cg ON cv.group_id = cg.id AND cg.is_active = true
             WHERE prch.product_id = ANY($1) AND cv.id IS NOT NULL AND cg.id IS NOT NULL
             GROUP BY prch.product_id
-          `;
+          `, [productIds]);
           
-          const specsResult = await executeQuery(specsQuery, [productIds]);
           specsResult.rows.forEach((row: any) => {
             specsByProductId[row.product_id] = row.specifications;
           });
@@ -374,28 +376,8 @@ export async function POST(request: NextRequest) {
     const result = await executeQuery(query, values);
     const product = result.rows[0];
 
-    // Инвалидируем кэш после создания товара
-    try {
-      logger.info('Invalidating product cache after creation', { productId: product.id })
-
-      // Инвалидируем кеш продуктов
-      await invalidateCache([
-        cachePatterns.allProducts,
-        cachePatterns.product(product.id),
-        'api:*products*',
-        'api:*search*'
-      ])
-
-      // Инвалидируем API кеш
-      await invalidateApiCache(['/products', '/search'])
-
-      logger.info('Cache invalidated successfully after creation', { productId: product.id })
-    } catch (cacheError) {
-      logger.warn('Failed to invalidate cache after product creation', {
-        productId: product.id,
-        error: cacheError.message
-      })
-    }
+    // Invalidate cache after product creation using unified function
+    await invalidateProductCache(product.id, requestData.category_id, 'create')
 
     // Если есть характеристики, добавляем их
     if (requestData.characteristics && Array.isArray(requestData.characteristics) && requestData.characteristics.length > 0) {

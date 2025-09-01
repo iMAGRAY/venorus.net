@@ -251,16 +251,18 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | undefined>(undefined)
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with saved language or RU as fallback
-  const [language, setLanguageState] = useState<SupportedLanguage>(() => {
+  // Always initialize with default language for SSR consistency
+  const [language, setLanguageState] = useState<SupportedLanguage>("ru")
+
+  // Hydrate with saved language on client only after mount
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = window.localStorage.getItem("venorus_lang") as SupportedLanguage | null
       if (saved === "ru" || saved === "es") {
-        return saved
+        setLanguageState(saved)
       }
     }
-    return "ru" // SSR fallback
-  })
+  }, [])
 
   // Persist changes and update document lang - only when language actually changes
   useEffect(() => {

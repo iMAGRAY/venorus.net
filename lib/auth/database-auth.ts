@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
-import { Client } from 'pg'
 import { logger } from '../logger'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 
 // Конфигурация безопасности
 export const AUTH_CONFIG = {
@@ -13,12 +13,10 @@ export const AUTH_CONFIG = {
   csrfTokenLength: 32
 }
 
-// Получение подключения к PostgreSQL
-function getDbConnection() {
-  return new Client({
-    connectionString: process.env.DATABASE_URL
-  })
-}
+// Throttling для логирования ошибок session cleanup
+let lastSessionCleanupErrorLog = 0
+let suppressedCleanupErrorCount = 0
+
 
 // Интерфейс пользователя
 export interface User {
@@ -55,19 +53,17 @@ const loginAttempts = new Map<string, { count: number; lastAttempt: number }>()
 
 // Генерация безопасного токена
 function generateSecureToken(length: number = 32): string {
-  const crypto = require('crypto')
   return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
 }
 
 // Проверка учетных данных пользователя в базе данных
 async function validateUserCredentials(username: string, password: string): Promise<User | null> {
-  const client = getDbConnection()
+  const { getPool } = await import('../database/db-connection')
+  const pool = getPool()
 
   try {
-    await client.connect()
-
     // Получаем пользователя с его ролью и правами
-    const userResult = await client.query(`
+    const userResult = await pool.query(`
       SELECT
         u.id, u.username, u.email, u.first_name, u.last_name,
         u.password_hash, u.status, u.last_login, u.created_at,
@@ -101,7 +97,7 @@ async function validateUserCredentials(username: string, password: string): Prom
     const passwordValid = await bcrypt.compare(password, userData.password_hash)
     if (!passwordValid) {
       // Увеличиваем счетчик неудачных попыток
-      await client.query(`
+      await pool.query(`
         UPDATE users
         SET failed_login_attempts = failed_login_attempts + 1,
             locked_until = CASE
@@ -116,7 +112,7 @@ async function validateUserCredentials(username: string, password: string): Prom
     }
 
     // Сбрасываем счетчик неудачных попыток при успешном входе
-    await client.query(`
+    await pool.query(`
       UPDATE users
       SET failed_login_attempts = 0,
           locked_until = NULL,
@@ -145,7 +141,7 @@ async function validateUserCredentials(username: string, password: string): Prom
     logger.error('Error validating user credentials', error)
     return null
   } finally {
-    await client.end()
+    // Pool connections are managed automatically - no need to end
   }
 }
 
@@ -182,19 +178,18 @@ export async function createUserSession(
   ipAddress: string,
   userAgent: string,
   rememberMe: boolean = false
-): Promise<string | null> {
-  const client = getDbConnection()
+): Promise<{ sessionId: string; csrfToken: string } | null> {
+  const { getPool } = await import('../database/db-connection')
+  const pool = getPool()
 
   try {
-    await client.connect()
-
     const sessionId = generateSecureToken(64)
     const csrfToken = generateSecureToken(AUTH_CONFIG.csrfTokenLength)
     const sessionTTL = rememberMe ? AUTH_CONFIG.extendedSessionTTL : AUTH_CONFIG.sessionTTL
     const expiresAt = new Date(Date.now() + sessionTTL)
 
     // Создаем сессию в базе данных
-    await client.query(`
+    await pool.query(`
       INSERT INTO user_sessions (
         id, user_id, ip_address, user_agent, csrf_token,
         remember_me, expires_at, last_activity, created_at
@@ -205,7 +200,7 @@ export async function createUserSession(
     loginAttempts.delete(ipAddress)
 
     // Логируем действие
-    await client.query(`
+    await pool.query(`
       INSERT INTO user_audit_log (
         user_id, action, details, ip_address, user_agent, session_id, created_at
       ) VALUES ($1, 'login', $2, $3, $4, $5, CURRENT_TIMESTAMP)
@@ -226,25 +221,24 @@ export async function createUserSession(
       expiresAt: expiresAt.toISOString()
     })
 
-    return sessionId
+    return { sessionId, csrfToken }
 
   } catch (error) {
     logger.error('Error creating user session', error)
     return null
   } finally {
-    await client.end()
+    // Pool connections are managed automatically - no need to end
   }
 }
 
 // Проверка сессии в базе данных
 export async function validateUserSession(sessionId: string): Promise<UserSession | null> {
-  const client = getDbConnection()
+  const { getPool } = await import('../database/db-connection')
+  const pool = getPool()
 
   try {
-    await client.connect()
-
     // Получаем сессию с данными пользователя
-    const sessionResult = await client.query(`
+    const sessionResult = await pool.query(`
       SELECT
         s.id, s.user_id, s.ip_address, s.user_agent, s.csrf_token,
         s.remember_me, s.expires_at, s.last_activity, s.created_at,
@@ -260,14 +254,14 @@ export async function validateUserSession(sessionId: string): Promise<UserSessio
 
     if (sessionResult.rows.length === 0) {
       // Удаляем истекшую сессию
-      await client.query('DELETE FROM user_sessions WHERE id = $1', [sessionId])
+      await pool.query('DELETE FROM user_sessions WHERE id = $1', [sessionId])
       return null
     }
 
     const sessionData = sessionResult.rows[0]
 
     // Обновляем время последней активности
-    await client.query(`
+    await pool.query(`
       UPDATE user_sessions
       SET last_activity = CURRENT_TIMESTAMP
       WHERE id = $1
@@ -303,19 +297,18 @@ export async function validateUserSession(sessionId: string): Promise<UserSessio
     logger.error('Error validating user session', error)
     return null
   } finally {
-    await client.end()
+    // Pool connections are managed automatically - no need to end
   }
 }
 
 // Удаление сессии
 export async function destroyUserSession(sessionId: string): Promise<void> {
-  const client = getDbConnection()
+  const { getPool } = await import('../database/db-connection')
+  const pool = getPool()
 
   try {
-    await client.connect()
-
     // Получаем данные сессии для логирования
-    const sessionResult = await client.query(`
+    const sessionResult = await pool.query(`
       SELECT user_id, ip_address, user_agent FROM user_sessions WHERE id = $1
     `, [sessionId])
 
@@ -323,7 +316,7 @@ export async function destroyUserSession(sessionId: string): Promise<void> {
       const sessionData = sessionResult.rows[0]
 
       // Логируем выход
-      await client.query(`
+      await pool.query(`
         INSERT INTO user_audit_log (
           user_id, action, details, ip_address, user_agent, session_id, created_at
         ) VALUES ($1, 'logout', $2, $3, $4, $5, CURRENT_TIMESTAMP)
@@ -337,14 +330,14 @@ export async function destroyUserSession(sessionId: string): Promise<void> {
     }
 
     // Удаляем сессию
-    await client.query('DELETE FROM user_sessions WHERE id = $1', [sessionId])
+    await pool.query('DELETE FROM user_sessions WHERE id = $1', [sessionId])
 
     logger.info('User session destroyed', { sessionId })
 
   } catch (error) {
     logger.error('Error destroying user session', error)
   } finally {
-    await client.end()
+    // Pool connections are managed automatically - no need to end
   }
 }
 
@@ -355,7 +348,7 @@ export async function authenticateUser(
   ipAddress: string,
   userAgent: string,
   rememberMe: boolean = false
-): Promise<{ success: boolean; sessionId?: string; error?: string; user?: User }> {
+): Promise<{ success: boolean; sessionId?: string; csrfToken?: string; error?: string; user?: User }> {
 
   // Проверка лимитов
   if (!checkRateLimit(ipAddress)) {
@@ -371,12 +364,12 @@ export async function authenticateUser(
   }
 
   // Создание сессии
-  const sessionId = await createUserSession(user, ipAddress, userAgent, rememberMe)
-  if (!sessionId) {
+  const sessionResult = await createUserSession(user, ipAddress, userAgent, rememberMe)
+  if (!sessionResult) {
     return { success: false, error: 'Failed to create session' }
   }
 
-  return { success: true, sessionId, user }
+  return { success: true, sessionId: sessionResult.sessionId, csrfToken: sessionResult.csrfToken, user }
 }
 
 // Middleware для проверки аутентификации
@@ -410,12 +403,11 @@ export function hasPermission(user: User, permission: string): boolean {
 
 // Очистка истекших сессий (функция для cron)
 export async function cleanupExpiredSessions(): Promise<number> {
-  const client = getDbConnection()
+  const { getPool } = await import('../database/db-connection')
+  const pool = getPool()
 
   try {
-    await client.connect()
-
-    const result = await client.query(`
+    const result = await pool.query(`
       DELETE FROM user_sessions
       WHERE expires_at < CURRENT_TIMESTAMP
          OR last_activity < CURRENT_TIMESTAMP - INTERVAL '30 days'
@@ -430,10 +422,25 @@ export async function cleanupExpiredSessions(): Promise<number> {
     return deletedCount
 
   } catch (error) {
-    logger.error('Error cleaning up expired sessions', error)
+    const now = Date.now()
+    // Всегда логируем ошибки на DEBUG уровне для диагностики
+    logger.debug('Session cleanup error (debug)', error)
+    
+    // ERROR уровень с ограничением для предотвращения спама, но с учетом количества
+    if (now - lastSessionCleanupErrorLog > 30000) {
+      if (suppressedCleanupErrorCount > 0) {
+        logger.error(`Error cleaning up expired sessions (${suppressedCleanupErrorCount + 1} occurrences since last report)`, error)
+        suppressedCleanupErrorCount = 0
+      } else {
+        logger.error('Error cleaning up expired sessions', error)
+      }
+      lastSessionCleanupErrorLog = now
+    } else {
+      suppressedCleanupErrorCount++
+    }
     return 0
   } finally {
-    await client.end()
+    // Pool connections are managed automatically - no need to end
   }
 }
 

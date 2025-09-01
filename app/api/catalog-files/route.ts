@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery } from '@/lib/db-connection'
-import { requireAuth, hasPermission } from '@/lib/database-auth'
+import { executeQuery } from '@/lib/database/db-connection'
+import { requireAuth, hasPermission } from '@/lib/auth/database-auth'
 import { getCacheManager } from '@/lib/dependency-injection'
 import { guardDbOr503Fast } from '@/lib/api-guards'
 

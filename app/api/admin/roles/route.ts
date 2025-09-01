@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/database-auth'
+import { requireAuth } from '@/lib/auth/database-auth'
 import { pool } from '@/lib/database/db-connection'
 
 // Принудительно делаем маршрут динамическим

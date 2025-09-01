@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { executeQuery, } from '@/lib/db-connection';
+import { executeQuery } from '@/lib/database/db-connection';
 import { pool } from '@/lib/database/db-connection';
 import { getLogger } from '@/lib/dependency-injection'
 
