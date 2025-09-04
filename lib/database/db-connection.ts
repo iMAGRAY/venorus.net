@@ -1,23 +1,25 @@
 import { Pool, PoolConfig, QueryResult, QueryResultRow } from "pg"
 import { logger } from "../logger"
 import { performanceMonitor } from "../performance-monitor"
+import { getSSLConfig, SSLConfig } from "./ssl-config"
 
 // Singleton Pool instance
 let _pool: Pool | null = null
 
 // Add legacy synchronous availability flag for existing routes
 let connectionFailed = false
+let connectionInitialized = false
 let lastDbErrorLogTime = 0
 let dbReconnectAttempts = 0
 let lastDbReconnectTime = 0
 const MAX_DB_RECONNECT_ATTEMPTS = 5
 const DB_RECONNECT_BASE_DELAY = 2000 // 2 seconds base delay
 
-// Функция переподключения с exponential backoff
+// Reconnection function with exponential backoff
 async function tryReconnectDb(): Promise<void> {
   const now = Date.now()
   
-  // Не пытаемся переподключиться слишком часто
+  // Don't try to reconnect too frequently
   if (now - lastDbReconnectTime < DB_RECONNECT_BASE_DELAY) {
     return
   }
@@ -36,20 +38,21 @@ async function tryReconnectDb(): Promise<void> {
   
   setTimeout(async () => {
     try {
-      // Пересоздаем пул подключений с правильной инициализацией
+      // Recreate connection pool with proper initialization
       if (_pool) {
         await _pool.end()
         _pool = null
       }
-      // Используем getPool() для правильной инициализации всех обработчиков событий
-      _pool = null // Сбрасываем, чтобы getPool() создал новый пул
-      getPool() // Создает новый пул с правильными обработчиками событий
+      // Use getPool() for proper initialization of all event handlers
+      _pool = null // Reset so getPool() creates new pool
+      getPool() // Creates new pool with proper event handlers
       logger.info('Database pool recreated successfully')
     } catch (error) {
       logger.error('Failed to recreate database pool', error)
     }
   }, delay)
 }
+
 
 // Environment validation
 function validateEnvironment(): void {
@@ -67,7 +70,7 @@ function createPool(): Pool {
   // Validate environment first
   validateEnvironment()
 
-  // Особая конфигурация для build time - ограничиваем подключения
+  // Special configuration for build time - limit connections
   const isBuildTime = process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build'
   
   const config: PoolConfig = {
@@ -77,31 +80,22 @@ function createPool(): Pool {
     user: process.env.DB_USER || process.env.POSTGRESQL_USER || "postgres",
     password: process.env.DB_PASSWORD || process.env.POSTGRESQL_PASSWORD || "",
     database: process.env.DB_NAME || process.env.POSTGRESQL_DBNAME || "medsip_protez",
-    // ОПТИМИЗИРОВАНО: Настройки для удаленной облачной БД с высокой латентностью
-    max: isBuildTime ? 2 : 15, // Увеличено до 15 для компенсации латентности
-    min: isBuildTime ? 1 : 5,  // Минимум 5 соединений для быстрого отклика
-    idleTimeoutMillis: 300_000, // 5 минут idle timeout (увеличено для стабильности)
-    connectionTimeoutMillis: 15_000, // 15 секунд на подключение (увеличено для облачной БД)
-    query_timeout: 30_000, // 30 секунд на запрос
-    statement_timeout: 30_000, // 30 секунд statement timeout
-    keepAlive: true, // Включаем keepAlive
-    keepAliveInitialDelayMillis: 5_000, // Начинаем keepAlive через 5 секунд
-    allowExitOnIdle: false, // Предотвращаем закрытие pool при idle
+    // OPTIMIZED: Settings for remote cloud DB with high latency
+    max: isBuildTime ? 2 : 15, // Increased to 15 to compensate for latency
+    min: isBuildTime ? 1 : 5,  // Minimum 5 connections for quick response
+    idleTimeoutMillis: 300_000, // 5 minute idle timeout (increased for stability)
+    connectionTimeoutMillis: 15_000, // 15 seconds connection timeout (increased for cloud DB)
+    query_timeout: 30_000, // 30 second query timeout
+    statement_timeout: 30_000, // 30 second statement timeout
+    keepAlive: true, // Enable keepAlive
+    keepAliveInitialDelayMillis: 5_000, // Start keepAlive after 5 seconds
+    allowExitOnIdle: false, // Prevent pool closure on idle
     
-    // Дополнительные настройки для стабильности облачной БД
-    application_name: 'venorus_web_app', // Идентификация приложения
+    // Additional settings for cloud DB stability
+    application_name: 'venorus_web_app', // Application identification
     
-    // SSL настройки для облачных БД - ВРЕМЕННОЕ РЕШЕНИЕ ДЛЯ ПРОДАКШЕН
-    ssl: (process.env.DATABASE_URL?.includes("sslmode=disable") || 
-          process.env.DATABASE_SSL === "false") ? false : 
-         (process.env.PGSSL === "true" || 
-          process.env.DATABASE_SSL === "true" || 
-          process.env.DATABASE_URL?.includes("sslmode=require") || 
-          process.env.DATABASE_URL?.includes("sslmode=prefer") ||
-          process.env.DATABASE_URL?.includes("sslmode=allow") ||
-          (process.env.PGSSLMODE && process.env.PGSSLMODE !== "disable")) ? { 
-      rejectUnauthorized: false // Временно разрешаем самоподписанные сертификаты для продакшен
-    } : false,
+    // SSL settings for cloud databases
+    ssl: getSSLConfig(),  // Using imported ssl-config module
   }
 
   logger.info('Connecting to database', {
@@ -121,18 +115,18 @@ export function getPool(): Pool {
     // Улучшенная обработка ошибок пула
     _pool.on("error", (err) => {
       const now = Date.now()
-      // Логируем ошибки БД не чаще чем раз в 10 секунд
+      // Log DB errors no more than once every 10 seconds
       if (now - lastDbErrorLogTime > 10000) {
         logger.error("PostgreSQL Pool error", err)
         lastDbErrorLogTime = now
       }
       
-      // Обрабатываем idle-session timeout специально
+      // Handle idle-session timeout specially
       if (err.message?.includes('idle-session timeout') || (err as any).code === '57P05') {
         if (now - lastDbErrorLogTime > 10000) {
           logger.warn('Idle session timeout detected, connection will be recreated automatically')
         }
-        connectionFailed = false // Не считаем это критической ошибкой
+        connectionFailed = false // Don't consider this a critical error
       } else {
         connectionFailed = true
         // Пытаемся переподключиться с exponential backoff
@@ -143,23 +137,50 @@ export function getPool(): Pool {
     _pool.on("connect", (client) => {
       logger.debug("New database connection established")
       connectionFailed = false
-      dbReconnectAttempts = 0 // Сбрасываем счетчик при успешном подключении
-      startKeepAlive() // Запускаем keepalive пинги
+      connectionInitialized = true
+      dbReconnectAttempts = 0 // Reset counter on successful connection
+      startKeepAlive() // Start keepalive pings
       
-      // Устанавливаем keep-alive на уровне соединения
+      // Set keep-alive at connection level
       client.query('SET application_name = $1', ['venorus_web_app']).catch(() => {})
     })
     
-    // Обработка удаления соединения
+    // Handle connection removal
     _pool.on("remove", () => {
       logger.debug("Database connection removed from pool")
+    })
+    
+    // CRITICAL FIX: Immediately try to establish a connection
+    // This ensures connectionInitialized gets set early
+    _pool.query('SELECT 1 as init').then(() => {
+      connectionInitialized = true
+      connectionFailed = false
+      logger.info('Database pool initialized successfully')
+    }).catch(err => {
+      // If SSL error, try to provide more helpful message
+      if (err.message?.includes('self-signed certificate')) {
+        logger.error('Database SSL certificate validation failed. TWC Cloud requires special SSL handling.', err)
+        // Still mark as initialized but failed so we can retry
+        connectionInitialized = true
+        connectionFailed = true
+      } else {
+        logger.error('Database pool initialization failed', err)
+        connectionFailed = true
+      }
     })
   }
   return _pool
 }
 
 export function isDatabaseAvailableSync(): boolean {
-  return !connectionFailed
+  // CRITICAL FIX: Consider pool created as initialized to avoid blocking all requests
+  // We'll handle actual connection failures during query execution
+  if (!_pool) {
+    return false // Pool not created yet
+  }
+  
+  // Pool exists - allow requests through and let query execution handle errors
+  return true
 }
 
 // Keepalive ping interval
@@ -178,7 +199,7 @@ function startKeepAlive(): void {
         logger.warn('Keepalive ping failed', { error: error.message })
       }
     }
-  }, 60_000) // Ping every 1 minute для удаленной БД
+  }, 60_000) // Ping every 1 minute for remote DB
 }
 
 // Stop keepalive pings
@@ -193,6 +214,7 @@ function stopKeepAlive(): void {
 export function forceResetConnection(): void {
   stopKeepAlive()
   connectionFailed = false
+  connectionInitialized = false
   if (_pool) {
     _pool.end().catch(err => logger.error("Error closing pool", err))
     _pool = null
@@ -230,7 +252,7 @@ export async function executeQuery<T extends QueryResultRow = QueryResultRow>(
 ): Promise<QueryResult<T>> {
   const startTime = Date.now()
   
-  // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Проверяем connection exhaustion перед выполнением запроса
+  // CRITICAL FIX: Check connection exhaustion before executing query
   const db = getPool()
   if (db.totalCount >= (db.options.max || 5) && db.waitingCount > 2) {
     logger.warn('Connection pool near exhaustion - rejecting request for graceful degradation', {
@@ -242,9 +264,9 @@ export async function executeQuery<T extends QueryResultRow = QueryResultRow>(
     throw new Error('Service temporarily unavailable - connection pool exhausted')
   }
   
-  // Автоматический прогрев при первом запросе
+  // Automatic warmup on first request
   if (!connectionWarmed) {
-    await warmConnection().catch(() => {}) // Игнорируем ошибки прогрева
+    await warmConnection().catch(() => {}) // Ignore warmup errors
   }
   
   try {
@@ -262,7 +284,7 @@ export async function executeQuery<T extends QueryResultRow = QueryResultRow>(
     const duration = Date.now() - startTime
     connectionFailed = false
 
-    // Логируем медленные запросы для мониторинга
+    // Log slow queries for monitoring
     const logLevel = duration > 1000 ? 'warn' : duration > 500 ? 'info' : 'debug';
     logger[logLevel]('Database query completed', {
       query: query.substring(0, 100) + '...',
@@ -283,7 +305,7 @@ export async function executeQuery<T extends QueryResultRow = QueryResultRow>(
     const errorMessage = (error as Error).message
     const db = getPool()
 
-    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Обработка connection timeout
+    // CRITICAL FIX: Handle connection timeout
     if (errorMessage.includes('timeout exceeded when trying to connect') || errorMessage.includes('Connection terminated')) {
       logger.error('Connection pool exhaustion detected - force reset', {
         poolTotalCount: db.totalCount,
@@ -292,7 +314,7 @@ export async function executeQuery<T extends QueryResultRow = QueryResultRow>(
         error: errorMessage
       })
       
-      // Принудительно сбрасываем состояние ошибки
+      // Force reset error state
       connectionFailed = false
     }
 
@@ -348,7 +370,7 @@ export async function warmConnection(): Promise<boolean> {
   }
 }
 
-// Проверяем статус прогрева
+// Check warmup status
 export function isConnectionWarmed(): boolean {
   return connectionWarmed && !connectionFailed
 }
@@ -367,7 +389,7 @@ export async function checkDatabaseConnection(): Promise<boolean> {
 
 // Graceful shutdown (useful for tests / Vercel edge)
 export async function closePool() {
-  stopKeepAlive() // Останавливаем keepalive пинги
+  stopKeepAlive() // Stop keepalive pings
   if (_pool) {
     await _pool.end()
     _pool = null
@@ -437,9 +459,9 @@ export interface DatabaseProduct {
   updated_at: Date
 }
 
-// Экспорт для совместимости
+// Export for compatibility
 export const db = getPool()
 
-// КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Создаем константу pool для экспорта
+// CRITICAL FIX: Create pool constant for export
 const poolInstance = getPool()
 export { poolInstance as pool }

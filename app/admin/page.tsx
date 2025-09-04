@@ -340,7 +340,7 @@ try {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-normal text-gray-800 mb-1">Панель управления</h1>
-            <p className="text-gray-500 text-sm">Обзор системы МедСИП Протезирование</p>
+            <p className="text-gray-500 text-sm">Обзор системы Venorus - Российские товары</p>
             <div className="flex items-center gap-3 mt-3">
               <div className="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 px-2.5 py-1 rounded-full border border-green-200">
                 <CheckCircle className="w-3 h-3" />

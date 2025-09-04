@@ -7,40 +7,40 @@ async function updateSettings() {
     port: parseInt(process.env.POSTGRESQL_PORT || process.env.PGPORT || '5432'),
     user: process.env.POSTGRESQL_USER || process.env.PGUSER || 'postgres',
     password: process.env.POSTGRESQL_PASSWORD || process.env.PGPASSWORD,
-    database: process.env.POSTGRESQL_DBNAME || process.env.PGDATABASE || 'medsip_db',
+    database: process.env.POSTGRESQL_DBNAME || process.env.PGDATABASE || 'venorus_db',
     ssl: false
   });
 
   try {
     await pool.query(`
       UPDATE site_settings SET
-        site_name = 'МедСИП - Современное протезирование',
-        site_description = 'Ведущий производитель высокотехнологичных протезов и ортопедических изделий в России. Инновационные решения для восстановления качества жизни.',
-        hero_title = 'Технологии будущего уже сегодня',
-        hero_subtitle = 'Революционные протезы с AI-управлением, миоэлектрическим контролем и сенсорной обратной связью',
-        contact_email = 'info@medsip.ru',
+        site_name = 'Венорус - Российские товары',
+        site_description = 'Платформа для продвижения российских производителей. Качественные товары с доставкой по всей России.',
+        hero_title = 'Лучшие российские товары',
+        hero_subtitle = 'От проверенных производителей. Поддерживаем отечественный бизнес',
+        contact_email = 'info@venorus.net',
         contact_phone = '+7 (495) 123-45-67',
         address = 'г. Москва, ул. Инновационная, д. 15, офис 501',
         social_media = '{
-          "vk": "https://vk.com/medsip_russia",
-          "telegram": "https://t.me/medsip_official",
-          "youtube": "https://youtube.com/@medsip"
+          "vk": "https://vk.com/venorus_russia",
+          "telegram": "https://t.me/venorus_official",
+          "youtube": "https://youtube.com/@venorus"
         }'::jsonb,
         additional_contacts = '[
           {
             "type": "Отдел продаж",
             "phone": "+7 (495) 123-45-68",
-            "email": "sales@medsip.ru"
+            "email": "sales@venorus.net"
           },
           {
             "type": "Техническая поддержка",
             "phone": "+7 (495) 123-45-69",
-            "email": "support@medsip.ru"
+            "email": "support@venorus.net"
           },
           {
             "type": "Сервисный центр",
             "phone": "+7 (495) 123-45-70",
-            "email": "service@medsip.ru"
+            "email": "service@venorus.net"
           }
         ]'::jsonb,
         updated_at = NOW()

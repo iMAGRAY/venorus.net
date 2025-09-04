@@ -7,17 +7,17 @@ module.exports = {
     instances: 1,
     exec_mode: 'fork',
     
-    // Критически важные переменные окружения
+    // Critical environment variables
     env: {
       NODE_ENV: 'production',
       PORT: 3000
     },
     
-    // Память и рестарты
+    // Memory and restarts
     max_memory_restart: '4G',
     node_args: '--max-old-space-size=4096',
     
-    // Логирование
+    // Logging
     error_file: './logs/err.log',
     out_file: './logs/out.log',
     log_file: './logs/combined.log',

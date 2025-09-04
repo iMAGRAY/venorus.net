@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
 
-type SupportedLanguage = "ru" | "es"
+type SupportedLanguage = "es"
 
 type Dictionary = Record<string, any>
 
@@ -95,6 +95,7 @@ const ru: Dictionary = {
     selectVariant: "Выберите вариант товара",
     backToProduct: "Вернуться к товару",
     clickVariantToSelect: "Нажмите на вариант ниже для выбора",
+    selectAllRequired: "Пожалуйста, выберите все обязательные характеристики",
   },
   cart: {
     title: "Заявка",
@@ -212,6 +213,7 @@ const es: Dictionary = {
     selectVariant: "Elija una variante del producto",
     backToProduct: "Volver al producto",
     clickVariantToSelect: "Pulse en una variante para seleccionar",
+    selectAllRequired: "Por favor, seleccione todas las características requeridas",
   },
   cart: {
     title: "Solicitud",
@@ -240,7 +242,125 @@ const es: Dictionary = {
   }
 }
 
-const DICTS: Record<SupportedLanguage, Dictionary> = { ru, es }
+const en: Dictionary = {
+  common: {
+    searchPlaceholder: "Search...",
+    apply: "Apply",
+    category: "Category",
+    showAllProducts: "Show all products",
+    showAll: "Show all",
+    collapse: "Show less",
+    back: "Back",
+    home: "Home",
+    products: "Products",
+    allCategories: "All categories",
+    similarProduct: "Similar product",
+    noRecommendations: "No recommendations available",
+    loading: "Loading...",
+    open: "Open",
+    download: "Download",
+    share: "Share",
+    more: "more",
+    domesticProduction: "Domestic production",
+    productionInRussia: "Made in Russia",
+    quality: "Quality",
+    russianStandards: "Russian standards",
+    reliable: "Reliable",
+    timeTested: "Time tested",
+    sortBy: "Sort by...",
+    searchSortOptions: "Search sort options...",
+    qualityAndReliability: "Quality and reliability",
+    deliveryAcrossVenezuela: "Delivery across Venezuela",
+    guaranteeAndSupport: "Warranty and support",
+    certifiedInRussia: "Certified in Russia",
+    allRightsReserved: "All rights reserved",
+  },
+  sort: {
+    nameAsc: "By name A-Z",
+    nameDesc: "By name Z-A",
+    priceAsc: "By price ↑",
+    priceDesc: "By price ↓"
+  },
+  header: {
+    contacts: "Contacts",
+    phone: "Phone",
+    email: "Email",
+    address: "Address",
+    additionalContacts: "Additional contacts",
+    language: "Language",
+    currency: "Currency",
+    contactSubtitle: "Contact us by any convenient method",
+  },
+  hero: {
+    madeInRussia: "Made in Russia",
+    forVenezuela: "FROM RUSSIA",
+    qualityTraditions: "Quality and Traditions",
+    seeProducts: "See products",
+    catalogTitle: "Catalog of Russian products",
+    categories: "Categories",
+    filters: "Filters",
+    activeFilters: "Active filters",
+    clearAll: "Clear all",
+    loadingMore: "Loading more products...",
+    allLoaded: "All products loaded",
+    alsoRecommend: "Also recommend",
+    defaultSubtitle: "Quality Russian products from domestic manufacturers. Let's support our production - choose Russian! Reliability proven by time.",
+  },
+  footer: {
+    contactInfo: "Contact information",
+    socialTitle: "Social networks",
+  },
+  trust: {
+    originalProducts: "Original Russian products",
+    directFromManufacturers: "Direct from manufacturers",
+    deliveryToVenezuela: "Delivery to Venezuela",
+    shipNationwide: "Ship nationwide",
+    paymentInCurrencies: "Payment in RUB/USD",
+    flexibleTerms: "Flexible terms for customers",
+  },
+  product: {
+    price: "Price",
+    inStock: "In stock",
+    outOfStock: "Out of stock",
+    onRequest: "On request",
+    addToCart: "Add to request",
+    details: "More details",
+    inCart: "In request",
+    back: "Back",
+    similar: "Similar products",
+    selectVariant: "Choose a product variant",
+    backToProduct: "Back to product",
+    clickVariantToSelect: "Click on a variant below to select",
+    selectAllRequired: "Please select all required characteristics",
+  },
+  cart: {
+    title: "Request",
+    empty: "Request is empty",
+    continue: "Continue creating request",
+    total: "Total:",
+    checkout: "Place order",
+    consult: "WhatsApp consultation",
+    share: "Share request",
+    sendToWhatsApp: "Send to WhatsApp",
+    clear: "Clear request",
+  },
+  category: {
+    emptyMenu: "Catalog menu is empty",
+    chooseCategoryForFilters: "Choose a category to display filters",
+  },
+  productPage: {
+    loading: "Loading product...",
+    notFound: "Product not found",
+    goHome: "Return to home",
+  },
+  groups: {
+    size: "Size",
+    color: "Color",
+    variants: "Variants",
+  }
+}
+
+const DICTS: Record<SupportedLanguage, Dictionary> = { es }
 
 interface I18nContextValue {
   language: SupportedLanguage
@@ -252,16 +372,11 @@ const I18nContext = createContext<I18nContextValue | undefined>(undefined)
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   // Always initialize with default language for SSR consistency
-  const [language, setLanguageState] = useState<SupportedLanguage>("ru")
+  const [language, setLanguageState] = useState<SupportedLanguage>("es")
 
-  // Hydrate with saved language on client only after mount
+  // Language is always Spanish for users
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = window.localStorage.getItem("venorus_lang") as SupportedLanguage | null
-      if (saved === "ru" || saved === "es") {
-        setLanguageState(saved)
-      }
-    }
+    // No need to check localStorage - always use Spanish
   }, [])
 
   // Persist changes and update document lang - only when language actually changes
@@ -283,7 +398,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     return (path: string) => {
       const primary = getByPath(DICTS[language], path)
       if (typeof primary === "string") return primary
-      const fallback = getByPath(DICTS.ru, path)
+      const fallback = getByPath(DICTS.es, path)
       return typeof fallback === "string" ? fallback : path
     }
   }, [language])

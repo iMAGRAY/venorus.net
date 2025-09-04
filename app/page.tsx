@@ -362,10 +362,10 @@ export default function HomePage() {
   }, [catalogMenuItems])
 
   const [filteredProducts, setFilteredProducts] = useState<any[]>([])
-  const [displayedProducts, setDisplayedProducts] = useState<any[]>([]) // Товары для отображения
-  const [_currentPage, _setCurrentPage] = useState(1) // Текущая "страница" для infinite scroll
-  const [isLoadingMore, setIsLoadingMore] = useState(false) // Загрузка дополнительных товаров
-  const [hasMore, setHasMore] = useState(true) // Есть ли еще товары для загрузки
+  const [displayedProducts, setDisplayedProducts] = useState<any[]>([]) // Products for display
+  const [_currentPage, _setCurrentPage] = useState(1) // Current "page" for infinite scroll
+  const [isLoadingMore, setIsLoadingMore] = useState(false) // Loading additional products
+  const [hasMore, setHasMore] = useState(true) // Are there more products to load
   const [activeCategory, setActiveCategory] = useState<string>("All")
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null)
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false)
@@ -381,35 +381,35 @@ export default function HomePage() {
     characteristics: Record<string, string[]>;
   }>({
     categories: [],
-    characteristics: {} // Format: { "Вес": ["1.2 кг"], "Гарантия": ["3 года"] }
+    characteristics: {} // Format: { "Weight": ["1.2 kg"], "Warranty": ["3 years"] }
   })
 
-  // Состояние для фильтров характеристик
+  // State for characteristics filters
   const [availableCharacteristics, setAvailableCharacteristics] = useState<any[]>(() => {
-    logger.debug('Инициализация availableCharacteristics: пустой массив')
+    logger.debug('Initializing availableCharacteristics: empty array')
     return []
   })
   const [isLoadingCharacteristics, setIsLoadingCharacteristics] = useState(false)
   
-  // Логируем изменения availableCharacteristics
+  // Log availableCharacteristics changes
   useEffect(() => {
-    logger.debug('availableCharacteristics изменились:', availableCharacteristics.length, availableCharacteristics)
+    logger.debug('availableCharacteristics changed:', availableCharacteristics.length, availableCharacteristics)
   }, [availableCharacteristics])
 
   const handleCategoryChange = useCallback((categoryName: string, categoryId?: number) => {
-    logger.debug('handleCategoryChange вызвана:', { categoryName, categoryId })
-    logger.log(`Смена категории на: "${categoryName}" (ID: ${categoryId})`)
+    logger.debug('handleCategoryChange called:', { categoryName, categoryId })
+    logger.log(`Category changed to: "${categoryName}" (ID: ${categoryId})`)
     setActiveCategory(categoryName)
     setActiveCategoryId(categoryId || null)
     setIsFilterDrawerOpen(false)
     setIsCategoryDrawerOpen(false)
     
-    // Очищаем фильтры характеристик при смене категории
+    // Clear characteristics filters when changing category
     setAppliedFilters(prev => ({ ...prev, characteristics: {} }))
     
-    // Загружаем характеристики для новой категории
-    if (categoryName === "All" || categoryName === "Все категории") {
-      logger.debug('Загружаем все характеристики')
+    // Load characteristics for new category
+    if (categoryName === "All" || categoryName === "All categories") {
+      logger.debug('Loading all characteristics')
       loadFilterCharacteristics(null)
     } else if (categoryId) {
       logger.debug('Загружаем характеристики для категории:', categoryId)
@@ -606,9 +606,9 @@ export default function HomePage() {
       )
     }
 
-    // Apply category filter - работаем с реальными категориями товаров
-    // Показываем все товары если категория не выбрана или выбрана "All"
-    if (activeCategoryId && activeCategory !== "All" && activeCategory !== "Все категории") {
+    // Apply category filter - working with real product categories
+    // Show all products if no category selected or "all" selected
+    if (activeCategoryId && activeCategory !== "all") {
       const relevantCategoryIds = findGroupAndChildrenById(hierarchicalCategories, activeCategoryId)
 
       logger.log(`Фильтрация по категории: "${activeCategory}" (ID: ${activeCategoryId})`)
@@ -998,7 +998,7 @@ export default function HomePage() {
                         >
                           <ChevronRight className="w-4 h-4 mr-1 sm:mr-2" />
                           <span>{t('hero.categories')}</span>
-                          {activeCategory !== "All" && activeCategory !== "Все категории" && (
+                          {activeCategory !== "All" && activeCategory !== "All categories" && (
                             <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-full">1</span>
                           )}
                         </Button>
@@ -1142,7 +1142,7 @@ export default function HomePage() {
               {(activeCategory !== "All" && activeCategory !== "Все категории" || Object.keys(appliedFilters.characteristics).length > 0) && (
                 <div className="lg:hidden mt-3 space-y-2">
                   {/* Выбранная категория */}
-                  {activeCategory !== "All" && activeCategory !== "Все категории" && (
+                  {activeCategory !== "All" && activeCategory !== "All categories" && (
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs text-slate-600 font-medium">Категория:</span>
                       <button
@@ -1238,7 +1238,7 @@ export default function HomePage() {
                           {Object.keys(appliedFilters.characteristics).length > 0 && (
                             <div className="bg-red-50/40 rounded-lg p-3 border border-red-200/30">
                               <div className="flex justify-between items-center mb-2">
-                                <h4 className="text-sm font-medium text-slate-700">Активные фильтры</h4>
+                                <h4 className="text-sm font-medium text-slate-700">{t('hero.activeFilters')}</h4>
                                 <button
                                   onClick={clearCharacteristicFilters}
                                   className="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded-full bg-red-100/50 hover:bg-red-200/50 transition-all duration-200"
@@ -1276,7 +1276,7 @@ export default function HomePage() {
                             </div>
                           ) : availableCharacteristics.length === 0 ? (
                             <div className="text-sm text-gray-500 text-center py-8">
-                              Выберите категорию для отображения фильтров
+                              {t('category.chooseCategoryForFilters')}
                             </div>
                           ) : (
                             availableCharacteristics.map((characteristic) => (

@@ -9,7 +9,7 @@ module.exports = {
       exec_mode: 'fork',
       interpreter: 'node',
       
-      // Environment - ВАЖНО для правильной работы
+      // Environment - IMPORTANT for proper operation
       env: {
         NODE_ENV: 'production',
         PORT: 3000,

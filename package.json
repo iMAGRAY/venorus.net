@@ -1,7 +1,7 @@
 {
   "name": "venorus",
   "version": "1.0.0",
-  "description": "Современная система управления каталогом с расширенными возможностями каталогизации, характеристик и административного управления",
+  "description": "Platform for promoting Russian products with advanced cataloging and administrative capabilities",
   "private": false,
   "author": {
     "name": "Venorus Team",
@@ -16,15 +16,15 @@
     "url": "https://github.com/iMAGRAY/venorus/issues"
   },
   "keywords": [
-    "medical",
-    "prosthetics",
+    "russian",
+    "products",
     "catalog",
     "nextjs",
     "typescript",
     "postgresql",
     "redis",
     "admin-panel",
-    "healthcare",
+    "ecommerce",
     "inventory-management"
   ],
   "license": "MIT",

@@ -11,9 +11,9 @@ import { Toaster } from "@/components/ui/sonner"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Venorus - Качественные российские протезы и ортопедические изделия",
-  description: "Производство высококачественных протезов и ортопедических изделий в России. Проверенные технологии и индивидуальный подход.",
-  keywords: "российские протезы, ортопедия, медицинские изделия, производство в России, реабилитация",
+  title: "Venorus - Quality Russian Products",
+  description: "Platform for promoting Russian products. Quality products from domestic manufacturers with delivery across Venezuela.",
+  keywords: "russian products, made in russia, domestic manufacturers, quality products, venezuela import",
   icons: {
     icon: [
       {
@@ -34,49 +34,49 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              // Улучшенный обработчик ошибок загрузки чанков
+              // Enhanced chunk loading error handler
               (function() {
                 let reloadAttempts = 0;
                 const maxReloads = 2;
                 const reloadKey = 'chunkReloadCount';
                 
-                // Получаем счетчик перезагрузок из sessionStorage
+                // Get reload counter from sessionStorage
                 const getReloadCount = () => parseInt(sessionStorage.getItem(reloadKey) || '0');
                 const setReloadCount = (count) => sessionStorage.setItem(reloadKey, count.toString());
                 
-                // Обработчик ошибок
+                // Error handler
                 const handleChunkError = (isPromise) => {
                   reloadAttempts = getReloadCount();
                   
                   if (reloadAttempts < maxReloads) {
                     setReloadCount(reloadAttempts + 1);
-                    // Задержка перед перезагрузкой
+                    // Delay before reload
                     setTimeout(() => window.location.reload(), 1000);
                   } else {
-                    // Сброс счетчика после максимума попыток
+                    // Reset counter after maximum attempts
                     setReloadCount(0);
-                    // Показываем сообщение пользователю вместо бесконечных перезагрузок
+                    // Show message to user instead of infinite reloads
                     if (document.body) {
                       const msg = document.createElement('div');
                       msg.style.cssText = 'position:fixed;top:10px;right:10px;background:#ef4444;color:white;padding:10px;border-radius:5px;z-index:9999';
-                      msg.textContent = 'Ошибка загрузки. Попробуйте очистить кэш браузера.';
+                      msg.textContent = 'Loading error. Try clearing browser cache.';
                       document.body.appendChild(msg);
                       setTimeout(() => msg.remove(), 5000);
                     }
                   }
                 };
                 
-                // Сброс счетчика при успешной загрузке
+                // Reset counter on successful load
                 window.addEventListener('load', () => {
                   setTimeout(() => setReloadCount(0), 3000);
                 });
                 
-                // Обработчик ошибок загрузки
+                // Loading error handler
                 window.addEventListener('error', function(event) {
                   if (event.message && event.message.includes('ChunkLoadError')) {
                     event.preventDefault();
@@ -84,7 +84,7 @@ export default function RootLayout({
                   }
                 });
                 
-                // Обработчик промисов
+                // Promise handler
                 window.addEventListener('unhandledrejection', function(event) {
                   if (event.reason && (event.reason.name === 'ChunkLoadError' || 
                       (event.reason.message && event.reason.message.includes('Loading chunk')))) {

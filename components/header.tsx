@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, X, Phone, Mail, MapPin, ClipboardList, Globe, Banknote } from "lucide-react"
+import { Menu, X, Phone, Mail, MapPin, ClipboardList, Banknote } from "lucide-react"
 import { useAdminStore } from "@/lib/stores"
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { InstantLink } from "@/components/instant-link"
@@ -54,7 +54,7 @@ function SafeCartButton() {
 }
 
 export default function Header() {
-  const { language, setLanguage, t } = useI18n()
+  const { t } = useI18n()
   const siteSettings = useAdminStore(state => state.settings)
   const isInitialized = useAdminStore(state => state.initialized.settings)
   const initializeSettings = useAdminStore(state => state.initializeSettings)
@@ -79,13 +79,6 @@ export default function Header() {
     }
   }, [isInitialized, initializeSettings, currency])
 
-  // Обработчик смены языка - напрямую обновляем i18n провайдер
-  const handleLanguageChange = useCallback((newLang: 'ru' | 'es') => {
-    setLanguage(newLang)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('venorus_lang', newLang)
-    }
-  }, [setLanguage])
 
   const navLinks = [
     { href: "#contact", label: t('header.contacts') },
@@ -154,20 +147,8 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Язык и Валюта (десктоп) */}
+          {/* Валюта (десктоп) */}
           <div className="hidden md:flex items-center gap-2">
-            <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-md px-2 py-1 text-slate-700">
-              <Globe className="w-3.5 h-3.5" />
-              <select
-                value={language}
-                onChange={(e) => handleLanguageChange(e.target.value as 'ru' | 'es')}
-                className="bg-transparent text-xs focus:outline-none"
-                aria-label="Выбор языка"
-              >
-                <option value="ru">RU</option>
-                <option value="es">ES</option>
-              </select>
-            </div>
             <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-md px-2 py-1 text-slate-700">
               <Banknote className="w-3.5 h-3.5" />
               <select
@@ -211,20 +192,8 @@ export default function Header() {
                     </div>
                     <span className="text-lg font-semibold text-slate-800">Venorus</span>
                 </InstantLink>
-                {/* Язык и Валюта (мобайл) */}
+                {/* Валюта (мобайл) */}
                 <div className="flex items-center gap-2 px-4">
-                  <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-md px-2 py-1 text-slate-700">
-                    <Globe className="w-3.5 h-3.5" />
-                    <select
-                      value={language}
-                      onChange={(e) => handleLanguageChange(e.target.value as 'ru' | 'es')}
-                      className="bg-transparent text-xs focus:outline-none"
-                      aria-label="Выбор языка"
-                    >
-                      <option value="ru">RU</option>
-                      <option value="es">ES</option>
-                    </select>
-                  </div>
                   <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-md px-2 py-1 text-slate-700">
                     <Banknote className="w-3.5 h-3.5" />
                     <select

@@ -339,7 +339,7 @@ export default function ProductPage() {
             setProductImage(apiProduct.imageUrl || apiProduct.image_url || apiProduct.primary_image_url)
           }
           loadProductImages(productId)
-          // Загружаем варианты товара
+          // Load product variants
           loadProductVariants(productId)
         } else {
 
@@ -351,7 +351,7 @@ export default function ProductPage() {
               // Сохраняем оригинальное изображение товара
               setProductImage(foundProduct.imageUrl || foundProduct.image_url || foundProduct.primary_image_url || null)
               loadProductImages(productId)
-              // Загружаем варианты товара
+              // Load product variants
               loadProductVariants(productId)
             }
           }
@@ -945,7 +945,7 @@ export default function ProductPage() {
                               const selectedGroups = Object.keys(selectedConfiguration)
                               
                               if (selectedGroups.length < requiredGroups.length) {
-                                toast.warning('Пожалуйста, выберите все обязательные характеристики')
+                                toast.warning(t('product.selectAllRequired'))
                                 setConfigurationError(true)
                                 // Прокручиваем к блоку конфигурации
                                 const configBlock = document.querySelector('[data-config-selector]')
@@ -1055,7 +1055,7 @@ export default function ProductPage() {
             <div className="text-center mb-8">
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">
                 <span className="bg-gradient-to-r from-slate-800 via-blue-700 to-blue-800 bg-clip-text text-transparent">
-                  Похожие товары
+                  {t('product.similar')}
                 </span>
               </h3>
               <p className="text-slate-600">

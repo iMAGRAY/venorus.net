@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 import { apiClient } from "@/lib/api-client"
 
-// Интерфейсы для типизации данных
+// Interfaces for data typing
 interface _Category {
   id: number
   name: string
@@ -51,8 +51,8 @@ export function SidebarFilters({
                 setFeatures(featuresData.filter((feat: any) => feat.is_active).map((feat: any) => feat.name))
               } catch (_error) {
                 // Fallback data
-                setCategories(["Протезы рук", "Протезы ног", "Специальные протезы", "Детские протезы"])
-                setFeatures(["Миоэлектрическое управление", "Водонепроницаемость", "Регулируемая посадка", "Легкий вес", "Высокая прочность"])
+                setCategories(["Hand prostheses", "Leg prostheses", "Special prostheses", "Children prostheses"])
+                setFeatures(["Myoelectric control", "Waterproof", "Adjustable fit", "Lightweight", "High strength"])
               } finally {
                 setLoading(false)
               }
@@ -76,7 +76,7 @@ export function SidebarFilters({
   const handleCharacteristicChange = (charId: string, charName: string, value: string) => {
     setSelectedCharacteristics((prev) => {
       const newState = { ...prev }
-      const key = `${charId}:${charName}` // Используем комбинацию ID и названия
+      const key = `${charId}:${charName}` // Use combination of ID and name
       
       if (!newState[key]) {
         newState[key] = []
@@ -132,12 +132,12 @@ export function SidebarFilters({
   return (
     <aside className="w-full p-4 space-y-4 notion-card lg:w-80 notion-fade-in">
       <h3 className="notion-text-medium mb-4">
-        Фильтры товаров
+        Product Filters
       </h3>
       <Accordion type="multiple" defaultValue={["category"]} className="w-full">
         <AccordionItem value="category" className="notion-separator">
           <AccordionTrigger className="notion-text-medium py-3 hover:no-underline">
-            Категория
+            Category
           </AccordionTrigger>
           <AccordionContent className="space-y-3 pb-4">
             {categories.map((category) => (
@@ -158,7 +158,7 @@ export function SidebarFilters({
 
         <AccordionItem value="features" className="notion-separator">
           <AccordionTrigger className="notion-text-medium py-3 hover:no-underline">
-            Особенности
+            Features
           </AccordionTrigger>
           <AccordionContent className="space-y-3 pb-4">
             {features.map((feature) => (
@@ -179,7 +179,7 @@ export function SidebarFilters({
 
         <AccordionItem value="characteristics" className="notion-separator">
           <AccordionTrigger className="notion-text-medium py-3 hover:no-underline">
-            Характеристики
+            Characteristics
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pb-4">
             {isLoadingCharacteristics ? (
@@ -233,14 +233,14 @@ export function SidebarFilters({
           onClick={applyFilters}
           className="w-full notion-button-primary"
         >
-          Применить фильтры
+          Apply Filters
         </Button>
         <Button
           variant="outline"
           onClick={clearFilters}
           className="w-full notion-button-secondary"
         >
-          Очистить фильтры
+          Clear Filters
         </Button>
       </div>
     </aside>

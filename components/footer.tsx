@@ -143,7 +143,7 @@ export function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-12 h-12 bg-gradient-to-br from-red-500 to-blue-500 rounded-xl flex items-center justify-center hover:from-red-600 hover:to-blue-600 transition-all duration-300 hover:scale-110 shadow-lg"
-                        title="ВКонтакте"
+                        title="VKontakte"
                       >
                         <VkIcon className="w-6 h-6 text-white" />
                       </a>
@@ -176,7 +176,7 @@ export function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-12 h-12 bg-gradient-to-br from-red-500 to-blue-500 rounded-xl flex items-center justify-center hover:from-red-600 hover:to-blue-600 transition-all duration-300 hover:scale-110 shadow-lg"
-                        title="Одноклассники"
+                        title="Odnoklassniki"
                       >
                         <OkIcon className="w-6 h-6 text-white" />
                       </a>
