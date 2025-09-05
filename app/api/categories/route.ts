@@ -383,18 +383,18 @@ export async function DELETE(request: NextRequest) {
         );
 
       } else {
-        // Если категория "Аксессуары" не найдена, помечаем товары как удаленные
+        // Если категория "Аксессуары" не найдена, удаляем товары безвозвратно
         await executeQuery(
-          'UPDATE products SET is_deleted = true, updated_at = CURRENT_TIMESTAMP WHERE category_id = $1',
+          'DELETE FROM products WHERE category_id = $1',
           [id]
         );
 
       }
     }
 
-    // Мягкое удаление категории
+    // Жесткое удаление категории
     await executeQuery(
-      'UPDATE product_categories SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+      'DELETE FROM product_categories WHERE id = $1',
       [id]
     );
 
@@ -407,12 +407,28 @@ export async function DELETE(request: NextRequest) {
         ['Аксессуары']
       );
 
+      const getProductsPlural = (count: number) => {
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+        
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+          return 'товаров';
+        }
+        if (lastDigit === 1) {
+          return 'товар';
+        }
+        if (lastDigit >= 2 && lastDigit <= 4) {
+          return 'товара';
+        }
+        return 'товаров';
+      };
+
       if (defaultCategoryResult.rows.length > 0) {
-        message += `. ${productsCount} товар(ов) перемещено в категорию "Аксессуары"`;
+        message += `. ${productsCount} ${getProductsPlural(productsCount)} перемещено в категорию "Аксессуары"`;
         productsAction = 'moved';
       } else {
-        message += `. ${productsCount} товар(ов) помечено как неактивные`;
-        productsAction = 'deactivated';
+        message += `. ${productsCount} ${getProductsPlural(productsCount)} удалено безвозвратно`;
+        productsAction = 'deleted';
       }
     }
 

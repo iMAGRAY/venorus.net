@@ -10,18 +10,52 @@ import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
+// Site metadata constants
+const SITE_TITLE = "Venorus - Productos Rusos de Calidad"
+const SITE_DESCRIPTION = "Plataforma para promover productos rusos. Productos de calidad de fabricantes nacionales con entrega en toda Venezuela."
+const SITE_KEYWORDS = "productos rusos, hecho en rusia, fabricantes nacionales, productos de calidad, importación venezuela"
+const SITE_URL = "https://venorus.net"
+const SITE_LOGO_LIGHT = "/Logo-main.webp"
+const SITE_LOGO_DARK = "/dark_logo.webp"
+
 export const metadata: Metadata = {
-  title: "Venorus - Quality Russian Products",
-  description: "Platform for promoting Russian products. Quality products from domestic manufacturers with delivery across Venezuela.",
-  keywords: "russian products, made in russia, domestic manufacturers, quality products, venezuela import",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: "Venorus",
+    images: [
+      {
+        url: SITE_LOGO_LIGHT,
+        width: 1200,
+        height: 630,
+        alt: SITE_TITLE,
+      },
+    ],
+    locale: "es_ES",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [SITE_LOGO_LIGHT],
+  },
   icons: {
     icon: [
       {
-        url: '/logo.webp',
+        url: SITE_LOGO_LIGHT,
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/logo.webp',
+        url: SITE_LOGO_DARK,
         media: '(prefers-color-scheme: dark)',
       },
     ],

@@ -136,9 +136,9 @@ export async function GET(
       if (uncategorizedGroups.length > 0) {
         sectionMap.set(999999, {
           section_id: 999999,
-          section_name: 'Дополнительные характеристики',
+          section_name: 'Características adicionales',
           section_ordering: 999999,
-          section_description: 'Прочие характеристики и дополнительные сведения',
+          section_description: 'Otras características e información adicional',
           groups: uncategorizedGroups.sort((a, b) => (a.group_ordering || 999) - (b.group_ordering || 999)),
           is_real_section: false
         });
@@ -153,12 +153,16 @@ export async function GET(
     // Заполняем разделы выбранными характеристиками товара для отображения на странице продукта
     const selectedCharsByGroup = productCharacteristics.rows.reduce((acc: any, char: any) => {
       if (!acc[char.group_id]) {
-        acc[char.group_id] = [];
+        acc[char.group_id] = {
+          group_name: char.group_name,
+          characteristics: []
+        };
       }
-      acc[char.group_id].push({
+      acc[char.group_id].characteristics.push({
         value_id: char.value_id,
         value_name: char.value_name,
         group_id: char.group_id,
+        group_name: char.group_name,
         additional_value: char.additional_value || '',
         color_hex: char.color_hex
       });
@@ -170,7 +174,8 @@ export async function GET(
       ...section,
       groups: section.groups.map((group: any) => ({
         ...group,
-        characteristics: selectedCharsByGroup[group.group_id] || []
+        group_name: selectedCharsByGroup[group.group_id]?.group_name || group.group_name,
+        characteristics: selectedCharsByGroup[group.group_id]?.characteristics || []
       }))
     }));
 

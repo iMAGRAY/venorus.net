@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
+import Image from "next/image"
 import Header from "@/components/header"
 import HeroImage from "@/components/hero-image"
 import { Footer } from "@/components/footer"
@@ -12,19 +13,6 @@ import { ViewToggle } from "@/components/view-toggle"
 import { ProductQuickView } from "@/components/product-quick-view"
 import { Button } from "@/components/ui/button"
 import { ChevronRight, Filter, Loader2, X, ChevronUp, ChevronDown } from "lucide-react"
-import FlagIcon from '@mui/icons-material/Flag'
-import StarIcon from '@mui/icons-material/Star'
-// import HomeIcon from '@mui/icons-material/Home' // Unused
-// import CategoryIcon from '@mui/icons-material/Category' // Unused
-// import InventoryIcon from '@mui/icons-material/Inventory' // Unused
-// import SearchIcon from '@mui/icons-material/Search' // Unused
-// import SettingsIcon from '@mui/icons-material/Settings' // Unused
-// import CheckCircleIcon from '@mui/icons-material/CheckCircle' // Unused
-// import WarningIcon from '@mui/icons-material/Warning' // Unused
-// import LanguageIcon from '@mui/icons-material/Language' // Unused
-// import RefreshIcon from '@mui/icons-material/Refresh' // Unused
-import FactoryIcon from '@mui/icons-material/Factory'
-import ShieldIcon from '@mui/icons-material/Shield'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { useAdminStore } from "@/lib/stores"
 import logger from "@/lib/logger"
@@ -80,7 +68,6 @@ export default function HomePage() {
   const isLoading = useAdminStore(state => state.loading.products || state.loading.categories || state.loading.settings)
   const isInitialized = useAdminStore(state => state.initialized.products && state.initialized.categories && state.initialized.settings)
   const initializeAll = useAdminStore(state => state.initializeAll)
-  const refreshAll = useAdminStore(state => state.refreshAll)
   
   // Productos adaptados memoizados para estabilidad
   const adaptedProducts = useAdminStore(state => state.getAdaptedProducts())
@@ -864,14 +851,21 @@ export default function HomePage() {
             <div className="max-w-4xl relative">
               {/* Local backdrop for text readability */}
               <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gradient-to-r from-background/90 via-background/80 to-background/40 backdrop-blur-sm rounded-3xl -z-10" />
-              {/* Бейдж */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span className="text-sm font-medium text-primary flex items-center gap-2">
-                  <FlagIcon className="w-4 h-4" />
-                  {t('hero.madeInRussia')}
-                </span>
+              
+              {/* Логотип */}
+              <div className="mb-8 flex justify-start">
+                <div className="relative">
+                  <Image
+                    src="/Logo-main.webp"
+                    alt="Venorus Logo"
+                    width={240}
+                    height={96}
+                    priority
+                    className="h-20 sm:h-24 lg:h-32 w-auto drop-shadow-lg"
+                  />
+                </div>
               </div>
+
 
               {/* Заголовок */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">

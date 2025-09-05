@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
 import type { Prosthetic } from "@/lib/data"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -21,6 +21,19 @@ interface ProductsFiltersProps {
 }
 
 export default function ProductsFilters({ products, value, onChange }: ProductsFiltersProps) {
+  const [categories, setCategories] = useState<Array<{id: number, name: string}>>([])
+
+  // Загружаем категории из API
+  useEffect(() => {
+    fetch('/api/categories?flat=true')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setCategories(data.data)
+        }
+      })
+      .catch(err => console.error('Failed to load categories:', err))
+  }, [])
   const manufacturerOptions = useMemo(() => {
     const set = new Set<string>()
     products.forEach(p => {
@@ -44,13 +57,9 @@ export default function ProductsFilters({ products, value, onChange }: ProductsF
   }, [products, value.manufacturer])
 
   const categoryOptions = useMemo(() => {
-    const set = new Set<string>()
-    products.forEach(p => {
-      if (p.category_name) set.add(p.category_name)
-      else if (p.category) set.add(p.category)
-    })
-    return Array.from(set)
-  }, [products])
+    // Используем категории из API вместо извлечения из товаров
+    return categories.map(c => c.name)
+  }, [categories])
 
   const handlePriceChange = (field: "priceFrom" | "priceTo", val: string) => {
     const num = val === "" ? undefined : Number(val)

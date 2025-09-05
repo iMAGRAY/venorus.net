@@ -84,8 +84,8 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
 
           {/* Бейджи происхождения и доставки */}
           <div className="absolute top-3 left-3 flex gap-1">
-            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇷🇺 Сделано в России</span>
-            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">🇻🇪 Доставка</span>
+            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇻🇪 Hecho en Venezuela</span>
+            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">📦 Entrega</span>
           </div>
 
           {/* Кнопка быстрого просмотра */}
@@ -226,13 +226,13 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
           </div>
 
           {/* Кнопки действий */}
-          <div className="flex gap-2 sm:flex-row flex-col">
+          <div className="flex gap-2">
             {/* Кнопка добавления в заявку */}
             {!inCart && (
               <Button
                 onClick={handleAddToCart}
                 size="sm"
-                className="w-full sm:flex-1 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white border-0 transition-all duration-200 shadow-sm rounded-lg font-medium text-xs touch-manipulation"
+                className="flex-1 h-8 sm:h-9 bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 hover:border-sky-300 transition-all duration-200 rounded-lg text-xs"
               >
                 {t('product.addToCart')}
               </Button>
@@ -248,7 +248,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                   const btn = document.getElementById('cart-button') as HTMLButtonElement | null
                   btn?.click()
                 }}
-                className="w-full sm:w-auto px-3 py-2 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200 transition-colors rounded-lg text-xs touch-manipulation"
+                className="flex-1 h-8 sm:h-9 bg-green-50 border-green-200 text-green-700 hover:bg-green-100 transition-colors rounded-lg text-xs"
               >
                 {t('product.inCart')}
               </Button>
@@ -257,7 +257,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
             {/* Кнопка подробнее - переход на страницу товара */}
             <Link
               href={`/products/${product.id}`}
-              className="inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-200 touch-manipulation"
+              className="flex-1 h-8 sm:h-9 inline-flex items-center justify-center bg-gradient-to-r from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white shadow-sm rounded-lg transition-all duration-300 text-xs font-medium"
               onClick={(e) => e.stopPropagation()}
             >
               {t('product.details')}

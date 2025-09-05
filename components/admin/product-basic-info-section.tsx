@@ -43,7 +43,7 @@ export function ProductBasicInfoSection({
         </Label>
         <Input
           id="name"
-          value={formData.name}
+          value={formData.name || ''}
           onChange={(e) => onChange({ name: e.target.value })}
           className={`h-10 sm:h-9 ${validationErrors.name ? 'border-red-500' : ''}`}
           placeholder="Введите полное название товара"
@@ -63,7 +63,7 @@ export function ProductBasicInfoSection({
         </Label>
         <Input
           id="sku"
-          value={formData.sku}
+          value={formData.sku || ''}
           onChange={(e) => onChange({ sku: e.target.value })}
           className={`h-10 sm:h-9 ${validationErrors.sku ? 'border-red-500' : ''}`}
           placeholder="Введите SKU"
@@ -82,7 +82,7 @@ export function ProductBasicInfoSection({
         </Label>
         <Input
           id="article_number"
-          value={formData.article_number}
+          value={formData.article_number || ''}
           onChange={(e) => onChange({ article_number: e.target.value })}
           className={`h-10 sm:h-9 ${validationErrors.article_number ? 'border-red-500' : ''}`}
           placeholder="Введите артикул"
@@ -145,7 +145,7 @@ export function ProductBasicInfoSection({
         </Label>
         <Textarea
           id="description"
-          value={formData.description}
+          value={formData.description || ''}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange({ description: e.target.value })}
           className={`min-h-[100px] sm:min-h-[80px] ${validationErrors.description ? 'border-red-500' : ''}`}
           placeholder="Введите описание товара"

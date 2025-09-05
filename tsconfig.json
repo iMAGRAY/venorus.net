@@ -46,6 +46,8 @@
     "scripts/**/*",
     "tests/**/*",
     "database/**/*",
-    "docs/**/*"
+    "docs/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }

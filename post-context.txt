@@ -1,0 +1,492 @@
+You are a pragmatic code quality analyzer focused on helping developers ship better code without unnecessary friction. Be supportive and focus on what truly matters for code quality.
+
+IMPORTANT CONTEXT AWARENESS:
+- ANALYZE THE "Current user task" FROM CONVERSATION CONTEXT to understand what the user is trying to achieve
+- PRIORITIZE advice that helps complete their current task first
+- If the user is working on security improvements, provide thorough security analysis
+- For general development tasks, ONLY flag CRITICAL security issues (exposed secrets, SQL injection, RCE)
+- Avoid nitpicking and focus on issues that actually impact functionality or maintainability
+- Respect developer intent - don't suggest major refactoring unless there's a critical problem
+
+PRIORITY ANALYSIS AREAS:
+1. **Critical Bugs**: Logic errors that will cause failures, runtime exceptions, data corruption
+2. **Security (Contextual)**: 
+   - ALWAYS flag: Hardcoded secrets, SQL injection, command injection, path traversal with user input
+   - ONLY if security-focused task: Input validation, auth issues, crypto weaknesses
+3. **Functionality Issues**: Code that doesn't achieve its intended purpose
+4. **Major Performance**: Only O(n²) or worse issues, memory leaks, infinite loops
+5. **Maintainability**: Only if code is genuinely hard to understand or modify
+
+ANALYSIS APPROACH:
+- FIRST: Address what helps the user complete their current task
+- THEN: Report other critical issues found
+- Be developer-friendly: focus on helping, not blocking progress
+- Only report issues that genuinely matter for the code to work correctly
+- Skip minor style issues unless they severely impact readability
+- For security: distinguish between CRITICAL (must fix) and informational
+- Provide fixes, not just criticism
+
+SEVERITY GUIDELINES:
+- **error**: Only for code that WILL break or has CRITICAL security flaws (hardcoded secrets, SQL injection)
+- **warning**: Issues that could cause problems in production or make code hard to maintain
+- **info**: Helpful suggestions that improve code quality but aren't urgent
+
+REQUIRED JSON RESPONSE FORMAT:
+{
+  "summary": "One-line assessment focusing on the user's current task",
+  "overall_quality": "excellent|good|needs_improvement|poor", 
+  "task_assistance": {
+    "current_task": "Brief description of what the user is trying to achieve",
+    "task_progress": "helps_achieve_goal|partially_complete|needs_more_work|blocking_issues",
+    "next_steps": ["Specific recommendations to complete the user's task"],
+    "task_specific_issues": [
+      {
+        "type": "missing_functionality|incorrect_implementation|improvement_opportunity",
+        "description": "How this relates to completing the user's task",
+        "suggestion": "Specific fix to help achieve the goal"
+      }
+    ]
+  },
+  "general_issues": [
+    {
+      "severity": "error|warning|info",
+      "category": "security|performance|logic|style|maintainability",
+      "message": "Clear issue description",
+      "line": 42,
+      "fix_suggestion": "Specific improvement recommendation"
+    }
+  ],
+  "suggestions": [
+    {
+      "category": "performance|security|maintainability|style",
+      "description": "Improvement opportunity",
+      "priority": "high|medium|low",
+      "code_example": "Optional code snippet showing better approach"
+    }
+  ]
+}
+
+CRITICAL INSTRUCTIONS FOR SECURITY CHECKS:
+- DO NOT report generic security "best practices" unless there's an actual vulnerability
+- DO NOT suggest input validation for internal tools or development utilities
+- DO NOT flag missing HTTPS, CORS, CSP headers in development/local code
+- DO NOT report "potential" issues - only report ACTUAL vulnerabilities
+- DO report: exposed API keys, database passwords, SQL injection, command injection, eval() with user input
+
+Be pragmatic and supportive. Help developers ship code, don't create unnecessary friction.
+
+Your response must be ONLY the JSON object above, nothing else. No additional text or explanations.
+
+MANDATORY LANGUAGE MATCHING:
+You MUST analyze the conversation context and respond in the EXACT SAME LANGUAGE as the user.
+
+AUTOMATIC LANGUAGE DETECTION FROM CONVERSATION CONTEXT:
+1. Scan ALL user messages in the conversation context
+2. Identify the primary language used by the user:
+   - Russian: Contains Cyrillic characters (а, б, в, г, и, etc.)
+   - English: Contains only Latin characters
+   - Other: Detect accordingly
+3. MATCH the user's language in your response
+
+EXAMPLES:
+- If you see "[user]: создай файл" → RESPOND IN RUSSIAN
+- If you see "[user]: create a file" → respond in English
+- If you see mixed languages, use the MOST FREQUENT language
+
+CRITICAL: Language mismatch indicates you're not properly processing the conversation context.
+This is a validation failure that must be avoided.
+
+CONVERSATION CONTEXT:
+conversation:
+
+
+
+PROJECT CONTEXT:
+COMPRESSED_PROJECT[v3][CLAUDE.md,COMPLETE_SPANISH_TRANSLATION.md,CURRENCY_UPDATE_SUMMARY.md,DESIGN_MODERNIZATION_2025.md,QUICK_DEPLOY.md,README.md,RUSSIAN_TO_SPANISH_TRANSLATION.md,SPANISH_TRANSLATION_COMPLETE.md,TODO.md,TRUST_STRIP_FIX.md,components.json,ecosystem.config.js,ecosystem.simple.config.js,middleware.ts,package-lock.json,package.json,start-pm2.sh,tailwind.config.ts,trigger-deploy.js,tsconfig.json;__tests__[ssl-connection.test:j];app[error.tsx,global-error.tsx,globals.css,layout.tsx,loading.tsx,not-found.tsx,page.tsx];app/about[page.tsx];app/admin[layout.tsx,page.tsx];app/admin/catalog-files[page.tsx];app/admin/catalog-menu[page.tsx];app/admin/categories[page.tsx];app/admin/characteristic-templates[page.tsx];app/admin/export-import[page.tsx];app/admin/manufacturers[page.tsx];app/admin/manufacturers/[id][page.tsx];app/admin/media[page.tsx];app/admin/model-lines[page.tsx];app/admin/model-lines/[id]/products[page.tsx];app/admin/model-lineup[page.tsx];app/admin/orders[page.tsx];app/admin/products[loading.tsx,page.tsx];app/admin/products/[id]/edit[page.tsx];app/admin/products/[id]/variants[page.tsx];app/admin/products/create[page.tsx];app/admin/redis-monitor[page.tsx];app/admin/roles[page.tsx];app/admin/settings[page.tsx];app/admin/setup-templates[page.tsx];app/admin/specifications[page.tsx];app/admin/tags[page.tsx];app/admin/users[page.tsx];app/admin/warehouse[page.tsx];app/api/admin/auth/login[route:t];app/api/admin/auth/login-backup[route:t];app/api/admin/auth/logout[route:t];app/api/admin/auth/status[route:t];app/api/admin/auth/universal-login[route:t];app/api/admin/characteristic-templates[route:t];app/api/admin/characteristic-templates/[id][route:t];app/api/admin/cleanup-deleted-variants[route:t];app/api/admin/dashboard-stats[route:t];app/api/admin/performance[route:t];app/api/admin/permissions[route:t];app/api/admin/products/[id]/sizes[route:t];app/api/admin/roles[route:t];app/api/admin/roles/[id][route:t];app/api/admin/users[route:t];app/api/admin/users/[id][route:t];app/api/cache[route:t];app/api/cache-status[route:t];app/api/cache-test[route:t];app/api/cache/clear[route:t];app/api/cache/delete[route:t];app/api/cache/get[route:t];app/api/cache/invalidate[route:t];app/api/cache/set[route:t];app/api/cart[route:t];app/api/cart/add[route:t];app/api/catalog-files[route:t];app/api/catalog-files/[id][route:t];app/api/catalog-files/[id]/download[route:t];app/api/catalog-menu[route:t];app/api/catalog-menu-settings[route:t];app/api/catalog-menu/available-entities[route:t];app/api/catalog-subgroups[route:t];app/api/categories[route:t];app/api/categories-flat[route:t];app/api/categories/[id]/breadcrumbs[route:t];app/api/characteristics[route:t];app/api/characteristics/available[route:t];app/api/characteristics/by-category[route:t];app/api/characteristics/delete-info[route:t];app/api/characteristics/values[route:t];app/api/db-debug[route:t];app/api/db-reset[route:t];app/api/db-status[route:t];app/api/db-test-direct[route:t];app/api/debug/auth-info[route:t];app/api/debug/env-check[route:t];app/api/deploy/clean[route:t];app/api/deploy/status[route:t];app/api/export/excel[route:t];app/api/filter-characteristics[route:t];app/api/form-templates[route:t];app/api/form-templates/[id][route:t];app/api/form-templates/setup[route:t];app/api/form-templates/test[route:t];app/api/health[route:t];app/api/home[route:t];app/api/log-404[route:t];app/api/manufacturers[route:t];app/api/manufacturers/[id][route:t];app/api/manufacturers/[id]/model-lines[route:t];app/api/media[route:t];app/api/media/check[route:t];app/api/media/check-duplicate[route:t];app/api/media/delete[route:t];app/api/media/register[route:t];app/api/media/sync[route:t];app/api/model-lines[route:t];app/api/model-lines/[id][route:t];app/api/model-lines/[id]/products[route:t];app/api/orders[route:t];app/api/orders/[id][route:t];app/api/orders/[id]/items/[itemId][route:t];app/api/orders/count[route:t];app/api/orders/create[route:t];app/api/product-images[route:t];app/api/product-sizes[route:t];app/api/product-sizes/[id][route:t];app/api/product-specifications/[id][route:t];app/api/product-tags[route:t];app/api/product-variants[route:t];app/api/product-variants/[id][route:t];app/api/product-variants/[id]/characteristics[route:t];app/api/product-variants/[id]/characteristics-simple[route:t];app/api/products[route:t];app/api/products/[id][route:t];app/api/products/[id]/characteristics[route:t];app/api/products/[id]/characteristics-grouped[route:t];app/api/products/[id]/characteristics-simple[route:t];app/api/products/[id]/characteristics-templates[route:t];app/api/products/[id]/configurable-characteristics[route:t];app/api/products/[id]/images[route:t];app/api/products/[id]/personal-tags/[tagId][route:t];app/api/products/[id]/selection-tables[route:t];app/api/products/[id]/selection-tables/existing[route:t];app/api/products/[id]/selection-tables/new[route:t];app/api/products/[id]/similar[route:t];app/api/products/[id]/sizes[route:t];app/api/products/[id]/tags[route:t];app/api/products/[id]/variant[route:t];app/api/products/[id]/variants[route:t];app/api/products/[id]/warehouse-stock[route:t];app/api/products/export[route:t];app/api/products/fast[route:t];app/api/products/refresh[route:t];app/api/products/search[route:t];app/api/recommendations[route:t];app/api/redis-status[route:t];app/api/restart[route:t];app/api/search[route:t];app/api/setup-tags[route:t];app/api/setup-tags-complete[route:t];app/api/site-settings[route:t];app/api/size-charts[route:t];app/api/spec-enums[route:t];app/api/spec-groups-optimized[route:t];app/api/spec-values[route:t];app/api/specifications[route:t];app/api/specifications/available[route:t];app/api/sql-table/[table][route:t];app/api/suppliers[route:t];app/api/test-db[route:t];app/api/upload[route:t];app/api/v2/product-variants[route:t];app/api/v2/product-variants/[id][route:t];app/api/variant-images[route:t];app/api/variants/[id][route:t];app/api/variants/[id]/personal-tags/[tagId][route:t];app/api/variants/[id]/tags[route:t];app/api/variants/[id]/warehouse-stock[route:t];app/api/warehouse/analytics[route:t];app/api/warehouse/articles[route:t];app/api/warehouse/cities[route:t];app/api/warehouse/clean-fake-data[route:t];app/api/warehouse/init[route:t];app/api/warehouse/inventory[route:t];app/api/warehouse/movements[route:t];app/api/warehouse/regions[route:t];app/api/warehouse/sections[route:t];app/api/warehouse/sections/[id][route:t];app/api/warehouse/settings[route:t];app/api/warehouse/setup-hierarchy[route:t];app/api/warehouse/sync[route:t];app/api/warehouse/warehouses[route:t];app/api/warehouse/zones[route:t];app/api/warehouse/zones/capacity[route:t];app/api/warmup[route:t];app/api/webhook/github[route:t];app/contacts[page.tsx];app/products/[id][page.tsx];c[additional-contacts.tsx,cart-drawer.tsx,catalog-download-buttons.tsx,category-sidebar.tsx,fallback-image.tsx,footer.tsx,header.tsx,hero-image.tsx,hero-video.tsx,i18n-provider.tsx,instant-link.tsx,instant-navigation-provider.tsx,order-form.tsx,product-basic-info.tsx,product-card-list.tsx,product-card-simple.tsx,product-card.tsx,product-characteristics-minimal.tsx,product-characteristics.tsx,product-configuration-selector.tsx,product-filters.tsx,product-grid.tsx,product-main-parameters.tsx,product-quick-view.tsx,product-recommendations.tsx,product-selection-tables.tsx,product-tags-display.tsx,product-variant-details.tsx,product-variant-selector-grid.tsx,product-variant-selector-horizontal.tsx,product-variant-selector-modal.tsx,product-variant-selector-v2.tsx,product-variant-selector.tsx,product-variants-gallery.tsx,safe-image.tsx,search-bar.tsx,sidebar-filters.tsx,skeleton-provider.tsx,social-icons.tsx,sort-dropdown.tsx,theme-provider.tsx,trust-strip.tsx,view-toggle.tsx,warehouse-stock-display.tsx];c/admin[additional-contacts-manager.tsx,admin-layout.tsx,auth-guard.tsx,bulk-actions.tsx,characteristics-selector.tsx,characteristics-templates-manager.tsx,compact-characteristics.tsx,data-ready-indicator.tsx,duplicate-file-dialog.tsx,error-boundary.tsx,export-import.tsx,maintenance-page.tsx,manufacturers-manager.tsx,media-gallery.tsx,media-uploader.tsx,model-lines-dashboard.tsx,model-lines-manager.tsx,price-demo.tsx,product-basic-info-section.tsx,product-category-section.tsx,product-characteristics-manager.tsx,product-form-modern.tsx,product-image-uploader.tsx,product-pricing-section.tsx,product-selector.tsx,product-specifications-manager-new.tsx,product-specifications-manager.tsx,product-tags-selector.tsx,product-variant-form.tsx,product-variants-manager.tsx,products-filters.tsx,products-manager.tsx,selection-tables-editor.tsx,simple-characteristics.tsx,specifications-templates.tsx,stable-characteristics.tsx,variant-tags-selector.tsx,variant-warehouse-stock-manager.tsx,virtualized-media-grid.tsx,warehouse-advanced-search.tsx,warehouse-analytics-dashboard.tsx,warehouse-articles-section.tsx,warehouse-bulk-operations.tsx,warehouse-dialogs.tsx,warehouse-section.tsx,warehouse-settings.tsx,warehouse-stats.tsx,warehouse-stock-manager.tsx,warehouse-tree-manager.tsx,warehouse-tree-node.tsx];c/skeletons[page-skeletons.tsx];c/ui[accordion.tsx,alert-dialog.tsx,alert.tsx,aspect-ratio.tsx,avatar.tsx,badge.tsx,breadcrumb.tsx,button.tsx,calendar.tsx,card.tsx,carousel.tsx,chart.tsx,checkbox.tsx,collapsible.tsx,command.tsx,context-menu.tsx,custom-dialog.tsx,dialog.tsx,drawer.tsx,dropdown-menu.tsx,form.tsx,grouped-searchable-select.tsx,hover-card.tsx,index:t,input-otp.tsx,input.tsx,label.tsx,menubar.tsx,navigation-menu.tsx,pagination.tsx,popover.tsx,progress.tsx,radio-group.tsx,resizable.tsx,scroll-area.tsx,searchable-category-select.tsx,searchable-select.tsx,select.tsx,separator.tsx,sheet.tsx,sidebar.tsx,skeleton.tsx,slider.tsx,sonner.tsx,switch.tsx,table.tsx,tabs.tsx,textarea.tsx,toast.tsx,toaster.tsx,toggle-group.tsx,toggle.tsx,tooltip.tsx,use-mobile.tsx,use-toast:t,visually-hidden.tsx];d[ADMIN_PANEL_GUIDE.md,CATALOG_OPTIMIZATION_COMPLETE.md,INDEX.md,MODEL_LINES_DEBUG_GUIDE.md,ORDER_SYSTEM_GUIDE.md,PRODUCTION_PLAN.md,PRODUCTION_TODO.md,PRODUCT_IMAGES_GUIDE.md,PRODUCT_SPECIFICATIONS_GUIDE.md,PRODUCT_SPECIFICATIONS_MANAGER_GUIDE.md,PRODUCT_TAGS_SETUP.md,PRODUCT_VARIANTS_GUIDE.md,README.md,USER_MANAGEMENT_GUIDE.md,WAREHOUSE_MANAGEMENT_GUIDE.md,price-functionality.md];d/api[manufacturers.md,overview.md];d/database[DATABASE_CLEANUP_COMPLETE.md,schema.md];d/setup[installation.md,project-completion.md];d/testing[overview.md,writing-tests.md];database[apply-indexes:j,database_schema.sql,performance-indexes.sql];db[apply-indexes.sql,create-tags-tables.sql,performance-optimization.sql];hooks[use-characteristics-creator:t,use-characteristics-manager:t,use-instant-navigation:t,use-mobile.tsx,use-optimized-media:t,use-product-form-data:t,use-product-form:t,use-specification-groups:t,use-specifications-data:t,use-toast:t,use-warehouse-state:t,use-warehouse:t];l[admin-data:t,api-cache-headers:t,api-client:t,api-guards:t,app-config:t,cart-context.tsx,cart-storage:t,constants:t,data:t,database-auth:t,db-connection:t,db:t,dependency-injection:t,fallback-image:t,file-hash:t,index:t,init:t,logger:t,main-parameters-utils:t,orders-context.tsx,performance-monitor:t,rate-limit:t,recommendation-engine:t,redis-client:t,s3-client:t,theme-colors:t,unified-api-client:t,utils:t,validation:t];l/api[client:t,index:t,types:t];l/auth[database-auth:t,index:t,secure-db-config:t];l/cache[cache-middleware:t,cache-utils:t,client-cache:t,client-only:t,index:t,react-hooks:t,server-only:t,types:t,unified-cache:t];l/clients[api-client:t,index:t,redis-client:t,s3-client:t,unified-api-client:t];l/config[production:t];l/contexts[cart-context.tsx,index:t,orders-context.tsx];l/database[db-connection:t,db:t,index:t,prepared-statements:t,ssl-config.test:t,ssl-config:t];l/design-system[components:t,index:t];l/services[index:t,product-service:t,recommendation-engine:t,warehouse-service:t];l/stores[admin-store:t,index:t,types:t];l/types[config:t,product-form:t,warehouse:t];l/utils[field-mapper:t,sanitize:t,slug-generator:t,variant-attributes:t];scripts[activate-categories:j,check-category-111:j,check-duplicate-products:j,check-hierarchy:j,check-misplaced-categories:j,check-orders-table:j,check-parent-status:j,check-product-371:j,compare-categories:j,compare-db-vs-api:j,debug-categoriesmap:j,delete-numeric-categories:j,delete-test-categories-hard:j,find-strange-categories:j,find-test-categories:j,fix-async-params:j,fix-category-hierarchy:j,fix-db-imports:j,fix-product-tags-tables:j,force-clear-cache:j,kill-port:j];scripts/cleanup[README.md,analyze-legacy-tables:j,backup-before-cleanup:j,backup-legacy-tables:j,backup-sql-export:j,clean-inaccessible-images:j,clean-prosthetic-duplicates:j,clean-warehouse-system:j,cleanup-database:j,cleanup-duplicates:j,cleanup-obsolete-data:j,delete-legacy-tables:j,production-cleanup:j,remove-console-logs-ast:j,remove-console-logs:j,remove-placeholder-images:j,s3-cleanup-complete:j,s3-cleanup-files:j,verify-after-cleanup:j];scripts/database[add-discount-price-to-product-sizes.sql,add-performance-indexes.sql,add-personal-tags-support.sql,add-variant-personal-tags-support.sql,backup-full:j,create-catalog-files-table.sql,create-product-tags-table.sql,create-product-variants-system.sql,create-variant-characteristics-simple.sql,create-warehouses-tables.sql,extend-product-variants-table.sql,fix-database-system.sql,normalize-variant-attributes.sql,optimize-orders-performance:j,test-migration.sql,update-product-variants-system.sql];scripts/deploy[auto-deploy:j,clean-deploy:j];scripts/migration[README-enhanced-migration.md,enhanced-sizes-to-variants-migration:j,ensure-missing-tables:j,migrate-catalog-menu-settings:j,migrate-characteristics-to-enums:j,migrate-sizes-to-variants:j,migration-status-checker:j,migration-validator:j,run-color-migration:j,run-enhanced-migration:j,run-form-templates-migration:j,run-migration:j,run-product-characteristics-migration:j,run-product-variants-migration:j,run-sql:j,run-update-variants-migration:j,run-user-system-migration:j];scripts/monitoring[backup-system:j,health-check:j];scripts/seed[clear-database:j,russian-consumer-goods:j,russian-products-seed:j];scripts/setup[create-form-templates-table:j,create-hierarchical-structure-fixed:j,create-hierarchical-structure:j,create-initial-admin:j,create-logo:j,create-media-deduplication-tables:j,create-prosthetic-subgroups:j,create-smart-size-groups:j,create-super-admin:j,create-table-direct:j,create-table-with-env:j,create-test-user:j,create-universal-sizes:j,create-warehouse-system:j,fix-all-hardcoded-credentials:j,fix-api-endpoints:j,import-all-products:j,init-db:j,seed-data:j,seed-test-specifications:j,set-super-admin-credentials:j,setup-admin-credentials:j,setup-form-templates:j,setup-product-sizes-fixed:j,setup-product-sizes:j,setup-product-specifications:j,setup-remote-db:j,setup-specifications-simple:j,test-user-instructions.md,update-settings:j];scripts/tools[auto-fix-callback-deps:j,auto-fix-hooks-deps:j,auto-fix-jsx-keys:j,auto-fix-lint:j,auto-fix-shorthand-alias:j,fix-shorthand-from-tsc:j,fix-use-client-directive:j];services[product-service:t,warehouse-service:t];t[README.md,db-ssl-connection.test:j,run-all-tests:j,run-e2e:j,run-smoke:j,smoke-tests:j];t/api[about-page.test:j,contacts-page.test:j,db-status.test:j,manufacturers-page.test:j,manufacturers.test:j,not-found.test:j,product-specifications.test:j,site-settings.test:j,smoke-all-routes.test:j,stock-status-update.test:j];t/database[connection.test:j];t/e2e[comprehensive-testing:j,critical-user-flows:j];t/integration[api-integration-tests:j,auth-session-tests:j,hierarchy.test:j,static-assets.test:j];t/performance[db-latency.test:j,load-stress-testing:j,load-tests:j,media-gallery-performance.test:j];t/security[security-tests:j];t/utils[api-helper:j,db-helper:j,discover-api-routes:j]]
+METRICS[L130888,tsx:49743/190/21.5/8.7,t:35234/236/17.6/12.4,j:17501/135/15.8/12.2,json:16276/4/0.0/0.0,sql:6384/19/0.0/0.0,sh:32/1/0.0/0.0,md:5363/38/0.0/0.0,css:355/1/0.0/0.0;Q9/10/6;C18.5/11.1/170/151/529+32+0+0]
+IMPORTANT[index.ts,index.ts,index.ts,index.ts,index.ts]
+TOKENS:5329
+INCREMENTAL[MOD:components/header.tsx:13219b]
+
+
+CODE CHANGES (diff format):
+=== Full file with Edit changes: C:\Users\1\Documents\GitHub\venorus.net\components\header.tsx ===
+(Edit target not found, showing original file)
+
+   1   "use client"
+   2   
+   3   import { Button } from "@/components/ui/button"
+   4   import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+   5   import { Menu, X, Phone, Mail, MapPin, ClipboardList } from "lucide-react"
+   6   import { useAdminStore } from "@/lib/stores"
+   7   import { AdditionalContacts } from "@/components/additional-contacts"
+   8   import { InstantLink } from "@/components/instant-link"
+   9   import { CartDrawer } from "@/components/cart-drawer"
+  10   import { useCart } from "@/lib/cart-context"
+  11   import { Badge } from "@/components/ui/badge"
+  12   import { useState, useEffect } from "react"
+  13   import { useI18n } from "@/components/i18n-provider"
+  14   import { SafeImage } from "@/components/safe-image"
+  15   
+  16   // Безопасный компонент списка
+  17   function SafeCartButton() {
+  18     const [isClient, setIsClient] = useState(false)
+  19     const cart = useCart()
+  20   
+  21     useEffect(() => {
+  22       setIsClient(true)
+  23     }, [])
+  24   
+  25     const totalItems = cart?.totalItems ?? 0
+  26   
+  27     if (!isClient) {
+  28       return (
+  29         <Button
+  30           variant="outline"
+  31           size="sm"
+  32           className="relative h-9"
+  33         >
+  34           <ClipboardList className="w-4 h-4" />
+  35         </Button>
+  36       )
+  37     }
+  38   
+  39     return (
+  40       <CartDrawer>
+  41         <Button
+  42           variant="outline"
+  43           size="sm"
+  44           id="cart-button"
+  45           className="relative h-9"
+  46         >
+  47           <ClipboardList className="w-4 h-4" />
+  48           {totalItems > 0 && (
+  49             <Badge className="absolute -top-1 -right-1 bg-primary text-primary-foreground border-0 text-2xs min-w-[16px] h-4 flex items-center justify-center p-0 rounded-full">
+  50               {totalItems}
+  51             </Badge>
+  52           )}
+  53         </Button>
+  54       </CartDrawer>
+  55     )
+  56   }
+  57   
+  58   export default function Header() {
+  59     const { t } = useI18n()
+  60     const siteSettings = useAdminStore(state => state.settings)
+  61     const isInitialized = useAdminStore(state => state.initialized.settings)
+  62     const initializeSettings = useAdminStore(state => state.initializeSettings)
+  63     const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  64     const [isSheetOpen, setIsSheetOpen] = useState(false)
+  65   
+  66     // Inicialización de configuraciones
+  67     useEffect(() => {
+  68       if (!isInitialized) {
+  69         initializeSettings()
+  70       }
+  71     }, [isInitialized, initializeSettings])
+  72   
+  73   
+  74     const navLinks = [
+  75       { href: "#contact", label: t('header.contacts') },
+  76     ]
+  77     const contactLink = navLinks.find((l) => l.href === "#contact")
+  78   
+  79     const handleContactClick = (e: React.MouseEvent) => {
+  80       e.preventDefault()
+  81       setIsContactModalOpen(true)
+  82       // Cerrar menú lateral al abrir modal de contactos
+  83       setIsSheetOpen(false)
+  84     }
+  85   
+  86     // Функция для обработки открытия/закрытия бокового меню
+  87     const handleSheetOpenChange = (open: boolean) => {
+  88       setIsSheetOpen(open)
+  89       // Cerrar modal de contactos al abrir menú lateral
+  90       if (open) {
+  91         setIsContactModalOpen(false)
+  92       }
+  93     }
+  94   
+  95     return (
+  96       <>
+  97         {/* Banda promocional superior eliminada según especificaciones */}
+  98   
+  99         <header className="sticky top-0 z-50 w-full backdrop-blur-md border-b bg-background/80 border-border">
+ 100           <div className="container flex items-center h-14 mx-auto px-4 lg:px-6">
+ 101             {/* Логотип */}
+ 102             <div className="flex items-center">
+ 103               <InstantLink href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+ 104                 <div className="w-7 h-7 flex items-center justify-center">
+ 105                   <SafeImage src="/logo.webp?v=2" alt="Venorus" width={24} height={24} className="w-6 h-6" />
+ 106                 </div>
+ 107                 <span className="text-lg font-semibold tracking-tight">Venorus</span>
+ 108               </InstantLink>
+ 109             </div>
+ 110   
+ 111             {/* Центральная навигация */}
+ 112             <nav className="flex-1 hidden md:flex items-center justify-center">
+ 113               <div className="flex items-center gap-1">
+ 114                 {navLinks.filter((l) => l.href !== "#contact").map((link) => (
+ 115                   <InstantLink
+ 116                     key={link.label}
+ 117                     href={link.href}
+ 118                     className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+ 119                   >
+ 120                     {link.label}
+ 121                   </InstantLink>
+ 122                 ))}
+ 123               </div>
+ 124             </nav>
+ 125   
+ 126             {/* Правая часть */}
+ 127             <div className="flex items-center gap-2 ml-auto">
+ 128               {/* Контакты (десктоп) */}
+ 129               <div className="hidden md:flex">
+ 130                 {[contactLink].map((link) => (
+ 131                   link?.href === "#contact" ? (
+ 132                     <button
+ 133                       key={link.label}
+ 134                       onClick={handleContactClick}
+ 135                       className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+ 136                     >
+ 137                       {link.label}
+ 138                     </button>
+ 139                   ) : null
+ 140                 ))}
+ 141               </div>
+ 142   
+ 143               {/* Контакты (мобильная) */}
+ 144               <div className="md:hidden">
+ 145                 <button
+ 146                   onClick={handleContactClick}
+ 147                   className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+ 148                   title="Contactos"
+ 149                 >
+ 150                   <Phone className="w-4 h-4" />
+ 151                 </button>
+ 152               </div>
+ 153   
+ 154               {/* Carrito */}
+ 155               <SafeCartButton />
+ 156   
+ 157               {/* Мобильное меню */}
+ 158               <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
+ 159                 <SheetTrigger asChild>
+ 160                   <Button
+ 161                     variant="ghost"
+ 162                     size="icon"
+ 163                     className="md:hidden h-9 w-9"
+ 164                   >
+ 165                     <Menu className="w-4 h-4" />
+ 166                     <span className="sr-only">Menú</span>
+ 167                   </Button>
+ 168                 </SheetTrigger>
+ 169                 <SheetContent side="right" className="w-full sm:max-w-xs">
+ 170                   <nav className="grid gap-2 py-4">
+ 171                     <InstantLink href="/" className="flex items-center gap-2 mb-6">
+ 172                       <div className="w-7 h-7 flex items-center justify-center">
+ 173                         <SafeImage
+ 174                           src="/logo.webp?v=2"
+ 175                           alt="Venorus"
+ 176                           width={24}
+ 177                           height={24}
+ 178                           className="w-6 h-6"
+ 179                         />
+ 180                       </div>
+ 181                       <span className="text-lg font-semibold">Venorus</span>
+ 182                     </InstantLink>
+ 183   
+ 184   
+ 185                     {navLinks.map((link) => (
+ 186                       link.href === "#contact" ? (
+ 187                         <button
+ 188                           key={link.label}
+ 189                           onClick={(e) => {
+ 190                             handleContactClick(e);
+ 191                             setIsSheetOpen(false);
+ 192                           }}
+ 193                           className="text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+ 194                         >
+ 195                           {link.label}
+ 196                         </button>
+ 197                       ) : (
+ 198                         <InstantLink
+ 199                           key={link.label}
+ 200                           href={link.href}
+ 201                           className="text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+ 202                         >
+ 203                           {link.label}
+ 204                         </InstantLink>
+ 205                       )
+ 206                     ))}
+ 207                   </nav>
+ 208                 </SheetContent>
+ 209               </Sheet>
+ 210             </div>
+ 211           </div>
+ 212         </header>
+ 213   
+ 214         {/* Contact Modal */}
+ 215         {isContactModalOpen && (
+ 216           <div className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto">
+ 217             {/* Backdrop */}
+ 218             <div
+ 219               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+ 220               onClick={() => setIsContactModalOpen(false)}
+ 221             />
+ 222   
+ 223             {/* Modal Content */}
+ 224             <div className="relative w-full h-full sm:h-auto sm:w-auto flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
+ 225               <div className="relative bg-card rounded-2xl shadow-lg w-full sm:max-w-lg p-6 transform transition-all duration-300 scale-100 max-h-[90vh] overflow-y-auto border">
+ 226                 {/* Close Button */}
+ 227                 <button
+ 228                   onClick={() => setIsContactModalOpen(false)}
+ 229                   className="absolute top-4 right-4 p-2 rounded-lg hover:bg-accent transition-colors"
+ 230                 >
+ 231                   <X className="w-4 h-4" />
+ 232                 </button>
+ 233   
+ 234                 {/* Header */}
+ 235                 <div className="mb-6 pr-12">
+ 236                   <h2 className="text-2xl font-semibold mb-2">
+ 237                     {t('header.contacts')}
+ 238                   </h2>
+ 239                   <p className="text-muted-foreground text-sm">
+ 240                     {t('header.contactSubtitle')}
+ 241                   </p>
+ 242                 </div>
+ 243   
+ 244                 {/* Contact Information */}
+ 245                 <div className="space-y-3">
+ 246                   {/* Phone */}
+ 247                   <a href="tel:+74951326265" className="block">
+ 248                     <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors">
+ 249                       <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+ 250                         <Phone className="w-4 h-4 text-primary-foreground" />
+ 251                       </div>
+ 252                       <div>
+ 253                         <p className="font-medium text-sm">Teléfono</p>
+ 254                         <p className="text-sm text-muted-foreground">
+ 255                           +7 495 132-62-65
+ 256                         </p>
+ 257                       </div>
+ 258                     </div>
+ 259                   </a>
+ 260   
+ 261                   {/* Venezuela Phone - William Warrick */}
+ 262                   <a href="tel:+584142328611" className="block">
+ 263                     <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors">
+ 264                       <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+ 265                         <Phone className="w-4 h-4 text-primary-foreground" />
+ 266                       </div>
+ 267                       <div>
+ 268                         <p className="font-medium text-sm">Venezuela</p>
+ 269                         <p className="text-sm text-muted-foreground">
+ 270                           +58 414-2328611
+ 271                         </p>
+ 272                         <p className="text-xs text-muted-foreground">
+ 273                           William Warrick
+ 274                         </p>
+ 275                       </div>
+ 276                     </div>
+ 277                   </a>
+ 278   
+ 279                   {/* Email */}
+ 280                   <a href="mailto:info@venorus.ru" className="block">
+ 281                     <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors">
+ 282                       <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+ 283                         <Mail className="w-4 h-4 text-primary-foreground" />
+ 284                       </div>
+ 285                       <div>
+ 286                         <p className="font-medium text-sm">Email</p>
+ 287                         <p className="text-sm text-muted-foreground">
+ 288                           info@venorus.ru
+ 289                         </p>
+ 290                       </div>
+ 291                     </div>
+ 292                   </a>
+ 293   
+ 294                   {/* Address */}
+ 295                   <div className="flex items-center gap-3 p-3 rounded-lg border">
+ 296                     <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+ 297                       <MapPin className="w-4 h-4 text-primary-foreground" />
+ 298                     </div>
+ 299                     <div>
+ 300                       <p className="font-medium text-sm">Dirección</p>
+ 301                       <p className="text-sm text-muted-foreground">
+ 302                         121615, Москва, Рублевское ш., д. 26
+ 303                       </p>
+ 304                     </div>
+ 305                   </div>
+ 306   
+ 307                   {/* Additional Contacts */}
+ 308                   {(siteSettings as any)?.additionalContacts && (siteSettings as any).additionalContacts.length > 0 && (
+ 309                     <div className="mt-6 pt-6 border-t">
+ 310                       <h3 className="text-lg font-semibold mb-4">
+ 311                         Contactos adicionales
+ 312                       </h3>
+ 313                       <AdditionalContacts
+ 314                         contacts={(siteSettings as any).additionalContacts}
+ 315                         className="space-y-3"
+ 316                         theme="light"
+ 317                       />
+ 318                     </div>
+ 319                   )}
+ 320                 </div>
+ 321               </div>
+ 322             </div>
+ 323           </div>
+ 324         )}
+ 325       </>
+ 326     )
+ 327   }
+
+=== End of C:\Users\1\Documents\GitHub\venorus.net\components\header.tsx ===
+
+
+
+CRITICAL TOKEN LIMIT: Your response must NOT exceed 4500 tokens. Keep analysis concise but thorough.
+
+JSON RESPONSE FORMAT (REQUIRED):
+{
+  "decision": "allow|ask|deny|block",
+  "message": "<single line message focusing on user's task and critical issues>",
+  "risk_level": "low|medium|high|critical",
+  "detailed_feedback": {
+    "task_assistance": {
+      "current_task": "<what the user is trying to achieve from conversation context>",
+      "task_progress": "helps_achieve_goal|partially_complete|needs_more_work|blocking_issues",
+      "next_steps": ["<specific steps to complete the user's task>"],
+      "task_specific_issues": [
+        {
+          "type": "missing_functionality|incorrect_implementation|improvement_opportunity",
+          "description": "<how this relates to the user's task>",
+          "suggestion": "<specific fix to help achieve the goal>"
+        }
+      ]
+    },
+    "general_issues": [
+      {
+        "issue": "<specific issue not directly related to user's task>",
+        "severity": "critical|high|medium|low",
+        "suggestion": "<actionable improvement>",
+        "line": <line_number_if_applicable>
+      }
+    ],
+    "security_concerns": [
+      {
+        "type": "<vulnerability_type>",
+        "severity": "critical|high|medium|low",
+        "description": "<specific security issue>",
+        "recommendation": "<how to fix>"
+      }
+    ]
+  }
+}
+
+IMPORTANT: Keep all field names in English, but string values should be in the detected language!
+
+NEVER include text outside JSON. Output ONLY the JSON object.
+TOKEN LIMIT: Keep response under 4500 tokens.
+
+=== END OF PROMPT ===

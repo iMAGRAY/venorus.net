@@ -129,16 +129,8 @@ export function ProductVariantSelectorGrid({
   }, [fetchVariants])
 
   if (loading) {
-    return (
-      <div className={cn("space-y-4", className)}>
-        <div className="h-6 bg-gray-200 rounded animate-pulse w-32" />
-        <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="aspect-square bg-gray-100 rounded-lg animate-pulse" />
-          ))}
-        </div>
-      </div>
-    )
+    // Don't show loading skeleton - just return null
+    return null
   }
 
   if (variants.length === 0) {

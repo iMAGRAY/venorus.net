@@ -40,6 +40,7 @@ export async function GET(_request: NextRequest) {
         updated_at
       FROM product_categories
       WHERE (is_deleted = false OR is_deleted IS NULL)
+        AND is_active = true
       ORDER BY parent_id NULLS FIRST, name
     `
 

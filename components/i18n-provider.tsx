@@ -121,6 +121,12 @@ const es: Dictionary = {
     size: "Talla",
     color: "Color",
     variants: "Variantes",
+  },
+  navigation: {
+    fullscreen: {
+      withArrows: "← → para navegar, Esc para cerrar",
+      escOnly: "Esc para cerrar"
+    }
   }
 }
 

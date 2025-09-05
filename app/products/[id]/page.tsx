@@ -19,7 +19,6 @@ import type { Prosthetic } from "@/lib/data"
 import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
 import ProductCharacteristicsMinimal from "@/components/product-characteristics-minimal"
 import SelectionTables from "@/components/product-selection-tables"
-import { ProductBasicInfo } from "@/components/product-basic-info"
 import { useCart } from "@/lib/cart-context"
 import { getActualPrice } from "@/lib/utils"
 import React from "react"
@@ -105,6 +104,7 @@ export default function ProductPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [imagesLoading, setImagesLoading] = useState(true)
+  const [currentImageLoading, setCurrentImageLoading] = useState(false)
   const [characteristicGroups, setCharacteristicGroups] = useState<any[]>([])
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false)
   const [quickViewProduct, setQuickViewProduct] = useState<Prosthetic | null>(null)
@@ -240,12 +240,16 @@ export default function ProductPage() {
     setCurrentImageIndex(0)
   }, [images])
 
-  // Навигация по изображениям
+  // Навигация по изображениям с плавным переходом
   const nextImage = () => {
+    if (images.length <= 1) return
+    setCurrentImageLoading(true)
     setCurrentImageIndex((prev) => (prev + 1) % images.length)
   }
 
   const prevImage = () => {
+    if (images.length <= 1) return
+    setCurrentImageLoading(true) 
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
@@ -689,15 +693,26 @@ export default function ProductPage() {
                           className="relative w-full h-full cursor-pointer group"
                           onClick={openFullscreen}
                         >
+                          {/* Индикатор загрузки при смене изображения */}
+                          {currentImageLoading && (
+                            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10">
+                              <div className="w-6 h-6 animate-spin border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                            </div>
+                          )}
+                          
                           <SafeImage
                             src={images[currentImageIndex] || PROSTHETIC_FALLBACK_IMAGE}
                             alt={product.name}
                             fill
                             sizes="(max-width: 1024px) 100vw, 50vw"
-                            className="object-contain transition-transform duration-300 group-hover:scale-105"
+                            className={`object-contain transition-all duration-300 group-hover:scale-105 ${currentImageLoading ? 'opacity-50' : 'opacity-100'}`}
                             priority={currentImageIndex === 0}
                             onError={(_e) => {
                               logger.error('Image failed to load:', images[currentImageIndex])
+                              setCurrentImageLoading(false)
+                            }}
+                            onLoad={() => {
+                              setCurrentImageLoading(false)
                             }}
                           />
                           {/* Overlay с иконкой увеличения */}
@@ -989,6 +1004,21 @@ export default function ProductPage() {
                     </Button>
                   </div>
 
+                  {/* Descripción del producto - moved here from ProductBasicInfo */}
+                  {product.description && (
+                    <div className="bg-gradient-to-r from-sky-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 p-4 sm:p-6 shadow-lg shadow-blue-100/20">
+                      <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                          <FileText className="w-4 h-4 text-white" />
+                        </div>
+                        Descripción del producto
+                      </h3>
+                      <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        {product.description}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Выбор варианта товара */}
                   <ProductVariantSelectorGrid
                     productId={product.id}
@@ -1014,33 +1044,6 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Información básica del producto */}
-          <div className="mb-12">
-            <ProductBasicInfo
-              product={{
-                id: String(product.id),
-                name: product.name,
-                description: product.description,
-                price: product.price,
-                discount_price: product.discount_price,
-                weight: product.weight || undefined,
-                warranty: product.warranty,
-                batteryLife: product.batteryLife,
-                inStock: product.in_stock ?? product.inStock,
-                in_stock: product.in_stock,
-                category: product.category,
-                category_name: product.category_name,
-                category_full_path: product.category_full_path,
-                manufacturer: product.manufacturer,
-                manufacturer_name: product.manufacturer_name,
-                model_line_name: product.model_line_name,
-                show_price: product.show_price,
-                stock_status: product.stock_status,
-                stock_quantity: product.stock_quantity,
-                article_number: product.article_number || product.sku
-              }}
-            />
-          </div>
 
           {/* Характеристики товара */}
           <div className="mb-12">
@@ -1212,7 +1215,7 @@ export default function ProductPage() {
 
             {/* Подсказка по управлению */}
             <div className="absolute bottom-4 right-4 text-white/70 text-xs sm:text-sm bg-black/50 backdrop-blur-sm px-3 py-2 rounded-lg">
-              {images.length > 1 ? "← → для навигации, Esc для закрытия" : "Esc для закрытия"}
+              {images.length > 1 ? t('navigation.fullscreen.withArrows') : t('navigation.fullscreen.escOnly')}
             </div>
           </div>
         </div>

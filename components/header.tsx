@@ -124,7 +124,7 @@ export default function Header() {
           </nav>
 
           {/* Правая часть */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 ml-auto">
             {/* Контакты (десктоп) */}
             <div className="hidden md:flex">
               {[contactLink].map((link) => (
@@ -140,6 +140,16 @@ export default function Header() {
               ))}
             </div>
 
+            {/* Контакты (мобильная) */}
+            <div className="md:hidden">
+              <button
+                onClick={handleContactClick}
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+                title="Contactos"
+              >
+                <Phone className="w-4 h-4" />
+              </button>
+            </div>
 
             {/* Carrito */}
             <SafeCartButton />

@@ -74,12 +74,12 @@ const SelectionTables: React.FC<SelectionTablesProps> = ({ productSku, className
       <div className={`selection-tables ${className}`}>
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200 bg-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">Таблицы</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Tablas de selección</h2>
           </div>
           <div className="p-6">
           <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
-              <span className="ml-3 text-gray-600">Загрузка таблиц...</span>
+              <span className="ml-3 text-gray-600">Cargando tablas...</span>
             </div>
           </div>
         </div>

@@ -26,7 +26,9 @@ export async function GET(request: NextRequest) {
     checks: {
       isDatabaseAvailableSync: false,
       poolCreated: false,
-      connectionTest: 'not tested'
+      connectionTest: 'not tested' as string,
+      serverTime: undefined as any,
+      pgVersion: undefined as string | undefined
     },
     error: null
   }

@@ -43,6 +43,20 @@ export function useProductFormData() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Фильтрация мусорных категорий
+  const isGarbageCategory = (category: FormCategory): boolean => {
+    const name = category.name.toLowerCase().trim()
+    
+    // Исключаем тестовые и мусорные категории
+    if (name.match(/^\d+$/)) return true // Только числа (11, 22, 222)
+    if (name.includes('test')) return true
+    if (name.includes('тест')) return true
+    if (name === 'testcvbnm') return true
+    if (name.match(/^[0-9]+[a-z]*$/)) return true // Числа с буквами (323, 2131132)
+    
+    return false
+  }
+
   // Загрузка категорий
   const loadCategories = async () => {
     try {
@@ -59,8 +73,11 @@ export function useProductFormData() {
         throw new Error(data.error || 'Failed to load categories')
       }
 
-      setCategories(data.data)
-      return data.data
+      // Фильтруем мусорные категории
+      const filteredCategories = data.data.filter((category: FormCategory) => !isGarbageCategory(category))
+
+      setCategories(filteredCategories)
+      return filteredCategories
     } catch (err) {
       // Error loading categories
       const errorMessage = err instanceof Error ? err.message : 'Failed to load categories'

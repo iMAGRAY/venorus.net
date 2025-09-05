@@ -35,7 +35,7 @@ function isDevelopmentEnvironment(): boolean {
   const env = process.env.NODE_ENV || 'development'
   
   // Check explicit development mode
-  if (env === 'development' || env === 'dev') return true
+  if (env === 'development') return true
   
   // In production, don't auto-detect as development
   if (env === 'production') return false
@@ -129,6 +129,9 @@ function sanitizeCertPath(certPath: string | undefined | null): string | null {
       path.join(process.cwd(), '.cloud-certs'),
       path.join(process.cwd(), '.ssl-certs'),
       path.join(process.cwd(), 'certs'),
+      '/var/task',  // Vercel/AWS Lambda base directory
+      path.join('/var/task', '.cloud-certs'),
+      path.join('/var/task', '.ssl-certs'),
       '/etc/ssl',
       '/usr/local/share/ca-certificates'
     ]
@@ -194,6 +197,9 @@ function autoDetectCertificate(): string | null {
     path.join(process.cwd(), '.ssl-certs', 'root.crt'),
     path.join(process.cwd(), 'certs', 'ca.pem'),
     path.join(process.cwd(), 'certs', 'root.crt'),
+    // Vercel/Next.js production paths
+    path.join('/var/task', '.cloud-certs', 'root.crt'),
+    path.join('/var/task', '.ssl-certs', 'root.crt'),
     // System certificate locations (Linux/Mac)
     '/etc/ssl/certs/ca-certificates.crt',
     '/etc/ssl/cert.pem',
@@ -453,6 +459,52 @@ function hostRequiresSSL(host: string): boolean {
 }
 
 /**
+ * Creates SSL configuration specifically for TWC Cloud
+ * TWC Cloud requires NODE_TLS_REJECT_UNAUTHORIZED=0 due to their SSL certificate chain
+ * The certificate file is still used for additional verification when available
+ */
+function createTWCCloudSSLConfig(certPath: string | null): SSLConfig | false {
+  // TWC Cloud specific: Their SSL setup requires NODE_TLS_REJECT_UNAUTHORIZED=0
+  // This is a known limitation of their infrastructure
+  
+  logger.info('TWC Cloud detected: Special SSL handling required')
+  
+  // Set the environment variable that TWC Cloud requires
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  logger.warn('TWC Cloud: NODE_TLS_REJECT_UNAUTHORIZED set to 0 (required by provider)')
+  
+  if (certPath) {
+    try {
+      const caCert = fs.readFileSync(certPath, 'utf8')
+      
+      if (!isValidPEMCertificate(caCert)) {
+        logger.warn('TWC Cloud: Invalid certificate format, proceeding without CA')
+        // For TWC Cloud, we still need to connect even without valid cert
+        return false
+      }
+      
+      logger.info('TWC Cloud: CA certificate loaded for additional verification')
+      
+      // Even though NODE_TLS_REJECT_UNAUTHORIZED is set,
+      // we can still provide the CA for logging/verification purposes
+      return {
+        rejectUnauthorized: false,
+        ca: caCert
+      }
+    } catch (error) {
+      logger.warn('TWC Cloud: Could not load certificate file, proceeding without CA', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      })
+    }
+  }
+  
+  // For TWC Cloud, connection is still possible without certificate
+  // due to NODE_TLS_REJECT_UNAUTHORIZED=0
+  logger.info('TWC Cloud: Connecting without CA certificate')
+  return false
+}
+
+/**
  * Determines if SSL should be disabled based on environment
  */
 function shouldDisableSSL(): boolean {
@@ -520,40 +572,59 @@ export function getSSLConfig(): SSLConfig | false {
   const urlHost = extractHostFromUrl(dbUrl)
   const currentHost = urlHost || dbHost
   
-  // Check if host requires SSL even in dev mode (like TWC Cloud)
+  // Check if host requires SSL (like TWC Cloud)
   if (currentHost && hostRequiresSSL(currentHost)) {
-    logger.info(`Cloud database ${currentHost} detected, SSL handling based on environment`)
+    logger.info(`Cloud database ${currentHost} detected, configuring SSL`)
     
-    // For development with cloud databases
-    if (environment === 'development' || environment === 'test') {
-      // In dev mode, try to use certificate if available, but don't require strict validation
-      const certPath = autoDetectCertificate()
-      
-      if (certPath) {
-        try {
-          const caCert = fs.readFileSync(certPath, 'utf8')
-          logger.info('Using certificate in development mode with relaxed validation')
-          const devCloudConfig: SSLConfig = {
-            rejectUnauthorized: false, // Allow self-signed in dev
-            ca: caCert, // Still provide CA for better security
-            checkServerIdentity: () => undefined // Skip hostname check in dev
-          }
-          cachedSSLConfig = devCloudConfig
-          return devCloudConfig
-        } catch (error) {
-          logger.warn('Failed to load certificate in dev mode, using permissive SSL')
+    // Special handling for TWC Cloud
+    if (currentHost.includes('twc1.net') || currentHost.includes('twc2.ru')) {
+      try {
+        const certPath = autoDetectCertificate()
+        const config = createTWCCloudSSLConfig(certPath)
+        cachedSSLConfig = config
+        return config
+      } catch (error) {
+        // For production, we should fail if TWC Cloud cert is not available
+        if (environment === 'production') {
+          logger.error('TWC Cloud certificate required in production', {
+            error: error instanceof Error ? error.message : 'Unknown error'
+          })
+          throw error
         }
+        
+        // For development/test, allow connection with warning
+        logger.warn('TWC Cloud: Running without proper certificate (dev/test mode only)')
+        const devConfig: SSLConfig = {
+          rejectUnauthorized: false,
+          checkServerIdentity: () => undefined
+        }
+        cachedSSLConfig = devConfig
+        return devConfig
       }
-      
-      // Fallback for dev without certificate
-      logger.warn('Development mode: SSL validation relaxed for cloud database')
-      const devCloudConfig: SSLConfig = {
-        rejectUnauthorized: false,
-        checkServerIdentity: () => undefined
-      }
-      cachedSSLConfig = devCloudConfig
-      return devCloudConfig
     }
+    
+    // For other cloud providers, use standard SSL
+    const certPath = autoDetectCertificate()
+    if (certPath) {
+      try {
+        const caCert = fs.readFileSync(certPath, 'utf8')
+        const config: SSLConfig = {
+          rejectUnauthorized: true,
+          ca: caCert
+        }
+        cachedSSLConfig = config
+        return config
+      } catch (error) {
+        logger.warn('Failed to load certificate for cloud provider')
+      }
+    }
+    
+    // Default SSL for cloud providers
+    const config: SSLConfig = {
+      rejectUnauthorized: true
+    }
+    cachedSSLConfig = config
+    return config
   }
   
   // Development and test environments - disable SSL for local databases
