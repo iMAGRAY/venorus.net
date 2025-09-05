@@ -21,7 +21,6 @@ export function SortDropdown({ onSort, currentSort }: SortDropdownProps) {
         onValueChange={onSort}
         placeholder={t('common.sortBy')}
         searchPlaceholder={t('common.searchSortOptions')}
-        className="notion-select"
       />
     </div>
   )

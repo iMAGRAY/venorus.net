@@ -136,7 +136,7 @@ const SelectionTables: React.FC<SelectionTablesProps> = ({ productSku, className
                         ✓
                       </span>
                     ) : cell === '—' ? (
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-red-100 text-red-500 rounded-full text-xs font-bold">
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-sky-100 text-sky-500 rounded-full text-xs font-bold">
                         ✗
                       </span>
                     ) : (

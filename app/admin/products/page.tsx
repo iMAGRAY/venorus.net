@@ -35,7 +35,7 @@ export default function ProductsAdmin() {
   const [searchQuery, setSearchQuery] = useState("")
   const [adminFilters, setAdminFilters] = useState<ProductAdminFilters>({})
   const [currentPage, setCurrentPage] = useState(1)
-  const ROWS_PER_PAGE = 50
+  const [rowsPerPage, setRowsPerPage] = useState(100)
 
   // Проверяем права доступа
   const canViewProducts = hasPermission('products.view') || hasPermission('products.*') || hasPermission('*')
@@ -102,13 +102,13 @@ export default function ProductsAdmin() {
 
   // Мемоизированная пагинация
   const { pageCount, paginatedProducts } = useMemo(() => {
-    const pageCount = Math.max(1, Math.ceil(filteredProducts.length / ROWS_PER_PAGE))
+    const pageCount = Math.max(1, Math.ceil(filteredProducts.length / rowsPerPage))
     const paginatedProducts = filteredProducts.slice(
-      (currentPage - 1) * ROWS_PER_PAGE,
-      currentPage * ROWS_PER_PAGE,
+      (currentPage - 1) * rowsPerPage,
+      currentPage * rowsPerPage,
     )
     return { pageCount, paginatedProducts }
-  }, [filteredProducts, currentPage])
+  }, [filteredProducts, currentPage, rowsPerPage])
 
   // Ранний возврат без прав — после хуков
   if (!canViewProducts) {
@@ -580,11 +580,30 @@ export default function ProductsAdmin() {
                 </div>
 
                 {/* Pagination controls */}
-                {pageCount > 1 && (
-                  <div className="flex justify-between items-center mt-4">
+                <div className="flex justify-between items-center mt-4">
+                  <div className="flex items-center gap-4">
                     <span className="text-sm text-slate-600">
-                      Страница {currentPage} из {pageCount}
+                      Страница {currentPage} из {pageCount} (Всего: {filteredProducts.length} товаров)
                     </span>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-slate-600">Показывать:</label>
+                      <select
+                        className="border border-slate-200 rounded px-2 py-1 text-sm"
+                        value={rowsPerPage}
+                        onChange={(e) => {
+                          setRowsPerPage(Number(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                      >
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                        <option value={200}>200</option>
+                        <option value={500}>500</option>
+                        <option value={1000}>Все (до 1000)</option>
+                      </select>
+                    </div>
+                  </div>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
@@ -605,8 +624,7 @@ export default function ProductsAdmin() {
                         <ChevronRight className="w-4 h-4" />
                       </Button>
                     </div>
-                  </div>
-                )}
+                </div>
               </>
             )}
           </CardContent>

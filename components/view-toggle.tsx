@@ -10,20 +10,12 @@ interface ViewToggleProps {
 
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
-    <div className="relative">
-      {/* Фоновый градиент */}
-      <div className="absolute inset-0 bg-gradient-to-r from-red-100/30 to-blue-100/30 rounded-lg blur-sm"></div>
-
-      <div className="relative flex bg-white/80 backdrop-blur-lg border border-blue-200/50 rounded-lg overflow-hidden shadow-md shadow-blue-100/20">
+    <div className="flex bg-muted rounded-lg p-1">
       <Button
         variant={view === "grid" ? "default" : "ghost"}
         size="sm"
         onClick={() => onViewChange("grid")}
-        className={
-            view === "grid"
-              ? "bg-gradient-to-r from-red-600 to-blue-600 text-white hover:from-red-700 hover:to-blue-700 border-0 shadow-sm"
-              : "text-blue-700 hover:bg-blue-100/50 border-0 bg-transparent"
-        }
+        className={view === "grid" ? "bg-background shadow-sm" : ""}
       >
         <Grid3X3 className="w-4 h-4" />
       </Button>
@@ -31,15 +23,10 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
         variant={view === "list" ? "default" : "ghost"}
         size="sm"
         onClick={() => onViewChange("list")}
-        className={
-            view === "list"
-              ? "bg-gradient-to-r from-red-600 to-blue-600 text-white hover:from-red-700 hover:to-blue-700 border-0 shadow-sm"
-              : "text-blue-700 hover:bg-blue-100/50 border-0 bg-transparent"
-        }
+        className={view === "list" ? "bg-background shadow-sm" : ""}
       >
         <List className="w-4 h-4" />
       </Button>
-      </div>
     </div>
   )
 }

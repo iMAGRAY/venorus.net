@@ -45,11 +45,11 @@ export default function ProductCharacteristics({
   if (!sections || sections.length === 0) {
     return (
       <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-blue-200/30 p-8 shadow-sm text-center">
-        <h2 className="text-xl font-semibold mb-3 bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
-          Характеристики
+        <h2 className="text-xl font-semibold mb-3 bg-gradient-to-r from-sky-600 to-blue-700 bg-clip-text text-transparent">
+          Características
         </h2>
         <p className="text-slate-600">
-          Характеристики не указаны.
+          Características no especificadas.
         </p>
       </div>
     )
@@ -167,7 +167,7 @@ export default function ProductCharacteristics({
               Общие параметры
             </h2>
             <p className="text-sm text-slate-600">
-              Ключевые характеристики изделия
+              Características clave del producto
             </p>
           </div>
 
@@ -209,8 +209,8 @@ export default function ProductCharacteristics({
       {detailedSections.length > 0 && (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2 bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
-              Подробные характеристики
+            <h2 className="text-xl font-semibold mb-2 bg-gradient-to-r from-sky-600 to-blue-700 bg-clip-text text-transparent">
+              Características detalladas
             </h2>
             <p className="text-sm text-slate-600">
               Полная техническая информация и параметры устройства

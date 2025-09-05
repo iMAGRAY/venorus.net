@@ -5,7 +5,6 @@ import Header from "@/components/header"
 import HeroImage from "@/components/hero-image"
 import { Footer } from "@/components/footer"
 import { ProductGrid } from "@/components/product-grid"
-import { TrustStrip } from "@/components/trust-strip"
 import { CategorySidebar } from '@/components/category-sidebar'
 import { SearchBar } from "@/components/search-bar"
 import { SortDropdown } from "@/components/sort-dropdown"
@@ -32,7 +31,7 @@ import logger from "@/lib/logger"
 import { CatalogDownloadButtons } from "@/components/catalog-download-buttons"
 import { useI18n } from "@/components/i18n-provider"
 
-// Строгие интерфейсы для типизации
+// Interfaces estrictas para tipado
 interface CategoryGroup {
   id: number
   name: string
@@ -69,7 +68,7 @@ interface _Product {
   category_name?: string
 }
 
-const PRODUCTS_PER_PAGE = 12 // Количество товаров для загрузки за раз
+const PRODUCTS_PER_PAGE = 12 // Cantidad de productos para cargar por vez
 
 export default function HomePage() {
   const { t } = useI18n()
@@ -83,7 +82,7 @@ export default function HomePage() {
   const initializeAll = useAdminStore(state => state.initializeAll)
   const refreshAll = useAdminStore(state => state.refreshAll)
   
-  // Мемоизированные адаптированные продукты для стабильности
+  // Productos adaptados memoizados para estabilidad
   const adaptedProducts = useAdminStore(state => state.getAdaptedProducts())
 
   // Initialize data on mount
@@ -104,7 +103,7 @@ export default function HomePage() {
   useEffect(() => {
     logger.log("HomePage: Products updated:", allProducts.length)
     if (allProducts.length > 0) {
-      logger.log("Примеры товаров, их категорий и характеристик:",
+      logger.log("Ejemplos de productos, sus categorías y características:",
         allProducts.slice(0, 3).map(p => ({
           name: p.name,
           category: p.category,
@@ -118,7 +117,7 @@ export default function HomePage() {
     logger.log("HomePage: Categories:", adminCategories.length)
   }, [allProducts, adminCategories])
 
-  // Функция для прокрутки к каталогу
+  // Función para desplazarse al catálogo
   const scrollToCatalog = () => {
     const catalogSection = document.getElementById('products')
     if (catalogSection) {
@@ -129,12 +128,12 @@ export default function HomePage() {
     }
   }
 
-  // Загружаем категории товаров для каталога
+  // Cargamos categorías de productos para el catálogo
   const [_specGroups, _setSpecGroups] = useState<any[]>([])
   const [catalogMenuItems, setCatalogMenuItems] = useState<any[]>([])
-  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set()) // Для отображения/скрытия подкатегорий
+  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set()) // Para mostrar/ocultar subcategorías
 
-  // Функция для переключения раскрытия категории
+  // Función para alternar expansión de categoría
   const toggleCategoryExpansion = useCallback((categoryId: number) => {
     setExpandedCategories(prev => {
       const newSet = new Set(prev)
@@ -147,16 +146,16 @@ export default function HomePage() {
     })
   }, [])
 
-  // Функция загрузки характеристик для фильтрации
+  // Función de carga de características para filtrado
   const loadFilterCharacteristics = useCallback(async (categoryId?: number | null) => {
     logger.debug('loadFilterCharacteristics вызвана с categoryId:', categoryId)
     
-    // Отменяем предыдущий запрос если он есть
+    // Cancelamos la solicitud anterior si existe
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
     }
     
-    // Создаем новый AbortController
+    // Creamos nuevo AbortController
     const abortController = new AbortController()
     abortControllerRef.current = abortController
     
@@ -164,7 +163,7 @@ export default function HomePage() {
     try {
       logger.log('Загрузка характеристик для фильтрации...', { categoryId })
 
-      // Если выбрана категория, используем новый API
+      // Si se selecciona categoría, usamos nueva API
       const url = categoryId 
         ? `/api/characteristics/by-category?category_id=${categoryId}&include_children=true`
         : '/api/characteristics'
@@ -190,7 +189,7 @@ export default function HomePage() {
       })
 
       if (result.success && result.data) {
-        // Сначала собираем все группы с информацией о секциях
+        // Primero recopilamos todos los grupos con información de secciones
         const allGroups = result.data.sections?.flatMap((section: any) =>
           section.groups?.map((group: any) => ({
             id: group.group_id,
@@ -205,19 +204,19 @@ export default function HomePage() {
           sample: allGroups.slice(0, 3)
         })
 
-        // Находим дублирующиеся названия групп
+        // Encontramos nombres de grupos duplicados
         const groupNameCounts = allGroups.reduce((acc: any, group: any) => {
           acc[group.name] = (acc[group.name] || 0) + 1
           return acc
         }, {})
 
-        // Преобразуем в финальный формат, добавляя префикс секции только для дубликатов
+        // Convertimos al formato final, agregando prefijo de sección solo para duplicados
         const flatCharacteristics = allGroups.map((group: any) => ({
           id: group.id,
           name: groupNameCounts[group.name] > 1 
             ? `${group.sectionName} - ${group.name}` 
             : group.name,
-          originalName: group.name, // Сохраняем оригинальное название для фильтрации
+          originalName: group.name, // Guardamos el nombre original para filtrado
           values: group.values
         }))
 
@@ -237,7 +236,7 @@ export default function HomePage() {
             }))
           )
         }
-        // Проверяем что запрос не был отменен перед обновлением состояния
+        // Verificamos que la solicitud no fue cancelada antes de actualizar estado
         if (!abortController.signal.aborted) {
           setAvailableCharacteristics(flatCharacteristics)
           logger.debug('Установлены характеристики:', flatCharacteristics.length, flatCharacteristics)
@@ -249,14 +248,14 @@ export default function HomePage() {
         }
       }
     } catch (error: any) {
-      // Игнорируем AbortError - это нормальная отмена запроса
+      // Ignoramos AbortError - es cancelación normal de solicitud
       if (error.name === 'AbortError') {
         logger.debug('🚫 Запрос характеристик отменен')
         return
       }
       logger.error('❌ Ошибка загрузки характеристик для фильтрации:', error)
     } finally {
-      // Проверяем что это наш текущий запрос перед сбросом состояния
+      // Verificamos que es nuestra solicitud actual antes de resetear estado
       if (abortControllerRef.current === abortController) {
         setIsLoadingCharacteristics(false)
         abortControllerRef.current = null
@@ -267,7 +266,7 @@ export default function HomePage() {
   useEffect(() => {
     let isMounted = true;
     
-    // Очищаем характеристики при монтировании
+    // Limpiamos características al montar
     logger.debug('🧹 Очищаем характеристики при монтировании')
     setAvailableCharacteristics([])
 
@@ -280,11 +279,11 @@ export default function HomePage() {
 
         if (!isMounted) return;
 
-        // Проверяем новый формат API с success и data
+        // Verificamos nuevo formato API con success y data
         if (result.success && result.data && Array.isArray(result.data)) {
           logger.log(`Получено категорий: ${result.data.length}`)
 
-          // Преобразуем категории в формат для меню
+          // Convertimos categorías al formato para menú
           const transformCategories = (categories: any[]): any[] => {
             return categories.map(cat => ({
               id: cat.id,
@@ -301,7 +300,7 @@ export default function HomePage() {
           setCatalogMenuItems(transformedCategories)
           _setSpecGroups(transformedCategories)
           
-          // Автоматически раскрываем категории с детьми для видимости иерархии
+          // Expandimos automáticamente categorías con hijos para visibilidad de jerarquía
           const categoriesWithChildren = new Set<number>()
           transformedCategories.forEach((cat: any) => {
             if (cat.children && cat.children.length > 0) {
@@ -320,7 +319,7 @@ export default function HomePage() {
             }
           })
 
-          // Создаем плоский список всех названий категорий для сравнения с товарами
+          // Creamos lista plana de todos los nombres de categorías para comparar con productos
           const flatCategoryNames: string[] = []
           const extractNames = (categories: any[]) => {
             categories.forEach(cat => {
@@ -344,7 +343,7 @@ export default function HomePage() {
     const loadData = async () => {
       await Promise.all([
         loadCategories()
-        // Не загружаем характеристики сразу, только при выборе категории
+        // No cargamos características inmediatamente, solo al seleccionar categoría
       ])
     }
 
@@ -355,9 +354,9 @@ export default function HomePage() {
     }
   }, [])
 
-  // Мемоизируем иерархические категории
+  // Memoizamos categorías jerárquicas
   const hierarchicalCategories = useMemo(() => {
-    // Данные из API categories уже иерархические
+    // Los datos de API categories ya son jerárquicos
     return catalogMenuItems
   }, [catalogMenuItems])
 
@@ -375,7 +374,7 @@ export default function HomePage() {
   const [view, setView] = useState<"grid" | "list">("grid")
   const [sidebarMode, setSidebarMode] = useState<"categories" | "filters">("categories")
 
-  // Состояние для фильтров
+  // Estado para filtros
   const [appliedFilters, setAppliedFilters] = useState<{
     categories: string[];
     characteristics: Record<string, string[]>;
@@ -420,7 +419,7 @@ export default function HomePage() {
     }
   }, [loadFilterCharacteristics])
 
-  // Мемоизируем компонент для отображения иерархических категорий
+  // Memoizamos componente para mostrar categorías jerárquicas
   const HierarchicalCategoryItem = useCallback(({ group, level = 0 }: { group: any, level?: number }) => {
     const hasChildren = group.children && group.children.length > 0
     const isExpanded = expandedCategories.has(group.id)
@@ -428,7 +427,7 @@ export default function HomePage() {
     return (
       <div className={`${level > 0 ? 'ml-4' : ''}`} key={group.id}>
         <div className="flex items-center">
-          {/* Кнопка раскрытия для категорий с дочерними элементами */}
+          {/* Botón de expansión para categorías con elementos hijos */}
           {hasChildren && (
             <button
               onClick={(e) => {
@@ -449,12 +448,12 @@ export default function HomePage() {
             </button>
           )}
 
-          {/* Отступ для элементов без дочерних элементов */}
+          {/* Sangría para elementos sin elementos hijos */}
           {!hasChildren && level > 0 && (
             <div className="w-6 mr-2"></div>
           )}
 
-          {/* Кнопка категории */}
+          {/* Botón de categoría */}
           <button
             onClick={() => {
               logger.debug('Категория нажата:', { name: group.name, id: group.id })
@@ -465,11 +464,11 @@ export default function HomePage() {
               ${level === 0 ? 'font-medium' : level === 1 ? 'text-sm' : 'text-xs'}
               ${
                 activeCategoryId === group.id
-                  ? level === 0 ? "bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-lg shadow-blue-200/30" :
-                    level === 1 ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-md shadow-blue-200/20" :
-                    level === 2 ? "bg-gradient-to-r from-red-400 to-blue-400 text-white shadow-sm shadow-blue-200/10" :
-                    "bg-gradient-to-r from-red-200 to-blue-200 text-slate-700 shadow-sm"
-                  : "text-slate-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:text-blue-700"
+                  ? level === 0 ? "bg-gradient-to-r from-sky-400 to-blue-600 text-white shadow-lg shadow-blue-200/30" :
+                    level === 1 ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white shadow-md shadow-blue-200/20" :
+                    level === 2 ? "bg-gradient-to-r from-sky-300 to-blue-400 text-white shadow-sm shadow-blue-200/10" :
+                    "bg-gradient-to-r from-sky-200 to-blue-200 text-slate-700 shadow-sm"
+                  : "text-slate-700 hover:bg-gradient-to-r hover:from-sky-50 hover:to-blue-50 hover:text-blue-700"
               }
             `}
             style={{
@@ -484,7 +483,7 @@ export default function HomePage() {
           </button>
         </div>
 
-        {/* Дочерние категории - РЕКУРСИВНО */}
+        {/* Categorías hijas - RECURSIVAMENTE */}
         {hasChildren && isExpanded && (
           <div className="mt-1">
             {group.children.map((child: any) => (
@@ -500,7 +499,7 @@ export default function HomePage() {
     )
   }, [activeCategoryId, handleCategoryChange, expandedCategories, toggleCategoryExpansion])
 
-  // Обработчик изменения фильтров характеристик
+  // Manejador de cambios de filtros de características
   const handleCharacteristicFilterChange = useCallback((charName: string, value: string, checked: boolean) => {
     setAppliedFilters(prev => {
       const newCharacteristics = { ...prev.characteristics }
@@ -527,7 +526,7 @@ export default function HomePage() {
     })
   }, [])
 
-  // Функция очистки всех фильтров характеристик
+  // Función de limpieza de todos los filtros de características
   const clearCharacteristicFilters = useCallback(() => {
     setAppliedFilters(prev => ({
       ...prev,
@@ -535,7 +534,7 @@ export default function HomePage() {
     }))
   }, [])
 
-  // Компонент полноценного меню категорий - только категории без фильтров
+  // Componente de menú completo de categorías - solo categorías sin filtros
   const CategorySidebarComponent = useCallback(() => (
     <CategorySidebar
       hierarchicalCategories={hierarchicalCategories}
@@ -558,17 +557,17 @@ export default function HomePage() {
   // Initialize filtered products
   useEffect(() => {
     setFilteredProducts(allProducts)
-    filteredProductsRef.current = allProducts  // Синхронизируем ref
+    filteredProductsRef.current = allProducts  // Sincronizamos ref
   }, [allProducts])
 
-  // Мемоизируем функцию поиска групп и их детей по ID
+  // Memoizamos función de búsqueda de grupos y sus hijos por ID
   const findGroupAndChildrenById = useCallback((groups: any[], groupId: number): number[] => {
     const result: number[] = []
 
     for (const group of groups) {
       if (group.id === groupId) {
         result.push(group.id)
-        // Добавляем все дочерние группы рекурсивно
+        // Agregamos todos los grupos hijos recursivamente
         const addChildren = (children: any[]) => {
           for (const child of children) {
             result.push(child.id)
@@ -580,13 +579,13 @@ export default function HomePage() {
         if (group.children && group.children.length > 0) {
           addChildren(group.children)
         }
-        return result // Возвращаем сразу, так как ID уникален
+        return result // Devolvemos inmediatamente, ya que ID es único
       }
 
       if (group.children && group.children.length > 0) {
         const childResult = findGroupAndChildrenById(group.children, groupId)
         if (childResult.length > 0) {
-          return childResult // Если нашли в детях, возвращаем результат
+          return childResult // Si encontramos en hijos, devolvemos resultado
         }
       }
     }
@@ -648,14 +647,14 @@ export default function HomePage() {
       }
 
       tempProducts = tempProducts.filter((product) => {
-        // Товар должен соответствовать ВСЕМ выбранным характеристикам
+        // El producto debe coincidir con TODAS las características seleccionadas
         return Object.entries(appliedFilters.characteristics).every(([charKey, selectedValues]: [string, any]) => {
           if (!selectedValues || selectedValues.length === 0) return true
 
-          // Извлекаем ID группы и название из ключа
+          // Extraemos ID de grupo y nombre de la clave
           const [groupId, charName] = charKey.split(':')
           
-          // Ищем характеристику у товара по ID группы
+          // Buscamos característica en producto por ID de grupo
           const hasCharacteristic = product.specifications?.some((spec: any) =>
             spec.group_id?.toString() === groupId && selectedValues.includes(spec.spec_value)
           )
@@ -687,9 +686,9 @@ export default function HomePage() {
     return tempProducts
   }, [searchQuery, activeCategory, activeCategoryId, appliedFilters, sortBy, allProducts, hierarchicalCategories, findGroupAndChildrenById])
 
-  // Обновляем отфильтрованные товары и сбрасываем пагинацию при изменении фильтров
+  // Actualizamos productos filtrados y reseteamos paginación al cambiar filtros
   useEffect(() => {
-    // Дедупликация товаров по ID
+    // Deduplicación de productos por ID
     const seenIds = new Set()
     const uniqueProducts = processedProducts.filter(product => {
       if (seenIds.has(product.id)) {
@@ -700,12 +699,12 @@ export default function HomePage() {
     })
     
     setFilteredProducts(uniqueProducts)
-    filteredProductsRef.current = uniqueProducts  // Синхронизируем ref
+    filteredProductsRef.current = uniqueProducts  // Sincronizamos ref
     _setCurrentPage(1)
     setHasMore(true)
     hasMoreRef.current = true
 
-    // Показываем первую порцию товаров
+    // Mostramos primera porción de productos
     const initialProducts = uniqueProducts.slice(0, PRODUCTS_PER_PAGE)
     setDisplayedProducts(initialProducts)
     const newHasMore = uniqueProducts.length > PRODUCTS_PER_PAGE
@@ -713,15 +712,15 @@ export default function HomePage() {
     hasMoreRef.current = newHasMore
   }, [processedProducts])
 
-  // Функция загрузки дополнительных товаров
+  // Función de carga de productos adicionales
   const loadMoreProducts = useCallback(() => {
-    // Проверяем актуальное состояние через refs
+    // Verificamos estado actual a través de refs
     if (isLoadingMoreRef.current || !hasMoreRef.current) return
     
     setIsLoadingMore(true)
     isLoadingMoreRef.current = true
 
-    // Имитируем небольшую задержку для плавности
+    // Simulamos pequeño retraso para suavidad
     setTimeout(() => {
       _setCurrentPage(prevPage => {
         const nextPage = prevPage + 1
@@ -854,137 +853,85 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen notion-page">
       <Header />
       <main className="flex-grow">
-        {/* Hero Section - российская тематика с национальными цветами */}
-        <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center overflow-hidden bg-transparent">
-          {/* Фоновое изображение с российскими акцентами */}
+        {/* Hero Section - современный минималистичный дизайн */}
+        <section className="relative min-h-[70vh] flex items-center overflow-hidden">
+          {/* Фоновое изображение */}
           <div className="absolute inset-0">
             <HeroImage />
-            {/* Основной темный overlay для читаемости текста */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/45 to-black/55"></div>
-            {/* Дополнительное освещение в центре */}
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(ellipse 700px 600px at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 60%)'
-            }}></div>
           </div>
 
-          <div className="container relative z-10 mx-auto px-2 sm:px-6 lg:px-12">
-            <div className="grid lg:grid-cols-1 gap-12 items-center">
-              {/* Основной контент */}
-              <div className="space-y-8 text-center lg:text-left">
-                <div className="max-w-4xl mx-auto lg:mx-0 bg-black/30 backdrop-blur-sm rounded-2xl border border-white/10 p-4 sm:p-6 shadow-xl">
-                  <div className="space-y-6">
-                  <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
-                    <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-blue-500 rounded-full mr-3 animate-pulse"></div>
-                    <span className="text-white text-sm font-semibold flex items-center gap-2">
-                      <FlagIcon className="w-4 h-4" />
-                      {t('hero.madeInRussia')}
-                    </span>
-                  </div>
-
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                    <span className="text-white drop-shadow-lg">{t('common.products')}</span>
-                    <br />
-                    <span className="bg-gradient-to-r from-red-500 via-white to-blue-500 bg-clip-text text-transparent drop-shadow-md">
-                      {t('hero.forVenezuela')}
-                    </span>
-                    <br />
-                    <span className="text-white/90 drop-shadow-md">{t('hero.qualityTraditions')}</span>
-                  </h1>
-
-                  <p className="text-lg sm:text-xl lg:text-2xl text-white/85 leading-relaxed mb-6 sm:mb-8 max-w-4xl mx-auto lg:mx-0">
-                    {(siteSettings as any)?.heroSubtitle && (siteSettings as any)?.heroSubtitle.trim() !== "Тестовый подзаголовок"
-                      ? (siteSettings as any).heroSubtitle
-                      : t('hero.defaultSubtitle')}
-                  </p>
-
-                  {/* Кнопка перехода к каталогу */}
-                  <Button
-                    onClick={scrollToCatalog}
-                    size="lg"
-                    className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border-0"
-                  >
-                    <ChevronRight className="w-5 h-5 mr-2" />
-                    {t('hero.seeProducts')}
-                  </Button>
-                  </div>
-                </div>
-
-                {/* Преимущества российского производства */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-white/20">
-                  <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-red-600/5 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="text-2xl mb-2"><FactoryIcon className="w-8 h-8 text-red-400" /></div>
-                    <div className="text-base sm:text-lg font-semibold text-white mb-1">{t('common.domesticProduction')}</div>
-                    <div className="text-sm text-white/70">{t('common.productionInRussia')}</div>
-                  </div>
-                  <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="text-2xl mb-2"><StarIcon className="w-8 h-8 text-yellow-400" /></div>
-                    <div className="text-base sm:text-lg font-semibold text-white mb-1">{t('common.quality')}</div>
-                    <div className="text-sm text-white/70">{t('common.russianStandards')}</div>
-                  </div>
-                  <div className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-blue-500/10 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="text-2xl mb-2"><ShieldIcon className="w-8 h-8 text-blue-400" /></div>
-                    <div className="text-base sm:text-lg font-semibold text-white mb-1">{t('common.reliable')}</div>
-                    <div className="text-sm text-white/70">{t('common.timeTested')}</div>
-                  </div>
-                </div>
+          <div className="container relative z-10 mx-auto px-4 lg:px-6">
+            <div className="max-w-4xl relative">
+              {/* Local backdrop for text readability */}
+              <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gradient-to-r from-background/90 via-background/80 to-background/40 backdrop-blur-sm rounded-3xl -z-10" />
+              {/* Бейдж */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <span className="text-sm font-medium text-primary flex items-center gap-2">
+                  <FlagIcon className="w-4 h-4" />
+                  {t('hero.madeInRussia')}
+                </span>
               </div>
-            </div>
-          </div>
 
-          {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center bg-gradient-to-b from-red-500/20 to-blue-500/20 backdrop-blur-sm">
-              <div className="w-1.5 h-4 bg-white/80 rounded-full mt-2 animate-pulse"></div>
+              {/* Заголовок */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                <span className="text-foreground drop-shadow-lg">{t('common.products')}</span>
+                <br />
+                <span className="text-primary drop-shadow-lg">
+                  {t('hero.forVenezuela')}
+                </span>
+                <br />
+                <span className="text-foreground/80 drop-shadow-lg">{t('hero.qualityTraditions')}</span>
+              </h1>
+
+              {/* Описание */}
+              <p className="text-lg text-foreground/70 leading-relaxed mb-8 max-w-2xl drop-shadow">
+                {(siteSettings as any)?.heroSubtitle && (siteSettings as any)?.heroSubtitle.trim() !== "Subtítulo de prueba"
+                  ? (siteSettings as any).heroSubtitle
+                  : t('hero.defaultSubtitle')}
+              </p>
+
+              {/* Кнопка */}
+              <Button
+                onClick={scrollToCatalog}
+                size="lg"
+                className="h-12 px-8"
+              >
+                {t('hero.seeProducts')}
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Доверительный блок */}
-        <TrustStrip />
 
-        {/* Products Section - российская цветовая схема */}
-        <section id="products" className="py-12 sm:py-16 md:py-20 lg:py-24 relative">
-          {/* Фоновые декоративные элементы в российских цветах */}
-          <div className="absolute inset-0 bg-gradient-to-br from-red-50/25 via-white to-blue-50/30"></div>
-          <div className="absolute top-10 right-4 w-32 h-32 sm:top-20 sm:right-10 sm:w-64 sm:h-64 bg-gradient-to-br from-red-100/15 to-blue-100/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-16 left-4 w-24 h-24 sm:bottom-32 sm:left-16 sm:w-48 sm:h-48 bg-gradient-to-tr from-blue-100/15 to-red-100/20 rounded-full blur-2xl"></div>
-
-          <div className="container mx-auto px-2 sm:px-6 lg:px-12 relative z-10">
-            {/* Заголовок секции в российских цветах */}
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-red-100/40 to-blue-100/40 backdrop-blur-sm border border-red-200/30 mb-6">
-                <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-blue-500 rounded-full mr-3 animate-pulse"></div>
-                <span className="text-red-700 text-sm font-medium">{t('hero.catalogTitle')}</span>
+        {/* Products Section */}
+        <section id="products" className="py-16">
+          <div className="container mx-auto px-4 lg:px-6">
+            {/* Заголовок секции */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <span className="text-sm font-medium text-primary">{t('hero.catalogTitle')}</span>
               </div>
 
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-red-600 via-blue-700 to-red-800 bg-clip-text text-transparent">
-                  Venorus Catalog 2025
-                </span>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+                Venorus Catalog 2025
               </h2>
 
-              {/* Кнопки скачать и поделиться каталогом */}
+              {/* Кнопки скачать каталог */}
               <CatalogDownloadButtons />
             </div>
 
-            {/* Search and Controls - российская цветовая схема */}
-            <div className="bg-white/65 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-red-200/35 p-4 sm:p-6 mb-8 sm:mb-10 shadow-lg shadow-red-100/15">
+            {/* Search and Controls */}
+            <div className="bg-card rounded-xl border p-6 mb-8">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <div className="relative flex-1 sm:flex-none">
-                    <SearchBar onSearch={handleSearch} />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-100/15 to-blue-100/15 pointer-events-none"></div>
-                  </div>
-                  <div className="relative">
-                    <SortDropdown onSort={handleSort} currentSort={sortBy} />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-100/15 to-blue-100/15 pointer-events-none"></div>
-                  </div>
+                  <SearchBar onSearch={handleSearch} />
+                  <SortDropdown onSort={handleSort} currentSort={sortBy} />
                 </div>
                 <div className="flex items-center gap-3 justify-between sm:justify-end">
-                  <div className="relative">
-                    <ViewToggle view={view} onViewChange={handleViewChange} />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-100/15 to-blue-100/15 pointer-events-none"></div>
-                  </div>
+                  <ViewToggle view={view} onViewChange={handleViewChange} />
                   <div className="lg:hidden flex gap-2">
                     {/* Кнопка Категории */}
                     <Drawer open={isCategoryDrawerOpen} onOpenChange={setIsCategoryDrawerOpen}>
@@ -992,20 +939,18 @@ export default function HomePage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className={`bg-gradient-to-r from-red-50 to-blue-50 border-red-200 text-red-700 hover:from-red-100 hover:to-blue-100 hover:border-red-300 transition-all duration-300 ${
-                            activeCategory !== "All" && activeCategory !== "Все категории" ? "ring-2 ring-red-400" : ""
-                          }`}
+                          className={activeCategory !== "All" && activeCategory !== "Todas las categorías" ? "border-primary bg-primary/5" : ""}
                         >
-                          <ChevronRight className="w-4 h-4 mr-1 sm:mr-2" />
+                          <ChevronRight className="w-4 h-4 mr-2" />
                           <span>{t('hero.categories')}</span>
                           {activeCategory !== "All" && activeCategory !== "All categories" && (
-                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-full">1</span>
+                            <span className="ml-1 px-1.5 py-0.5 text-2xs bg-primary text-primary-foreground rounded-full">1</span>
                           )}
                         </Button>
                       </DrawerTrigger>
-                      <DrawerContent className="bg-gradient-to-br from-white via-red-50/25 to-blue-50/25 backdrop-blur-xl border-red-200/35 max-h-[80vh]">
+                      <DrawerContent className="max-h-[80vh]">
                         <DrawerHeader className="pb-2">
-                          <DrawerTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
+                          <DrawerTitle className="text-xl font-semibold">
                             {t('hero.categories')}
                           </DrawerTitle>
                         </DrawerHeader>
@@ -1021,22 +966,20 @@ export default function HomePage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className={`bg-gradient-to-r from-red-50 to-blue-50 border-red-200 text-red-700 hover:from-red-100 hover:to-blue-100 hover:border-red-300 transition-all duration-300 ${
-                            Object.keys(appliedFilters.characteristics).length > 0 ? "ring-2 ring-red-400" : ""
-                          }`}
+                          className={Object.keys(appliedFilters.characteristics).length > 0 ? "border-primary bg-primary/5" : ""}
                         >
-                          <Filter className="w-4 h-4 mr-1 sm:mr-2" />
+                          <Filter className="w-4 h-4 mr-2" />
                           <span>{t('hero.filters')}</span>
                           {Object.keys(appliedFilters.characteristics).length > 0 && (
-                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-full">
+                            <span className="ml-1 px-1.5 py-0.5 text-2xs bg-primary text-primary-foreground rounded-full">
                               {Object.values(appliedFilters.characteristics).flat().length}
                             </span>
                           )}
                         </Button>
                       </DrawerTrigger>
-                      <DrawerContent className="bg-gradient-to-br from-white via-red-50/25 to-blue-50/25 backdrop-blur-xl border-red-200/35 max-h-[80vh]">
+                      <DrawerContent className="max-h-[80vh]">
                         <DrawerHeader className="pb-2">
-                          <DrawerTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
+                          <DrawerTitle className="text-xl font-semibold">
                             {t('hero.filters')}
                           </DrawerTitle>
                         </DrawerHeader>
@@ -1044,12 +987,12 @@ export default function HomePage() {
                           <div className="space-y-4">
                             {/* Активные фильтры */}
                             {Object.keys(appliedFilters.characteristics).length > 0 && (
-                                <div className="bg-red-50/40 rounded-lg p-3 border border-red-200/30">
+                                <div className="bg-muted rounded-lg p-3 border">
                                   <div className="flex justify-between items-center mb-2">
-                                    <h4 className="text-sm font-medium text-slate-700">{t('hero.activeFilters')}</h4>
+                                    <h4 className="text-sm font-medium">{t('hero.activeFilters')}</h4>
                                     <button
                                       onClick={clearCharacteristicFilters}
-                                      className="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded-full bg-red-100/50 hover:bg-red-200/50 transition-all duration-200"
+                                      className="text-xs text-muted-foreground hover:text-foreground font-medium px-2 py-1 rounded-md bg-background hover:bg-accent transition-colors"
                                     >
                                       {t('hero.clearAll')}
                                     </button>
@@ -1060,7 +1003,7 @@ export default function HomePage() {
                                         <button
                                           key={`${charName}-${value}`}
                                           onClick={() => handleCharacteristicFilterChange(charName, value, false)}
-                                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
+                                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-primary/10 text-primary rounded-md hover:bg-primary/20 transition-colors"
                                         >
                                           {charName}: {value}
                                           <X className="w-3 h-3" />
@@ -1075,24 +1018,24 @@ export default function HomePage() {
                               {isLoadingCharacteristics ? (
                                 <div className="space-y-4">
                                   {[1, 2, 3].map((i) => (
-                                    <div key={i} className="border border-red-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
-                                      <div className="h-4 bg-red-100/50 rounded w-24 mb-2"></div>
-                                      <div className="h-3 bg-red-50/50 rounded w-full mb-1"></div>
-                                      <div className="h-3 bg-red-50/50 rounded w-3/4"></div>
+                                    <div key={i} className="border rounded-lg p-3 bg-card animate-pulse">
+                                      <div className="h-4 bg-muted rounded w-24 mb-2"></div>
+                                      <div className="h-3 bg-muted rounded w-full mb-1"></div>
+                                      <div className="h-3 bg-muted rounded w-3/4"></div>
                                     </div>
                                   ))}
                                 </div>
                               ) : (
                                 availableCharacteristics.map((characteristic) => (
-                                  <div key={characteristic.name} className="border border-red-200/30 rounded-lg p-3 bg-white/50">
+                                  <div key={characteristic.name} className="border border-sky-200/30 rounded-lg p-3 bg-white/50">
                                     <button
                                       onClick={() => toggleMobileCharGroup(characteristic.name)}
                                       className="flex items-center justify-between w-full text-left mb-2"
                                     >
                                       <h4 className="text-sm font-medium text-slate-700">{characteristic.name}</h4>
                                     {mobileExpandedCharGroups.has(characteristic.name) ?
-                                        <ChevronUp className="w-4 h-4 text-red-600" /> :
-                                        <ChevronDown className="w-4 h-4 text-red-600" />
+                                        <ChevronUp className="w-4 h-4 text-sky-600" /> :
+                                        <ChevronDown className="w-4 h-4 text-sky-600" />
                                       }
                                     </button>
 
@@ -1101,16 +1044,16 @@ export default function HomePage() {
                                         {(characteristic.values || []).map((valueObj: any, index: number) => (
                                           <label
                                             key={`${characteristic.name}-${index}`}
-                                            className="flex items-center gap-2 text-sm cursor-pointer hover:text-red-700 transition-colors"
+                                            className="flex items-center gap-2 text-sm cursor-pointer hover:text-sky-700 transition-colors"
                                           >
                                             <input
                                               type="checkbox"
                                               checked={appliedFilters.characteristics[characteristic.name]?.includes(valueObj.value) || false}
                                               onChange={(e) => handleCharacteristicFilterChange(characteristic.name, valueObj.value, e.target.checked)}
-                                              className="h-4 w-4 text-red-600 border-red-300 rounded focus:ring-red-500 focus:ring-1"
+                                              className="h-4 w-4 text-sky-600 border-sky-300 rounded focus:ring-sky-500 focus:ring-1"
                                             />
                                             <span className="flex-1">{valueObj.value}</span>
-                                            <span className="text-red-500/70 bg-red-100/40 px-1.5 py-0.5 rounded text-xs">
+                                            <span className="text-sky-500/70 bg-sky-100/40 px-1.5 py-0.5 rounded text-xs">
                                               {valueObj.productCount}
                                             </span>
                                           </label>
@@ -1126,7 +1069,7 @@ export default function HomePage() {
                           <div className="mt-6 flex justify-end">
                             <Button
                               onClick={() => setIsFilterDrawerOpen(false)}
-                              className="bg-gradient-to-r from-red-500 to-blue-500 hover:from-red-600 hover:to-blue-600 text-white"
+                              className="bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white"
                             >
                               {t('common.apply')}
                             </Button>
@@ -1139,15 +1082,15 @@ export default function HomePage() {
               </div>
               
               {/* Активные фильтры для мобильной версии */}
-              {(activeCategory !== "All" && activeCategory !== "Все категории" || Object.keys(appliedFilters.characteristics).length > 0) && (
+              {(activeCategory !== "All" && activeCategory !== "Todas las categorías" || Object.keys(appliedFilters.characteristics).length > 0) && (
                 <div className="lg:hidden mt-3 space-y-2">
                   {/* Выбранная категория */}
                   {activeCategory !== "All" && activeCategory !== "All categories" && (
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs text-slate-600 font-medium">Категория:</span>
+                      <span className="text-xs text-slate-600 font-medium">Categoría:</span>
                       <button
                         onClick={() => handleCategoryChange("All")}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-sky-100 text-sky-700 rounded-full hover:bg-sky-200 transition-colors"
                       >
                         {activeCategory}
                         <X className="w-3 h-3" />
@@ -1167,7 +1110,7 @@ export default function HomePage() {
                             <button
                               key={`${charKey}-${value}`}
                               onClick={() => handleCharacteristicFilterChange(charKey, value, false)}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-sky-100 text-sky-700 rounded-full hover:bg-sky-200 transition-colors"
                             >
                               {charName}: {value}
                               <X className="w-2.5 h-2.5" />
@@ -1177,7 +1120,7 @@ export default function HomePage() {
                         {Object.values(appliedFilters.characteristics).flat().length > 3 && (
                           <button
                             onClick={() => setIsFilterDrawerOpen(true)}
-                            className="inline-flex items-center px-2 py-0.5 text-xs bg-red-50 text-red-600 rounded-full hover:bg-red-100 transition-colors"
+                            className="inline-flex items-center px-2 py-0.5 text-xs bg-sky-50 text-sky-600 rounded-full hover:bg-sky-100 transition-colors"
                           >
                             +{Object.values(appliedFilters.characteristics).flat().length - 3} еще
                           </button>
@@ -1193,10 +1136,10 @@ export default function HomePage() {
               {/* Desktop Sidebar - российская цветовая схема */}
               <div className="hidden lg:block lg:w-64 xl:w-72 2xl:w-80 3xl:w-96 lg:flex-shrink-0">
                 <div className="sticky top-6">
-                  <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-red-200/35 shadow-lg shadow-red-100/15 overflow-hidden">
-                    <div className="bg-gradient-to-r from-red-100/40 to-blue-100/40 p-6 border-b border-red-200/30">
+                  <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-sky-200/35 shadow-lg shadow-sky-100/15 overflow-hidden">
+                    <div className="bg-gradient-to-r from-sky-100/40 to-blue-100/40 p-6 border-b border-sky-200/30">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-sky-600 to-blue-700 bg-clip-text text-transparent">
                           {sidebarMode === 'categories' ? t('hero.categories') : t('hero.filters')}
                         </h3>
                       </div>
@@ -1205,8 +1148,8 @@ export default function HomePage() {
                           onClick={() => setSidebarMode('categories')}
                           className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                             sidebarMode === 'categories'
-                              ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-lg shadow-red-200/30'
-                              : 'bg-white/50 text-red-700 hover:bg-red-50 border border-red-200/40'
+                              ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white shadow-lg shadow-sky-200/30'
+                              : 'bg-white/50 text-sky-700 hover:bg-sky-50 border border-sky-200/40'
                           }`}
                         >
                           {t('hero.categories')}
@@ -1215,8 +1158,8 @@ export default function HomePage() {
                           onClick={() => setSidebarMode('filters')}
                           className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
                             sidebarMode === 'filters'
-                              ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-lg shadow-red-200/30'
-                              : 'bg-white/50 text-red-700 hover:bg-red-50 border border-red-200/40'
+                              ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white shadow-lg shadow-sky-200/30'
+                              : 'bg-white/50 text-sky-700 hover:bg-sky-50 border border-sky-200/40'
                           }`}
                         >
                           <Filter className="w-4 h-4" />
@@ -1236,12 +1179,12 @@ export default function HomePage() {
                         <div className="space-y-4">
                           {/* Активные фильтры */}
                           {Object.keys(appliedFilters.characteristics).length > 0 && (
-                            <div className="bg-red-50/40 rounded-lg p-3 border border-red-200/30">
+                            <div className="bg-sky-50/40 rounded-lg p-3 border border-sky-200/30">
                               <div className="flex justify-between items-center mb-2">
                                 <h4 className="text-sm font-medium text-slate-700">{t('hero.activeFilters')}</h4>
                                 <button
                                   onClick={clearCharacteristicFilters}
-                                  className="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded-full bg-red-100/50 hover:bg-red-200/50 transition-all duration-200"
+                                  className="text-xs text-sky-600 hover:text-sky-700 font-medium px-2 py-1 rounded-full bg-sky-100/50 hover:bg-sky-200/50 transition-all duration-200"
                                 >
                                   Очистить все
                                 </button>
@@ -1252,7 +1195,7 @@ export default function HomePage() {
                                     <button
                                       key={`${charName}-${value}`}
                                       onClick={() => handleCharacteristicFilterChange(charName, value, false)}
-                                      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
+                                      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-sky-100 text-sky-700 rounded-full hover:bg-sky-200 transition-colors"
                                     >
                                       {charName}: {value}
                                       <X className="w-3 h-3" />
@@ -1267,10 +1210,10 @@ export default function HomePage() {
                           {isLoadingCharacteristics ? (
                             <div className="space-y-4">
                               {[1, 2, 3].map((i) => (
-                                <div key={i} className="border border-red-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
-                                  <div className="h-4 bg-red-100/50 rounded w-24 mb-2"></div>
-                                  <div className="h-3 bg-red-50/50 rounded w-full mb-1"></div>
-                                  <div className="h-3 bg-red-50/50 rounded w-3/4"></div>
+                                <div key={i} className="border border-sky-200/30 rounded-lg p-3 bg-white/50 animate-pulse">
+                                  <div className="h-4 bg-sky-100/50 rounded w-24 mb-2"></div>
+                                  <div className="h-3 bg-sky-50/50 rounded w-full mb-1"></div>
+                                  <div className="h-3 bg-sky-50/50 rounded w-3/4"></div>
                                 </div>
                               ))}
                             </div>
@@ -1280,15 +1223,15 @@ export default function HomePage() {
                             </div>
                           ) : (
                             availableCharacteristics.map((characteristic) => (
-                              <div key={characteristic.name} className="border border-red-200/30 rounded-lg p-3 bg-white/50">
+                              <div key={characteristic.name} className="border border-sky-200/30 rounded-lg p-3 bg-white/50">
                                 <button
                                   onClick={() => toggleDesktopCharGroup(characteristic.name)}
                                   className="flex items-center justify-between w-full text-left mb-2"
                                 >
                                   <h4 className="text-sm font-medium text-slate-700">{characteristic.name}</h4>
                                   {desktopExpandedCharGroups.has(characteristic.name) ?
-                                    <ChevronUp className="w-4 h-4 text-red-600" /> :
-                                    <ChevronDown className="w-4 h-4 text-red-600" />
+                                    <ChevronUp className="w-4 h-4 text-sky-600" /> :
+                                    <ChevronDown className="w-4 h-4 text-sky-600" />
                                   }
                                 </button>
 
@@ -1297,17 +1240,17 @@ export default function HomePage() {
                                     {(characteristic.values || []).map((valueObj: any, index: number) => (
                                       <label
                                         key={`${characteristic.name}-${index}`}
-                                        className="flex items-center gap-2 text-sm cursor-pointer hover:text-red-700 transition-colors"
+                                        className="flex items-center gap-2 text-sm cursor-pointer hover:text-sky-700 transition-colors"
                                       >
                                         <input
                                           type="checkbox"
                                           checked={appliedFilters.characteristics[characteristic.name]?.includes(valueObj.value) || false}
                                           onChange={(e) => handleCharacteristicFilterChange(characteristic.name, valueObj.value, e.target.checked)}
-                                          className="h-3 w-3 text-red-600 border-red-300 rounded focus:ring-red-500 focus:ring-1"
+                                          className="h-3 w-3 text-sky-600 border-sky-300 rounded focus:ring-sky-500 focus:ring-1"
                                         />
                                         <span className="flex-1 truncate">{valueObj.value}</span>
                                         {valueObj.product_count && (
-                                          <span className="text-red-500/70 bg-red-100/40 px-1.5 py-0.5 rounded text-xs">
+                                          <span className="text-sky-500/70 bg-sky-100/40 px-1.5 py-0.5 rounded text-xs">
                                             {valueObj.product_count}
                                           </span>
                                         )}
@@ -1328,7 +1271,7 @@ export default function HomePage() {
               {/* Product Grid с российской цветовой схемой */}
               <div className="flex-1 min-w-0">
 
-                <div className="bg-white/45 backdrop-blur-sm rounded-2xl border border-red-200/25 p-6 shadow-sm">
+                <div className="bg-white/45 backdrop-blur-sm rounded-2xl border border-sky-200/25 p-6 shadow-sm">
                   <ProductGrid
                     products={displayedProducts}
                     view={view}
@@ -1341,18 +1284,18 @@ export default function HomePage() {
                 <div ref={loadMoreRef} className="mt-8">
                   {isLoadingMore && (
                     <div className="text-center py-8">
-                      <div className="bg-white/65 backdrop-blur-lg rounded-2xl border border-red-200/35 p-6 shadow-lg shadow-red-100/15 max-w-sm mx-auto">
-                        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-3 text-red-500" />
-                        <p className="text-red-700 font-medium">{t('hero.loadingMore')}</p>
+                      <div className="bg-white/65 backdrop-blur-lg rounded-2xl border border-sky-200/35 p-6 shadow-lg shadow-sky-100/15 max-w-sm mx-auto">
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-3 text-sky-500" />
+                        <p className="text-sky-700 font-medium">{t('hero.loadingMore')}</p>
                       </div>
                     </div>
                   )}
 
                   {!hasMore && filteredProducts.length > 0 && (
                     <div className="text-center py-8">
-                      <div className="bg-gradient-to-r from-red-50 to-blue-50 backdrop-blur-lg rounded-2xl border border-red-200/35 p-6 shadow-lg shadow-red-100/15 max-w-sm mx-auto">
-                        <p className="text-red-700 font-medium">{t('hero.allLoaded')}</p>
-                        <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-blue-500 rounded-full mx-auto mt-3"></div>
+                      <div className="bg-gradient-to-r from-sky-50 to-blue-50 backdrop-blur-lg rounded-2xl border border-sky-200/35 p-6 shadow-lg shadow-sky-100/15 max-w-sm mx-auto">
+                        <p className="text-sky-700 font-medium">{t('hero.allLoaded')}</p>
+                        <div className="w-16 h-1 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full mx-auto mt-3"></div>
                       </div>
                     </div>
                   )}

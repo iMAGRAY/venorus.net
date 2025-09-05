@@ -104,7 +104,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
           {/* {isProductOutOfStock(product) && (
             <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center">
               <Badge className="bg-gradient-to-r from-slate-500 to-slate-600 text-white border-0 px-4 py-2 text-sm font-medium shadow-lg">
-                Нет в наличии
+                Agotado
               </Badge>
             </div>
           )} */}
@@ -123,7 +123,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
             {product.short_name || product.name}
           </InstantLink>
 
-          {/* Категория */}
+          {/* Categoría */}
           <div className="mb-3">
             <Badge
               variant="outline"
@@ -141,7 +141,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
             className="mb-3"
           />
 
-          {/* Цена */}
+          {/* Precio */}
           <div className="mb-3 flex-grow flex items-end">
             {(() => {
               // Если есть варианты, показываем диапазон цен
@@ -162,9 +162,9 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                 if (minPrice === maxPrice) {
                   return (
                       <span className="text-base font-bold text-slate-900 truncate block">
-                        {new Intl.NumberFormat('ru-RU', {
+                        {new Intl.NumberFormat('en-US', {
                           style: 'currency',
-                          currency: 'RUB',
+                          currency: 'USD',
                           maximumFractionDigits: 0
                         }).format(minPrice)}
                       </span>
@@ -174,9 +174,9 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                     <div className="space-y-1">
                       <span className="text-xs text-slate-500">от</span>
                       <span className="text-base font-bold text-slate-900 truncate block">
-                        {new Intl.NumberFormat('ru-RU', {
+                        {new Intl.NumberFormat('en-US', {
                           style: 'currency',
-                          currency: 'RUB',
+                          currency: 'USD',
                           maximumFractionDigits: 0
                         }).format(minPrice)}
                       </span>
@@ -193,16 +193,16 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                   return (
                     <div className="space-y-1">
                       <span className="text-base font-bold text-slate-900 truncate block">
-                        {new Intl.NumberFormat('ru-RU', {
+                        {new Intl.NumberFormat('en-US', {
                           style: 'currency',
-                          currency: 'RUB',
+                          currency: 'USD',
                           maximumFractionDigits: 0
                         }).format(product.discount_price)}
                       </span>
                       <span className="text-xs line-through text-slate-400 truncate block">
-                        {new Intl.NumberFormat('ru-RU', {
+                        {new Intl.NumberFormat('en-US', {
                           style: 'currency',
-                          currency: 'RUB',
+                          currency: 'USD',
                           maximumFractionDigits: 0
                         }).format(product.price)}
                       </span>
@@ -211,9 +211,9 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
                 } else {
                   return (
                     <span className="text-base font-bold text-slate-800 truncate block">
-                      {new Intl.NumberFormat('ru-RU', {
+                      {new Intl.NumberFormat('en-US', {
                         style: 'currency',
-                        currency: 'RUB',
+                        currency: 'USD',
                         maximumFractionDigits: 0
                       }).format((product.price || product.discount_price) ?? 0)}
                     </span>

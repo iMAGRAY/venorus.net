@@ -690,7 +690,7 @@ export function ProductImageUploader({
                     index === selectedImageIndex
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                  } ${selectedIndices.includes(index) ? 'ring-2 ring-red-200' : ''}`}
+                  } ${selectedIndices.includes(index) ? 'ring-2 ring-sky-200' : ''}`}
                   draggable
                   onDragStart={() => handleDragStart(index)}
                   onDragOver={(e) => handleDragOver(e, index)}
@@ -762,7 +762,7 @@ export function ProductImageUploader({
                       removeImage(index)
                     }}
                     disabled={safeProductImages.length === 1}
-                    className="h-7 w-7 sm:h-8 sm:w-8 p-0 flex-shrink-0 hover:bg-red-50 hover:text-red-600"
+                    className="h-7 w-7 sm:h-8 sm:w-8 p-0 flex-shrink-0 hover:bg-sky-50 hover:text-sky-600"
                     title={safeProductImages.length === 1 ? "Нельзя удалить последнее изображение" : "Удалить изображение"}
                   >
                     <X className="w-3 h-3 sm:w-4 sm:h-4" />

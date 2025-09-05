@@ -68,18 +68,18 @@ export function ProductConfigurationSelector({
   return (
     <Card 
       data-config-selector
-      className={`${className} bg-gradient-to-br from-red-50/30 to-blue-50/20 border-2 transition-all duration-300 ${
+      className={`${className} bg-gradient-to-br from-sky-50/30 to-blue-50/20 border-2 transition-all duration-300 ${
         hasError 
-          ? 'border-red-500 shadow-lg shadow-red-200/50' 
+          ? 'border-sky-500 shadow-lg shadow-sky-200/50' 
           : 'border-blue-200/40'
       }`}
     >
       <CardHeader className="pb-4">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Settings className={`w-5 h-5 ${hasError ? 'text-red-600' : 'text-blue-600'}`} />
-          <span className={hasError ? 'text-red-700' : ''}>Конфигурация товара</span>
+          <Settings className={`w-5 h-5 ${hasError ? 'text-sky-600' : 'text-blue-600'}`} />
+          <span className={hasError ? 'text-sky-700' : ''}>Конфигурация товара</span>
           {hasError && (
-            <span className="text-sm text-red-600 font-normal ml-auto">
+            <span className="text-sm text-sky-600 font-normal ml-auto">
               Обязательно для выбора
             </span>
           )}
@@ -97,7 +97,7 @@ export function ProductConfigurationSelector({
             return (
               <div key={groupId} className={`flex items-center justify-between p-3 bg-white/60 rounded-lg border-2 transition-all duration-300 ${
                 hasError && !configuration[groupId] 
-                  ? 'border-red-500 shadow-md shadow-red-200/30' 
+                  ? 'border-sky-500 shadow-md shadow-sky-200/30' 
                   : 'border-blue-200/30'
               }`}>
                 <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export function ProductConfigurationSelector({
                 >
                   <SelectTrigger className={`w-full bg-white/80 hover:bg-white/90 transition-colors ${
                     hasError && !configuration[groupId] 
-                      ? 'border-red-500 border-2' 
+                      ? 'border-sky-500 border-2' 
                       : 'border-blue-200/40'
                   }`}>
                     <SelectValue placeholder="Выберите вариант" />

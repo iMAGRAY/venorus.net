@@ -33,61 +33,54 @@ const HeroImage = () => {
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* Базовый фоновый слой (медленное движение) */}
+      {/* Минималистичный градиентный фон */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 bg-gradient-to-br from-background/40 via-muted/20 to-background/30"
         style={{
-          transform: `translateY(${scrollY * 0.3}px) scale(1.05)`,
-          background: "linear-gradient(135deg, rgba(255,245,245,1) 0%, rgba(239,246,255,1) 100%)",
+          transform: `translateY(${scrollY * 0.2}px)`,
         }}
       />
 
-      {/* Основное фоновое изображение */}
+      {/* Основное фоновое изображение с современной обработкой */}
       <Image
-        src="/hero.png"
+        src="/hero-main.png"
         alt="Фоновое изображение каталога"
         fill
         priority
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{
-          transform: `translateY(${scrollY * 0.15}px)`,
-        }}
-      />
-
-      {/* Тонкая сетка (среднее движение) */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          transform: `translateY(${scrollY * 0.2}px)`,
-          backgroundImage:
-            "linear-gradient(rgba(15,23,42,0.10) 1px, transparent 1px)," +
-            "linear-gradient(90deg, rgba(15,23,42,0.10) 1px, transparent 1px)",
-          backgroundSize: "32px 32px, 32px 32px",
-          backgroundPosition: "-1px -1px, -1px -1px",
-          opacity: 0.12,
-        }}
-      />
-
-      {/* Акцентные мягкие радииальные градиенты (быстрое движение) */}
-      <div
-        className="absolute inset-0"
+        className="absolute inset-0 w-full h-full object-cover opacity-60"
         style={{
           transform: `translateY(${scrollY * 0.1}px)`,
-          backgroundImage:
-            "radial-gradient(800px 600px at 60% 40%, rgba(239, 68, 68, 0.14), transparent 60%)," +
-            "radial-gradient(900px 700px at 30% 65%, rgba(37, 99, 235, 0.14), transparent 65%)",
+          filter: "blur(0.5px) saturate(0.8)",
         }}
       />
 
-      {/* Дополнительные цветовые волны (самое быстрое движение) */}
+      {/* Тонкий геометрический паттерн */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          transform: `translateY(${scrollY * 0.06}px)`,
+          transform: `translateY(${scrollY * 0.15}px)`,
           backgroundImage:
-            "radial-gradient(600px 450px at 85% 20%, rgba(255,255,255,0.25), transparent 55%)," +
-            "radial-gradient(500px 400px at 15% 80%, rgba(255,255,255,0.20), transparent 60%)",
-          filter: "blur(2px)",
+            "linear-gradient(hsl(var(--muted-foreground)) 1px, transparent 1px)," +
+            "linear-gradient(90deg, hsl(var(--muted-foreground)) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+
+      {/* Мягкий акцентный градиент */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          transform: `translateY(${scrollY * 0.05}px)`,
+          background:
+            "radial-gradient(800px 600px at 60% 40%, hsl(var(--primary) / 0.1), transparent 70%)",
+        }}
+      />
+      
+      {/* Темный градиент для улучшения читаемости текста */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/30 to-transparent"
+        style={{
+          transform: `translateY(${scrollY * 0.08}px)`,
         }}
       />
     </div>

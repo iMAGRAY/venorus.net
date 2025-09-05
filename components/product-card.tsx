@@ -91,7 +91,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                       key={index}
                       className={`w-2 h-2 rounded-full transition-all duration-200 ${
                         index === currentImageIndex
-                          ? "bg-gradient-to-r from-red-400 to-blue-400 scale-125"
+                          ? "bg-gradient-to-r from-sky-400 to-blue-400 scale-125"
                           : "bg-white/70 hover:bg-white/90 hover:scale-110"
                       }`}
                     />
@@ -102,8 +102,8 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
             {/* Бейджи происхождения и доставки */}
             <div className="absolute top-3 left-3 flex gap-1">
-              <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇷🇺 Сделано в России</span>
-              <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">🇻🇪 Доставка</span>
+              <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇷🇺 Hecho en Rusia</span>
+              <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">🇻🇪 Entrega</span>
             </div>
 
             {/* Кнопка быстрого просмотра */}
@@ -120,7 +120,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             {isProductOutOfStock(product) && (
               <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center">
                 <Badge className="bg-gradient-to-r from-slate-500 to-slate-600 text-white border-0 px-4 py-2 text-sm font-medium shadow-lg">
-                  Нет в наличии
+                  {t('product.outOfStock')}
                 </Badge>
               </div>
             )}
@@ -170,9 +170,9 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 )}
                 {/* Отображение количества вариантов */}
                 {product.has_variants && product.variants_count && product.variants_count > 0 && (
-                  <Badge className="bg-gradient-to-r from-red-100 to-blue-100 text-blue-700 border border-blue-200 text-[10px] px-1.5 py-0.5">
+                  <Badge className="bg-gradient-to-r from-sky-100 to-blue-100 text-blue-700 border border-blue-200 text-[10px] px-1.5 py-0.5">
                     <Layers className="w-2.5 h-2.5 mr-0.5" />
-                    {product.variants_count + 1} вар.
+                    {product.variants_count + 1} var.
                   </Badge>
                 )}
               </div>
@@ -205,9 +205,9 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 )}
                 {/* Отображение количества вариантов */}
                 {product.has_variants && product.variants_count && product.variants_count > 0 && (
-                  <Badge className="bg-gradient-to-r from-red-100 to-blue-100 text-blue-700 border border-blue-200 text-xs px-2 py-1">
+                  <Badge className="bg-gradient-to-r from-sky-100 to-blue-100 text-blue-700 border border-blue-200 text-xs px-2 py-1">
                     <Layers className="w-3 h-3 mr-1" />
-                    {product.variants_count + 1} {(product.variants_count + 1) === 2 ? 'варианта' : (product.variants_count + 1) < 5 ? 'варианта' : 'вариантов'}
+                    {product.variants_count + 1} {(product.variants_count + 1) === 1 ? 'variante' : 'variantes'}
                   </Badge>
                 )}
               </div>
@@ -222,37 +222,37 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             className="mb-2"
           />
 
-          {/* Цена и статус склада */}
+          {/* Precio y estado del almacén */}
           <div className="space-y-1 sm:space-y-2">
-            {/* Цена */}
+            {/* Precio */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
               {product.show_price === false || (!product.price && !product.discount_price) ? (
                 <span className="text-base sm:text-xl font-bold text-slate-600">
-                  По запросу
+                  {t('product.onRequest')}
                 </span>
               ) : (product.price || product.discount_price) ? (
                 product.discount_price && product.price && product.discount_price < product.price ? (
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                   <span className="text-base sm:text-xl font-bold text-slate-900 truncate">
-                      {new Intl.NumberFormat('ru-RU', {
+                      {new Intl.NumberFormat('en-US', {
                         style: 'currency',
-                        currency: 'RUB',
+                        currency: 'USD',
                         maximumFractionDigits: 0
                       }).format(product.discount_price)}
                     </span>
                     <span className="text-xs sm:text-sm line-through text-slate-400 truncate">
-                      {new Intl.NumberFormat('ru-RU', {
+                      {new Intl.NumberFormat('en-US', {
                         style: 'currency',
-                        currency: 'RUB',
+                        currency: 'USD',
                         maximumFractionDigits: 0
                       }).format(product.price)}
                     </span>
                   </div>
                 ) : (
                   <span className="text-base sm:text-xl font-bold text-slate-900 truncate">
-                    {new Intl.NumberFormat('ru-RU', {
+                    {new Intl.NumberFormat('en-US', {
                       style: 'currency',
-                      currency: 'RUB',
+                      currency: 'USD',
                       maximumFractionDigits: 0
                     }).format((product.price || product.discount_price) ?? 0)}
                   </span>
@@ -268,33 +268,36 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
         </CardContent>
 
-        <CardFooter className="p-1 sm:p-3 pt-0">
-          <div className="flex flex-col sm:flex-row gap-2 w-full">
-            <InstantLink href={`/products/${product.id}`} className="w-full" prefetch={true}>
+        <CardFooter className="p-2 sm:p-3 pt-0">
+          <div className="flex gap-2 w-full">
+            {/* Кнопка "Подробнее" */}
+            <InstantLink href={`/products/${product.id}`} className="flex-1" prefetch={true}>
               <Button
                 disabled={false}
                 size="sm"
-                className={`w-full py-2 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 touch-manipulation ${
+                className={`w-full h-8 sm:h-9 text-xs font-medium rounded-lg transition-all duration-300 ${
                   isProductAvailable(product)
-                    ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white shadow-sm'
                     : 'bg-slate-100 text-slate-500 cursor-not-allowed border border-slate-200'
                 }`}
               >
                 {isProductAvailable(product) ? (
-                  <span className="flex items-center gap-2">
-                    <CheckIcon className="w-4 h-4" />
-                    {t('product.details')}
+                  <span className="flex items-center gap-1 justify-center">
+                    <Eye className="w-3 h-3" />
+                    <span className="hidden sm:inline">{t('product.details')}</span>
+                    <span className="sm:hidden">Ver</span>
                   </span>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    <CloseIcon className="w-4 h-4" />
-                    {t('product.outOfStock')}
+                  <span className="flex items-center gap-1 justify-center">
+                    <CloseIcon className="w-3 h-3" />
+                    <span className="hidden sm:inline">{t('product.outOfStock')}</span>
+                    <span className="sm:hidden">N/D</span>
                   </span>
                 )}
               </Button>
             </InstantLink>
 
-            {/* Кнопка добавления / уже в заявке */}
+            {/* Кнопка добавления в заявку */}
             {isProductAvailable(product) && !inCart && (
               <Button
                 onClick={(e) => {
@@ -313,14 +316,17 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                   })
                 }}
                 size="sm"
-                className="w-full sm:w-auto px-3 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all duration-200 rounded-lg sm:rounded-xl"
+                className="flex-1 h-8 sm:h-9 bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 hover:border-sky-300 transition-all duration-200 rounded-lg"
               >
-                <span className="text-xs sm:text-sm truncate flex items-center gap-1 justify-center">
+                <span className="text-xs flex items-center gap-1 justify-center">
                   <AssignmentIcon className="w-3 h-3" />
-                  В заявку
+                  <span className="hidden sm:inline">{t('product.addToCart')}</span>
+                  <span className="sm:hidden">+</span>
                 </span>
               </Button>
             )}
+            
+            {/* Кнопка "В заявке" */}
             {inCart && (
               <Button
                 onClick={(e) => {
@@ -330,11 +336,12 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                 }}
                 size="sm"
                 variant="outline"
-                className="w-full sm:w-auto px-1 sm:px-4 py-1 sm:py-3 bg-green-100/60 border-green-300 text-green-700 hover:bg-green-200/60 transition-colors rounded-lg sm:rounded-xl"
+                className="flex-1 h-8 sm:h-9 bg-green-50 border-green-200 text-green-700 hover:bg-green-100 transition-colors rounded-lg"
               >
-                <span className="flex items-center gap-1 justify-center">
+                <span className="flex items-center gap-1 justify-center text-xs">
                   <CheckIcon className="w-3 h-3" />
-                  В заявке
+                  <span className="hidden sm:inline">{t('product.inCart')}</span>
+                  <span className="sm:hidden">✓</span>
                 </span>
               </Button>
             )}

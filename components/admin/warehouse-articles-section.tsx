@@ -270,9 +270,9 @@ export function WarehouseArticlesSection() {
   }
 
   const formatPrice = (price: string) => {
-    return new Intl.NumberFormat('ru-RU', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'RUB',
+      currency: 'USD',
       minimumFractionDigits: 0
     }).format(parseFloat(price))
   }
@@ -321,9 +321,9 @@ export function WarehouseArticlesSection() {
             </DialogHeader>
 
             {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
-                <AlertTriangle className="w-4 h-4 text-red-600" />
-                <span className="text-sm text-red-700">{error}</span>
+              <div className="flex items-center gap-2 p-3 bg-sky-50 border border-sky-200 rounded-md">
+                <AlertTriangle className="w-4 h-4 text-sky-600" />
+                <span className="text-sm text-sky-700">{error}</span>
               </div>
             )}
 
@@ -645,7 +645,7 @@ export function WarehouseArticlesSection() {
             </div>
 
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+              <div className="text-sm text-sky-600 bg-sky-50 p-2 rounded">
                 {error}
               </div>
             )}
@@ -680,7 +680,7 @@ export function WarehouseArticlesSection() {
             </p>
 
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+              <div className="text-sm text-sky-600 bg-sky-50 p-2 rounded">
                 {error}
               </div>
             )}

@@ -188,13 +188,13 @@ export async function OPTIONS(_request: NextRequest) {
 function getFallbackSettings() {
   return {
     id: 1,
-    siteName: "МедСИП Протезирование",
-    siteDescription: "Расширяем возможности жизни через инновационные протезные технологии и заботливый уход.",
-    heroTitle: "Передовые протезы, персонализированная забота",
-    heroSubtitle: "Откройте для себя инновационные решения, созданные для комфорта, функциональности и обновленного чувства возможностей.",
+    siteName: "MedSIP Prótesis",
+    siteDescription: "Ampliamos las posibilidades de vida a través de tecnologías protésicas innovadoras y cuidado atento.",
+    heroTitle: "Prótesis avanzadas, cuidado personalizado",
+    heroSubtitle: "Descubre soluciones innovadoras diseñadas para comodidad, funcionalidad y una renovada sensación de posibilidades.",
     contactEmail: "info@medsip-prosthetics.ru",
     contactPhone: "+7 (495) 123-45-67",
-    address: "ул. Медицинская, 15, Москва, 119991",
+    address: "Calle Médica, 15, Madrid, 28001",
     socialMedia: {
       vk: "https://vk.com/medsip_prosthetics",
       telegram: "https://t.me/medsip_prosthetics",

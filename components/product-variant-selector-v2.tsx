@@ -299,7 +299,7 @@ export function ProductVariantSelectorV2({
                   ))}
                 </div>
 
-                {/* Цена */}
+                {/* Precio */}
                 <div className="pt-2">
                   {variant.discount_price ? (
                     <div className="flex items-baseline gap-2">
@@ -318,7 +318,7 @@ export function ProductVariantSelectorV2({
                       {variant.price.toLocaleString('ru-RU')} ₽
                     </span>
                   ) : (
-                    <Badge variant="secondary">Цена по запросу</Badge>
+                    <Badge variant="secondary">Precio bajo consulta</Badge>
                   )}
                 </div>
 
@@ -327,7 +327,7 @@ export function ProductVariantSelectorV2({
                   {variant.in_stock ? (
                     <>
                       <Package className="w-4 h-4 text-green-600" />
-                      <span className="text-green-600 font-medium">В наличии</span>
+                      <span className="text-green-600 font-medium">En stock</span>
                       {variant.available_stock <= 5 && (
                         <Badge variant="warning" className="text-xs">
                           Осталось: {variant.available_stock}
@@ -336,8 +336,8 @@ export function ProductVariantSelectorV2({
                     </>
                   ) : (
                     <>
-                      <Package className="w-4 h-4 text-red-600" />
-                      <span className="text-red-600 font-medium">Нет в наличии</span>
+                      <Package className="w-4 h-4 text-sky-600" />
+                      <span className="text-sky-600 font-medium">Agotado</span>
                     </>
                   )}
                 </div>
@@ -416,7 +416,7 @@ export function ProductVariantSelectorV2({
             disabled={!selectedVariant.in_stock}
           >
             <ShoppingCart className="w-5 h-5" />
-            {selectedVariant.in_stock ? 'В корзину' : 'Нет в наличии'}
+            {selectedVariant.in_stock ? 'Al carrito' : 'Agotado'}
           </Button>
           
           <Button size="lg" variant="outline" className="gap-2">

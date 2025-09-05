@@ -23,13 +23,13 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
   return (
     <div className="group relative">
       {/* Фоновый градиент */}
-      <div className="absolute inset-0 bg-gradient-to-r from-red-100/30 to-blue-100/40 rounded-2xl blur-sm transform group-hover:scale-[1.02] transition-transform duration-300"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-sky-100/30 to-blue-100/40 rounded-2xl blur-sm transform group-hover:scale-[1.02] transition-transform duration-300"></div>
 
       <Card className="relative overflow-hidden min-h-[120px] bg-white/90 backdrop-blur-lg border border-blue-200/50 shadow-lg shadow-blue-100/20 hover:shadow-xl hover:shadow-blue-200/30 transition-all duration-300 hover:border-blue-300/60 rounded-2xl">
         <CardContent className="p-0 relative">
           <div className="flex flex-col sm:flex-row">
             {/* Секция изображения */}
-            <div className="relative w-full aspect-square sm:w-64 sm:h-64 flex-shrink-0 overflow-hidden rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none bg-gradient-to-br from-red-50 to-blue-50">
+            <div className="relative w-full aspect-square sm:w-64 sm:h-64 flex-shrink-0 overflow-hidden rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none bg-gradient-to-br from-sky-50 to-blue-50">
               <SafeImage
                 src={product.imageUrl || PROSTHETIC_FALLBACK_IMAGE}
                 alt={product.short_name || product.name}
@@ -39,7 +39,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
               />
 
               {/* Элегантный overlay градиент */}
-              <div className="absolute inset-0 bg-gradient-to-t from-red-900/20 via-transparent to-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-sky-900/20 via-transparent to-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               {/* Кнопка быстрого просмотра */}
               <div className="absolute top-3 right-3">
@@ -56,7 +56,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
               {isProductOutOfStock(product) && (
                 <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center">
                   <Badge className="bg-gradient-to-r from-slate-500 to-slate-600 text-white border-0 px-4 py-2 text-sm font-medium shadow-lg">
-                    Нет в наличии
+                    Agotado
                   </Badge>
                 </div>
               )}
@@ -65,7 +65,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
             {/* Серая линия между изображением и названием */}
             <div className="hidden sm:block w-px h-full bg-gradient-to-b from-transparent via-slate-300 to-transparent"></div>
 
-            {/* Основная информация */}
+            {/* Información básica */}
             <div className="flex-1 space-y-1 sm:space-y-2 p-3 sm:p-4">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -104,9 +104,9 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                       )}
                       {/* Отображение количества вариантов */}
                       {product.has_variants && product.variants_count && product.variants_count > 0 && (
-                        <Badge className="bg-gradient-to-r from-red-100 to-blue-100 text-blue-700 border border-blue-200 text-[10px] sm:text-xs px-1.5 py-0.5">
+                        <Badge className="bg-gradient-to-r from-sky-100 to-blue-100 text-blue-700 border border-blue-200 text-[10px] sm:text-xs px-1.5 py-0.5">
                           <Layers className="w-2.5 h-2.5 mr-0.5" />
-                          {product.variants_count + 1} вар.
+                          {product.variants_count + 1} var.
                         </Badge>
                       )}
                     </div>
@@ -120,42 +120,42 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                     className="mb-1"
                   />
 
-                  {/* Цена */}
+                  {/* Precio */}
                   <div>
                     {product.show_price === false || (!product.price && !product.discount_price) ? (
                       <span className="text-xl font-bold text-slate-600">
-                        По запросу
+                        Bajo petición
                       </span>
                     ) : (product.price || product.discount_price) ? (
                       product.discount_price && product.price && product.discount_price < product.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                          <span className="text-xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
-                            {new Intl.NumberFormat('ru-RU', {
+                          <span className="text-xl font-bold bg-gradient-to-r from-sky-600 to-blue-700 bg-clip-text text-transparent">
+                            {new Intl.NumberFormat('en-US', {
                               style: 'currency',
-                              currency: 'RUB',
+                              currency: 'USD',
                               maximumFractionDigits: 0
                             }).format(product.discount_price)}
                           </span>
                           <span className="text-sm line-through text-slate-400">
-                            {new Intl.NumberFormat('ru-RU', {
+                            {new Intl.NumberFormat('en-US', {
                               style: 'currency',
-                              currency: 'RUB',
+                              currency: 'USD',
                               maximumFractionDigits: 0
                             }).format(product.price)}
                           </span>
                         </div>
                       ) : (
                         <span className="text-xl font-bold text-slate-800">
-                          {new Intl.NumberFormat('ru-RU', {
+                          {new Intl.NumberFormat('en-US', {
                             style: 'currency',
-                            currency: 'RUB',
+                            currency: 'USD',
                             maximumFractionDigits: 0
                           }).format((product.price || product.discount_price) ?? 0)}
                         </span>
                       )
                     ) : (
                       <span className="text-xl font-bold text-slate-600">
-                        По запросу
+                        Bajo petición
                       </span>
                     )}
                   </div>
@@ -164,46 +164,49 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
 
                 </div>
 
-                                  {/* Кнопки действий */}
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-                    <Link href={`/products/${product.id}`} className="w-full sm:w-auto">
+                  {/* Кнопки действий */}
+                  <div className="flex gap-2 w-full sm:w-auto sm:min-w-[200px]">
+                    <Link href={`/products/${product.id}`} className="flex-1">
                       <Button
                         disabled={false}
                         size="sm"
-                        className={`w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 touch-manipulation ${
+                        className={`w-full h-9 text-sm font-medium rounded-lg transition-all duration-300 ${
                           isProductAvailable(product)
-                            ? 'bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 border-0'
-                            : 'bg-gradient-to-r from-slate-200 to-gray-200 text-slate-500 cursor-not-allowed border border-slate-300'
+                            ? 'bg-gradient-to-r from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white shadow-sm'
+                            : 'bg-slate-100 text-slate-500 cursor-not-allowed border border-slate-200'
                         }`}
                       >
-                        {isProductAvailable(product) ? "Подробнее" : "Нет в наличии"}
+                        <Eye className="w-4 h-4 mr-1" />
+                        {isProductAvailable(product) ? "Ver" : "N/D"}
                       </Button>
                     </Link>
 
-                  {/* Кнопка добавления в заявку - только если товар доступен */}
-                  {isProductAvailable(product) && (
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                        addItem({
-                          id: String(product.id),
-                          name: product.name,
-                          price: getActualPrice(product),
-                          image_url: product.imageUrl || '',
-                          category: product.category,
-                          sku: product.sku || '',
-                          article_number: product.article_number || '',
-                          is_on_request: product.show_price === false || (!product.price && !product.discount_price),
-                          show_price: product.show_price
-                        })
-                      }}
-                  size="sm"
-                      className="w-full sm:w-auto px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-blue-400 transition-all duration-300 shadow-md hover:shadow-lg rounded-lg"
-                >
-                      <span>В заявку</span>
-                </Button>
-                  )}
+                    {/* Кнопка добавления в заявку - только если товар доступен */}
+                    {isProductAvailable(product) && (
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          addItem({
+                            id: String(product.id),
+                            name: product.name,
+                            price: getActualPrice(product),
+                            image_url: product.imageUrl || '',
+                            category: product.category,
+                            sku: product.sku || '',
+                            article_number: product.article_number || '',
+                            is_on_request: product.show_price === false || (!product.price && !product.discount_price),
+                            show_price: product.show_price
+                          })
+                        }}
+                        size="sm"
+                        className="flex-1 h-9 bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 hover:border-sky-300 transition-all duration-200 rounded-lg"
+                      >
+                        <Package className="w-4 h-4 mr-1" />
+                        <span className="hidden sm:inline">Añadir</span>
+                        <span className="sm:hidden">+</span>
+                      </Button>
+                    )}
                 </div>
               </div>
             </div>

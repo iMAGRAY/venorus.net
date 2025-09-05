@@ -202,7 +202,7 @@ export function ProductVariantSelectorGrid({
                   "relative group cursor-pointer rounded-lg sm:rounded-xl border-2 bg-white transition-all duration-300 flex-shrink-0",
                   "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[160px]", // Квадратные размеры
                   isSelected
-                    ? "border-blue-600 shadow-md shadow-blue-200/50 bg-gradient-to-br from-red-50 to-blue-50"
+                    ? "border-blue-600 shadow-md shadow-blue-200/50 bg-gradient-to-br from-sky-50 to-blue-50"
                     : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                   !inStock && "opacity-60"
                 )}
@@ -275,7 +275,7 @@ export function ProductVariantSelectorGrid({
                   {!inStock && (
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                       <span className="text-white text-[8px] sm:text-[10px] font-medium bg-black/50 px-1 py-0.5 rounded text-center">
-                        Нет в наличии
+                        Agotado
                       </span>
                     </div>
                   )}

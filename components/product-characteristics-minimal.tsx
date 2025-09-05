@@ -63,7 +63,7 @@ export default function ProductCharacteristicsMinimal({ sections }: ProductChara
   return (
     <div className="bg-white rounded-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-cyan-200/30">
-        <h2 className="text-lg font-semibold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">Характеристики</h2>
+        <h2 className="text-lg font-semibold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">Características</h2>
       </div>
 
       <div className="p-6 space-y-8">

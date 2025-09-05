@@ -97,7 +97,7 @@ export default function ProductMainParameters({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium text-blue-700">
               {showIcons && <Zap className="w-4 h-4" />}
-              Важные характеристики
+              Características importantes
             </div>
             <div className="flex flex-wrap gap-2">
               {groupedParams.important.map((param) => (

@@ -219,7 +219,7 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-red-500" />
+            <AlertTriangle className="w-5 h-5 text-sky-500" />
             Подтверждение удаления
           </AlertDialogTitle>
           <AlertDialogDescription>
@@ -244,7 +244,7 @@ export const WarehouseDialogs: React.FC<WarehouseDialogsProps> = ({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-sky-600 hover:bg-sky-700"
           >
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
             Удалить

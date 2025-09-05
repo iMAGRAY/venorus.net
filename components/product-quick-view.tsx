@@ -153,7 +153,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
         <div className="relative flex-shrink-0 p-3 sm:p-4 lg:p-6 pb-2 sm:pb-4 border-b">
           <button
             onClick={onClose}
-            className="absolute top-1 right-1 sm:top-2 sm:right-2 lg:top-3 lg:right-3 p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-red-100/50 to-blue-100/50 text-blue-700 hover:from-red-200/50 hover:to-blue-200/50 transition-all duration-300 hover:scale-110 z-10"
+            className="absolute top-1 right-1 sm:top-2 sm:right-2 lg:top-3 lg:right-3 p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-sky-100/50 to-blue-100/50 text-blue-700 hover:from-sky-200/50 hover:to-blue-200/50 transition-all duration-300 hover:scale-110 z-10"
           >
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -206,7 +206,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                     {/* {!isAvailable && (
                       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center">
                         <Badge className="bg-slate-500 text-white border-0 px-4 py-2 text-sm font-medium shadow-lg">
-                          Нет в наличии
+                          Agotado
                         </Badge>
                       </div>
                     )} */}
@@ -289,7 +289,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
 
 
 
-                  {/* Цена и кнопка добавления в заявку */}
+                  {/* Precio y botón agregar a solicitud */}
                   <div className="pt-1 sm:pt-2 space-y-2 sm:space-y-3 bg-white/60 backdrop-blur-sm rounded-lg border border-blue-200/30 p-2 sm:p-3">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                       {product.show_price === false || !actualPrice ? (
@@ -299,24 +299,24 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                       ) : selectedVariant && selectedVariant.discountPrice && selectedVariant.price && selectedVariant.discountPrice < selectedVariant.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                           <span className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
-                            {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.discountPrice)}
+                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.discountPrice)}
                           </span>
                           <span className="text-xs sm:text-sm line-through text-slate-400">
-                            {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.price)}
+                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}
                           </span>
                         </div>
                       ) : product.discount_price && product.price && product.discount_price < product.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                           <span className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
-                            {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(product.discount_price)}
+                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.discount_price)}
                           </span>
                           <span className="text-xs sm:text-sm line-through text-slate-400">
-                            {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(product.price)}
+                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)}
                           </span>
                         </div>
                       ) : actualPrice ? (
                         <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-800">
-                          {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(actualPrice)}
+                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(actualPrice)}
                         </span>
                       ) : (
                         <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-600">
@@ -329,9 +329,9 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                     <div className="space-y-1.5 sm:space-y-2">
                       <Button
                         onClick={handleAddToCart}
-                        className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 rounded-lg font-medium"
+                        className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-sky-400 to-blue-600 hover:from-sky-500 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 rounded-lg font-medium"
                       >
-                        <span>Добавить в заявку</span>
+                        <span>{t('product.addToCart')}</span>
                       </Button>
 
                       {/* Кнопка Подробнее */}
@@ -364,16 +364,16 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
 
                 <div className="space-y-3 sm:space-y-4">
                   <div>
-                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1.5 sm:mb-2 text-slate-800">Описание</h3>
+                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1.5 sm:mb-2 text-slate-800">Descripción</h3>
                     <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed whitespace-pre-wrap">
-                      {selectedVariant?.description || product.description || "Описание товара отсутствует"}
+                      {selectedVariant?.description || product.description || "Descripción del producto no disponible"}
                     </p>
                   </div>
 
                   <Separator />
 
                   <div>
-                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 sm:mb-3 text-slate-800">Характеристики</h3>
+                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 sm:mb-3 text-slate-800">Características</h3>
                     <div className="space-y-1.5 sm:space-y-2">
                       {product.warranty && (
                         <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-green-50 to-green-100 p-1.5 sm:p-2 rounded-lg border border-green-200/50">

@@ -159,7 +159,7 @@ export default function SettingsAdmin() {
         if (!isInitialized) {
           await initializeSettings()
         }
-        // Загружаем каталоги
+        // Cargamos catálogos
         await loadCatalogs()
       } catch (error) {
         console.error('❌ Error loading data:', error)
@@ -327,12 +327,12 @@ export default function SettingsAdmin() {
 
         <Tabs defaultValue="general" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="general">Основные</TabsTrigger>
-            <TabsTrigger value="content">Контент</TabsTrigger>
-            <TabsTrigger value="contact">Контакты</TabsTrigger>
-            <TabsTrigger value="additional">Доп. контакты</TabsTrigger>
-            <TabsTrigger value="social">Соцсети</TabsTrigger>
-            <TabsTrigger value="catalogs">Каталоги</TabsTrigger>
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="content">Contenido</TabsTrigger>
+            <TabsTrigger value="contact">Contactos</TabsTrigger>
+            <TabsTrigger value="additional">Contactos adicionales</TabsTrigger>
+            <TabsTrigger value="social">Redes sociales</TabsTrigger>
+            <TabsTrigger value="catalogs">Catálogos</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">
@@ -340,7 +340,7 @@ export default function SettingsAdmin() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="w-5 h-5" />
-                  Основные настройки
+                  Configuraciones generales
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -375,7 +375,7 @@ export default function SettingsAdmin() {
           <TabsContent value="content">
             <Card>
               <CardHeader>
-                <CardTitle>Контент главной секции</CardTitle>
+                <CardTitle>Contenido de la sección principal</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -657,7 +657,7 @@ export default function SettingsAdmin() {
                     ) : catalogs.length === 0 ? (
                       <div className="text-center py-8">
                         <FileDown className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                        <p className="text-slate-600">Каталоги пока не загружены</p>
+                        <p className="text-slate-600">Los catálogos aún no se han cargado</p>
                       </div>
                     ) : (
                       <div className="grid gap-4">

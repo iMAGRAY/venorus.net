@@ -131,9 +131,9 @@ export function DataReadyIndicator({
               {specGroupsLoaded ? (
                 <CheckCircle className="w-3 h-3 text-green-600" />
               ) : (
-                <XCircle className="w-3 h-3 text-red-600" />
+                <XCircle className="w-3 h-3 text-sky-600" />
               )}
-              <span className={specGroupsLoaded ? 'text-green-700' : 'text-red-600'}>
+              <span className={specGroupsLoaded ? 'text-green-700' : 'text-sky-600'}>
                 Группы характеристик
               </span>
             </div>
@@ -142,9 +142,9 @@ export function DataReadyIndicator({
               {characteristicsLoaded ? (
                 <CheckCircle className="w-3 h-3 text-green-600" />
               ) : (
-                <XCircle className="w-3 h-3 text-red-600" />
+                <XCircle className="w-3 h-3 text-sky-600" />
               )}
-              <span className={characteristicsLoaded ? 'text-green-700' : 'text-red-600'}>
+              <span className={characteristicsLoaded ? 'text-green-700' : 'text-sky-600'}>
                 Характеристики товара
               </span>
             </div>

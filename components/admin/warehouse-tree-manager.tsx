@@ -309,7 +309,7 @@ export const WarehouseTreeManager: React.FC<WarehouseTreeManagerProps> = ({
                   </span>
                 )}
                 {node.metrics.alerts && node.metrics.alerts > 0 && (
-                  <span className="flex items-center gap-1 text-red-500">
+                  <span className="flex items-center gap-1 text-sky-500">
                     <AlertCircle className="w-3 h-3" />
                     {node.metrics.alerts}
                   </span>
@@ -357,7 +357,7 @@ export const WarehouseTreeManager: React.FC<WarehouseTreeManagerProps> = ({
               <Separator />
               <DropdownMenuItem
                 onClick={() => onNodeDelete(node)}
-                className="text-red-600 focus:text-red-600"
+                className="text-sky-600 focus:text-sky-600"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Удалить

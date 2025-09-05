@@ -134,7 +134,7 @@ export function ProductVariantsGallery({
                     )}
                   </div>
 
-                  {/* Цена */}
+                  {/* Precio */}
                   <div className="flex items-center justify-between">
                     <div>
                       {variant.discountPrice ? (
@@ -171,9 +171,9 @@ export function ProductVariantsGallery({
                   {/* Наличие */}
                   <div className="flex items-center justify-between text-sm">
                     {variant.isAvailable ? (
-                      <span className="text-green-600">В наличии</span>
+                      <span className="text-green-600">En stock</span>
                     ) : (
-                      <span className="text-red-600">Нет в наличии</span>
+                      <span className="text-sky-600">Agotado</span>
                     )}
                     
                     {variant.stockQuantity !== null && variant.stockQuantity !== undefined && variant.stockQuantity <= 5 && (

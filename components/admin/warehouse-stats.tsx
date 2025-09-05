@@ -206,7 +206,7 @@ export const WarehouseStats: React.FC<WarehouseStatsProps> = ({ data, loading = 
               ) : utilizationPercentage < 95 ? (
                 <AlertTriangle className="h-5 w-5 text-yellow-500" />
               ) : (
-                <AlertTriangle className="h-5 w-5 text-red-500" />
+                <AlertTriangle className="h-5 w-5 text-sky-500" />
               )}
               <div>
                 <div className="font-medium text-sm">Загрузка складов</div>
@@ -223,7 +223,7 @@ export const WarehouseStats: React.FC<WarehouseStatsProps> = ({ data, loading = 
               ) : warehouseActivePercentage >= 80 ? (
                 <AlertTriangle className="h-5 w-5 text-yellow-500" />
               ) : (
-                <AlertTriangle className="h-5 w-5 text-red-500" />
+                <AlertTriangle className="h-5 w-5 text-sky-500" />
               )}
               <div>
                 <div className="font-medium text-sm">Активность складов</div>

@@ -119,7 +119,7 @@ export function WarehouseSection() {
   const getUtilizationColor = (percentage: number) => {
     if (percentage < 70) return 'text-green-600'
     if (percentage < 90) return 'text-orange-600'
-    return 'text-red-600'
+    return 'text-sky-600'
   }
 
   const getUtilizationBadge = (percentage: number) => {
@@ -152,9 +152,9 @@ export function WarehouseSection() {
   }
 
   const _formatPrice = (price: string) => {
-    return new Intl.NumberFormat('ru-RU', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'RUB',
+      currency: 'USD',
       minimumFractionDigits: 0
     }).format(parseFloat(price))
   }
@@ -199,7 +199,7 @@ export function WarehouseSection() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-8 text-red-600">
+          <div className="flex items-center justify-center py-8 text-sky-600">
             <AlertTriangle className="w-6 h-6 mr-2" />
             <span>{error}</span>
           </div>

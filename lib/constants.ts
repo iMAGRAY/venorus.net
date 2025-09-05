@@ -129,8 +129,8 @@ export const CONFIG = {
 
   // Формат
   DATE_FORMAT: 'dd.MM.yyyy',
-  CURRENCY: 'RUB',
-  LOCALE: 'ru-RU',
+  CURRENCY: 'USD',
+  LOCALE: 'en-US',
 } as const
 
 // Типы для безопасности

@@ -306,12 +306,12 @@ export function ProductVariantSelector({
                         {variant.price.toLocaleString('ru-RU')} ₽
                       </p>
                     ) : (
-                      <Badge variant="secondary">Цена по запросу</Badge>
+                      <Badge variant="secondary">Precio bajo consulta</Badge>
                     )}
                     
                     {!variant.isAvailable && (
                       <Badge variant="destructive" className="mt-1">
-                        Нет в наличии
+                        Agotado
                       </Badge>
                     )}
                     {variant.isAvailable && variant.stockQuantity !== null && variant.stockQuantity !== undefined && variant.stockQuantity <= 5 && (

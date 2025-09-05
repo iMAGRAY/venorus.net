@@ -33,18 +33,18 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
   return (
     <Card className="w-full bg-white/80 backdrop-blur-sm border-blue-200/40 shadow-lg shadow-blue-100/20">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
-          Основная информация
+        <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-sky-600 to-blue-700 bg-clip-text text-transparent">
+          Información básica
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Описание товара */}
         {product.description && (
-          <div className="bg-gradient-to-r from-red-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 overflow-hidden shadow-sm">
+          <div className="bg-gradient-to-r from-sky-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 overflow-hidden shadow-sm">
             <div className="px-4 py-3 border-b border-blue-200/30 bg-gradient-to-r from-white/90 to-blue-50/50">
               <h3 className="text-sm font-semibold text-blue-800 flex items-center gap-2">
                 <FileText className="w-4 h-4" />
-                Описание товара
+                Descripción del producto
               </h3>
             </div>
             <div className="relative">
@@ -74,7 +74,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-slate-50/50 to-gray-50/30 rounded-lg border border-slate-200/30">
               <Package className="w-5 h-5 text-slate-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-slate-700">Артикул</p>
+                <p className="text-sm font-medium text-slate-700">Artículo</p>
                 <p className="text-xs text-slate-500">{product.article_number}</p>
               </div>
             </div>
@@ -84,7 +84,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-slate-50/50 to-gray-50/30 rounded-lg border border-slate-200/30">
               <Package className="w-5 h-5 text-slate-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-slate-700">Категория</p>
+                <p className="text-sm font-medium text-slate-700">Categoría</p>
                 <p className="text-xs text-slate-500">{product.category_full_path || product.category_name}</p>
               </div>
             </div>
@@ -94,7 +94,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-slate-50/50 to-gray-50/30 rounded-lg border border-slate-200/30">
               <Building className="w-5 h-5 text-slate-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-slate-700">Производитель</p>
+                <p className="text-sm font-medium text-slate-700">Fabricante</p>
                 <p className="text-xs text-slate-500">{product.manufacturer_name}</p>
               </div>
             </div>
@@ -104,7 +104,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-slate-50/50 to-gray-50/30 rounded-lg border border-slate-200/30">
               <Package className="w-5 h-5 text-slate-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-slate-700">Модельная линия</p>
+                <p className="text-sm font-medium text-slate-700">Línea de modelo</p>
                 <p className="text-xs text-slate-500">{product.model_line_name}</p>
               </div>
             </div>
@@ -114,7 +114,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-slate-50/50 to-gray-50/30 rounded-lg border border-slate-200/30">
               <Package className="w-5 h-5 text-slate-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-slate-700">Вес</p>
+                <p className="text-sm font-medium text-slate-700">Peso</p>
                 <p className="text-xs text-slate-500">{product.weight}</p>
               </div>
             </div>
@@ -124,7 +124,7 @@ export function ProductBasicInfo({ product }: ProductBasicInfoProps) {
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-emerald-50/70 to-green-50/50 rounded-lg border border-emerald-200/40 shadow-sm">
               <Shield className="w-5 h-5 text-emerald-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-emerald-800">Гарантия</p>
+                <p className="text-sm font-medium text-emerald-800">Garantía</p>
                 <p className="text-sm font-semibold text-emerald-700">{product.warranty}</p>
               </div>
             </div>

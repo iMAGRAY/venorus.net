@@ -96,13 +96,13 @@ export function ProductCategorySection({
           value={formData.category_id?.toString() || 'none'}
           onValueChange={handleCategoryChange}
           placeholder="Выберите категорию"
-          className={`h-10 sm:h-9 ${validationErrors.category ? 'border-red-500' : ''}`}
+          className={`h-10 sm:h-9 ${validationErrors.category ? 'border-sky-500' : ''}`}
           includeNoneOption={true}
           noneOptionText="Не выбрана"
           noneValue="none"
         />
         {validationErrors.category && (
-          <p className="text-sm text-red-600 mt-1">Категория обязательна для выбора</p>
+          <p className="text-sm text-sky-600 mt-1">Категория обязательна для выбора</p>
         )}
       </div>
 
@@ -116,10 +116,10 @@ export function ProductCategorySection({
           value={formData.manufacturer_id?.toString() || 'none'}
           onValueChange={handleManufacturerChange}
           placeholder="Выберите производителя"
-          className={`h-10 sm:h-9 ${validationErrors.manufacturer ? 'border-red-500' : ''}`}
+          className={`h-10 sm:h-9 ${validationErrors.manufacturer ? 'border-sky-500' : ''}`}
         />
         {validationErrors.manufacturer && (
-          <p className="text-sm text-red-600 mt-1">Производитель обязателен для выбора</p>
+          <p className="text-sm text-sky-600 mt-1">Производитель обязателен для выбора</p>
         )}
       </div>
 
@@ -138,10 +138,10 @@ export function ProductCategorySection({
                 ? "Выберите линейку модели"
                 : "Сначала выберите производителя"
           }
-          className={`h-10 sm:h-9 ${validationErrors.model_line ? 'border-red-500' : ''}`}
+          className={`h-10 sm:h-9 ${validationErrors.model_line ? 'border-sky-500' : ''}`}
         />
         {validationErrors.model_line && (
-          <p className="text-sm text-red-600 mt-1">Линейка модели обязательна для выбора</p>
+          <p className="text-sm text-sky-600 mt-1">Линейка модели обязательна для выбора</p>
         )}
       </div>
     </div>

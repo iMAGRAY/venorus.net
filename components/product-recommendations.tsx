@@ -121,7 +121,7 @@ export function ProductRecommendations({
       <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-blue-200/40 shadow-lg shadow-blue-100/20 overflow-hidden">
 
         {/* Заголовок с навигацией */}
-        <div className="bg-gradient-to-r from-red-50/80 to-blue-50/60 p-4 border-b border-blue-200/30">
+        <div className="bg-gradient-to-r from-sky-50/80 to-blue-50/60 p-4 border-b border-blue-200/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {getRecommendationIcon(currentRecommendation.type)}
@@ -221,7 +221,7 @@ export function ProductRecommendations({
                   
                   window.location.href = `/products${categoryFilter || manufacturerFilter}`
                 }}
-                className="bg-gradient-to-r from-red-50 to-blue-50 border-blue-200 text-blue-700 hover:from-red-100 hover:to-blue-100 hover:border-blue-300 touch-manipulation"
+                className="bg-gradient-to-r from-sky-50 to-blue-50 border-blue-200 text-blue-700 hover:from-sky-100 hover:to-blue-100 hover:border-blue-300 touch-manipulation"
               >
                 {t('common.showAllProducts')} ({currentRecommendation.products.length})
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -271,7 +271,7 @@ export function ProductRecommendationsSidebar({
 
   return (
     <div className={`bg-white/70 backdrop-blur-xl rounded-xl border border-blue-200/40 shadow-sm overflow-hidden ${className}`}>
-      <div className="bg-gradient-to-r from-red-50/80 to-blue-50/60 p-3 border-b border-blue-200/30">
+      <div className="bg-gradient-to-r from-sky-50/80 to-blue-50/60 p-3 border-b border-blue-200/30">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-blue-700" />
           <h4 className="text-sm font-semibold text-slate-800">{t('hero.alsoRecommend')}</h4>
@@ -305,7 +305,7 @@ export function ProductRecommendationsSidebar({
             }}
           >
             <div className="flex gap-3 p-2 rounded-lg hover:bg-blue-50/50 transition-colors">
-              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-red-50 to-blue-50">
+              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-sky-50 to-blue-50">
                 <SafeImage
                   src={product.imageUrl || product.image_url || (product.images && product.images.length > 0 ? product.images[0] : null) || '/placeholder.jpg'}
                   alt={product.name}
@@ -323,9 +323,9 @@ export function ProductRecommendationsSidebar({
                 </p>
                 {product.price && (
                   <p className="text-xs font-medium text-blue-600 mt-1">
-                    {new Intl.NumberFormat('ru-RU', {
+                    {new Intl.NumberFormat('en-US', {
                       style: 'currency',
-                      currency: 'RUB'
+                      currency: 'USD'
                     }).format(product.price)}
                   </p>
                 )}

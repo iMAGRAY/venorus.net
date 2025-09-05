@@ -164,7 +164,7 @@ export function CatalogDownloadButtons() {
             <Button
               onClick={() => handleDownload(catalog)}
               disabled={downloading === catalog.id}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 rounded-lg font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white shadow-md hover:shadow-lg transition-all duration-300 rounded-lg font-medium"
             >
               {downloading === catalog.id ? (
                 <>

@@ -23,11 +23,11 @@ const contactTypeIcons = {
 }
 
 const contactTypeLabels = {
-  phone: "Телефон",
+  phone: "Teléfono",
   email: "Email",
-  address: "Адрес",
-  website: "Веб-сайт",
-  other: "Другое",
+  address: "Dirección",
+  website: "Sitio web",
+  other: "Otro",
 }
 
 export function AdditionalContactsManager({ contacts, onChange }: AdditionalContactsManagerProps) {
@@ -78,7 +78,7 @@ export function AdditionalContactsManager({ contacts, onChange }: AdditionalCont
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{contact.label}</span>
                         <span className={`px-2 py-1 text-xs rounded ${contact.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                          {contact.isActive ? "Активен" : "Неактивен"}
+                          {contact.isActive ? "Activo" : "Inactivo"}
                         </span>
                       </div>
                       <div className="text-sm text-slate-600">{contact.value}</div>
@@ -87,9 +87,9 @@ export function AdditionalContactsManager({ contacts, onChange }: AdditionalCont
                   </div>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" onClick={() => toggleContactStatus(contact.id)}>
-                      {contact.isActive ? "Скрыть" : "Показать"}
+                      {contact.isActive ? "Ocultar" : "Mostrar"}
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => removeContact(contact.id)} className="text-red-600 hover:text-red-700">
+                    <Button variant="outline" size="sm" onClick={() => removeContact(contact.id)} className="text-sky-600 hover:text-sky-700">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -99,10 +99,10 @@ export function AdditionalContactsManager({ contacts, onChange }: AdditionalCont
           </div>
         )}
         <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
-          <h4 className="text-sm font-medium text-slate-700">Добавить новый контакт</h4>
+          <h4 className="text-sm font-medium text-slate-700">Agregar nuevo contacto</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="contact-type">Тип контакта</Label>
+              <Label htmlFor="contact-type">Tipo de contacto</Label>
               <select
                 id="contact-type"
                 value={newContact.type}
@@ -117,25 +117,25 @@ export function AdditionalContactsManager({ contacts, onChange }: AdditionalCont
               </select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contact-label">Название</Label>
+              <Label htmlFor="contact-label">Nombre</Label>
               <Input
                 id="contact-label"
-                placeholder="Например: Горячая линия"
+                placeholder="Por ejemplo: Línea directa"
                 value={newContact.label}
                 onChange={(e) => setNewContact({ ...newContact, label: e.target.value })}
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contact-value">Значение</Label>
+            <Label htmlFor="contact-value">Valor</Label>
             <Input
               id="contact-value"
               placeholder={
-                newContact.type === "phone" ? "+7 (xxx) xxx-xx-xx" :
+                newContact.type === "phone" ? "+58 (xxx) xxx-xx-xx" :
                 newContact.type === "email" ? "example@domain.com" :
-                newContact.type === "address" ? "Адрес" :
+                newContact.type === "address" ? "Dirección" :
                 newContact.type === "website" ? "https://example.com" :
-                "Значение"
+                "Valor"
               }
               value={newContact.value}
               onChange={(e) => setNewContact({ ...newContact, value: e.target.value })}
@@ -147,7 +147,7 @@ export function AdditionalContactsManager({ contacts, onChange }: AdditionalCont
             className="w-full"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Добавить контакт
+            Agregar contacto
           </Button>
         </div>
       </div>

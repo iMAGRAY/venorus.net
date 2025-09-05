@@ -600,12 +600,12 @@ export default function ProductPage() {
         <Header />
         <main className="flex-grow flex items-center justify-center relative z-10">
           <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-blue-200/40 shadow-xl shadow-blue-100/20 p-12 text-center max-w-md">
-            <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-red-700 to-blue-800 bg-clip-text text-transparent">{t('productPage.notFound')}</h1>
+            <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-sky-600 to-blue-800 bg-clip-text text-transparent">{t('productPage.notFound')}</h1>
             <p className="text-slate-600 mb-8 leading-relaxed">
-              Запрашиваемый товар не существует или был удален.
+              El producto solicitado no existe o ha sido eliminado.
             </p>
             <Button
-              className="px-8 py-4 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] rounded-xl font-medium"
+              className="px-8 py-4 bg-gradient-to-r from-sky-400 to-blue-600 hover:from-sky-500 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] rounded-xl font-medium"
               onClick={() => window.location.href = '/'}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -666,10 +666,10 @@ export default function ProductPage() {
                 router.push('/')
               }
             }}
-            className="mb-4 sm:mb-8 bg-gradient-to-r from-red-50 to-blue-50 border-blue-200 text-blue-700 hover:from-red-100 hover:to-blue-100 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mb-4 sm:mb-8 bg-gradient-to-r from-sky-50 to-blue-50 border-blue-200 text-blue-700 hover:from-sky-100 hover:to-blue-100 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            Назад
+            {t('product.back')}
           </Button>
 
           {/* Main Product Section - Tiffany glass card с адаптивностью */}
@@ -716,13 +716,13 @@ export default function ProductPage() {
                       <>
                         <button
                           onClick={prevImage}
-                          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-blue-200/40 text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-blue-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+                          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-blue-200/40 text-blue-700 hover:bg-gradient-to-r hover:from-sky-50 hover:to-blue-50 hover:border-blue-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                           <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                         <button
                           onClick={nextImage}
-                          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-blue-200/40 text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 hover:border-blue-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+                          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-blue-200/40 text-blue-700 hover:bg-gradient-to-r hover:from-sky-50 hover:to-blue-50 hover:border-blue-300 p-2 sm:p-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                           <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
@@ -790,65 +790,65 @@ export default function ProductPage() {
                   />
 
                   {/* Цена и кнопка добавления */}
-                  <div className="bg-gradient-to-r from-red-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 p-4 sm:p-6 shadow-lg shadow-blue-100/20">
+                  <div className="bg-gradient-to-r from-sky-50/50 to-blue-50/30 rounded-xl border border-blue-200/40 p-4 sm:p-6 shadow-lg shadow-blue-100/20">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-600 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
                           <span className="text-white font-bold text-sm sm:text-base">₽</span>
                         </div>
                         <div>
-                          <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-1">Цена</h3>
+                          <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-1">{t('product.price')}</h3>
                           {/* Если выбран вариант, показываем его цену */}
                           {selectedVariant ? (
                             // Проверяем show_price варианта
                             selectedVariant.show_price === false ? (
                               <span className="text-lg sm:text-xl font-bold text-slate-600">
-                                По запросу
+                                {t('product.onRequest')}
                               </span>
                             ) : selectedVariant.discount_price ? (
                               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                 <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-800 bg-clip-text text-transparent">
-                                  {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.discount_price)}
+                                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.discount_price)}
                                 </span>
                                 {selectedVariant.price && (
                                   <span className="text-xs sm:text-sm line-through text-slate-400">
-                                    {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.price)}
+                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}
                                   </span>
                                 )}
                               </div>
                             ) : selectedVariant.price ? (
                               <span className="text-lg sm:text-xl font-bold text-slate-800">
-                                {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(selectedVariant.price)}
+                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}
                               </span>
                             ) : (
                               <span className="text-lg sm:text-xl font-bold text-slate-600">
-                                По запросу
+                                {t('product.onRequest')}
                               </span>
                             )
                           ) : (
                             /* Иначе показываем цену продукта */
                             product.show_price === false || (!product.price && !product.discount_price) ? (
                               <span className="text-lg sm:text-xl font-bold text-slate-600">
-                                По запросу
+                                {t('product.onRequest')}
                               </span>
                             ) : (product.price || product.discount_price) ? (
                               product.discount_price && product.price && product.discount_price < product.price ? (
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                   <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-800 bg-clip-text text-transparent">
-                                    {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(product.discount_price)}
+                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.discount_price)}
                                   </span>
                                   <span className="text-xs sm:text-sm line-through text-slate-400">
-                                    {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(product.price)}
+                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)}
                                   </span>
                                 </div>
                               ) : (
                                 <span className="text-lg sm:text-xl font-bold text-slate-800">
-                                  {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format((product.price || product.discount_price) ?? 0)}
+                                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((product.price || product.discount_price) ?? 0)}
                                 </span>
                               )
                             ) : (
                               <span className="text-lg sm:text-xl font-bold text-slate-600">
-                                По запросу
+                                {t('product.onRequest')}
                               </span>
                             )
                           )}
@@ -869,9 +869,9 @@ export default function ProductPage() {
                           )
                         }`}>
                           {selectedVariant ? (
-                            selectedVariant.in_stock ? 'В наличии' : 'Нет в наличии'
+                            selectedVariant.in_stock ? t('product.inStock') : t('product.outOfStock')
                           ) : (
-                            product.in_stock ? 'В наличии' : 'Нет в наличии'
+                            product.in_stock ? t('product.inStock') : t('product.outOfStock')
                           )}
                         </Badge>
                       </div>
@@ -879,7 +879,7 @@ export default function ProductPage() {
                     
                     {/* Кнопка добавления в заявку */}
                     <Button
-                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center gap-2"
+                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-sky-400 to-blue-600 hover:from-sky-500 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base flex items-center justify-center gap-2"
                       onClick={async () => {
                         if (product) {
                           // Если есть выбранный вариант, используем его данные
@@ -922,7 +922,7 @@ export default function ProductPage() {
                             })
                             
                             // Формируем сообщение о добавлении с учетом конфигурации
-                            let message = `Товар "${product.name} - ${selectedVariant.name}" добавлен в корзину`
+                            let message = `Producto "${product.name} - ${selectedVariant.name}" añadido a la solicitud`
                             
                             if (Object.keys(selectedConfiguration).length > 0) {
                               const configDetails = Object.values(selectedConfiguration)
@@ -970,7 +970,7 @@ export default function ProductPage() {
                             })
                             
                             // Формируем сообщение о добавлении с учетом конфигурации
-                            let message = `Товар "${product.name}" добавлен в корзину`
+                            let message = `Producto "${product.name}" añadido a la solicitud`
                             
                             if (Object.keys(selectedConfiguration).length > 0) {
                               const configDetails = Object.values(selectedConfiguration)
@@ -985,7 +985,7 @@ export default function ProductPage() {
                       }}
                     >
                       <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-                      Добавить в заявку
+                      {t('product.addToCart')}
                     </Button>
                   </div>
 
@@ -1014,7 +1014,7 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Основная информация о товаре */}
+          {/* Información básica del producto */}
           <div className="mb-12">
             <ProductBasicInfo
               product={{
@@ -1059,7 +1059,7 @@ export default function ProductPage() {
                 </span>
               </h3>
               <p className="text-slate-600">
-                Товары, которые могут вас заинтересовать
+                Productos que pueden interesarte
               </p>
             </div>
 
@@ -1099,7 +1099,7 @@ export default function ProductPage() {
             </h2>
                 {images.length > 1 && (
                   <span className="text-white/70 text-sm bg-white/20 px-3 py-1 rounded-full">
-                    {currentImageIndex + 1} из {images.length}
+                    {currentImageIndex + 1} de {images.length}
                   </span>
                 )}
               </div>
@@ -1108,7 +1108,7 @@ export default function ProductPage() {
               <button
                 onClick={closeFullscreen}
                 className="p-3 sm:p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-300 hover:scale-110 touch-manipulation"
-                aria-label="Закрыть полноэкранный режим"
+                aria-label="Cerrar modo pantalla completa"
               >
                 <svg className="w-6 h-6 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1120,7 +1120,7 @@ export default function ProductPage() {
             <button
               onClick={closeFullscreen}
               className="md:hidden absolute top-4 right-4 z-10 p-3 bg-black/50 backdrop-blur-sm rounded-full text-white border border-white/30 shadow-lg touch-manipulation"
-              aria-label="Закрыть"
+              aria-label="Cerrar"
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />

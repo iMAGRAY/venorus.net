@@ -128,7 +128,7 @@ ${items.map(item => {
             </SheetHeader>
 
             <div className="flex flex-col items-center justify-center h-full py-16">
-              <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-3xl p-12 text-center border border-blue-200/30">
+              <div className="bg-gradient-to-r from-sky-50/50 to-blue-50/40 backdrop-blur-sm rounded-3xl p-12 text-center border border-blue-200/30">
                 <ClipboardList className="w-16 h-16 text-blue-500 mx-auto mb-6" />
                 <h3 className="text-xl font-semibold text-slate-800 mb-4">{t('cart.empty')}</h3>
                 <p className="text-slate-600 mb-6">
@@ -136,7 +136,7 @@ ${items.map(item => {
                 </p>
                 <Button
                   onClick={() => setIsOpen(false)}
-                  className="bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02]"
+                  className="bg-gradient-to-r from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02]"
                 >
                   {t('cart.continue')}
                 </Button>
@@ -159,7 +159,7 @@ ${items.map(item => {
             <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-slate-800 via-red-700 to-blue-800 bg-clip-text text-transparent flex items-center gap-2">
               <ClipboardList className="w-6 h-6 text-blue-600" />
               {t('cart.title')}
-              <Badge className="bg-gradient-to-r from-red-600 to-blue-600 text-white border-0 text-sm">
+              <Badge className="bg-gradient-to-r from-sky-400 to-sky-600 text-white border-0 text-sm">
                 {items.length}
               </Badge>
             </SheetTitle>
@@ -171,7 +171,7 @@ ${items.map(item => {
               {items.map((item, index) => {
                 const uniqueKey = `${item.id}-${index}`
                 return (
-                  <div key={uniqueKey} className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30">
+                  <div key={uniqueKey} className="bg-gradient-to-r from-sky-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30">
                     <div className="flex items-start gap-4">
                       {!imageErrors[uniqueKey] ? (
                         <SafeImage
@@ -183,7 +183,7 @@ ${items.map(item => {
                           onError={() => setImageErrors(prev => ({ ...prev, [uniqueKey]: true }))}
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-100 to-blue-100 border border-blue-200/30 flex-shrink-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-sky-100 to-blue-100 border border-blue-200/30 flex-shrink-0 flex items-center justify-center">
                           <ClipboardList className="w-6 h-6 text-blue-600" />
                         </div>
                       )}
@@ -267,10 +267,10 @@ ${items.map(item => {
           {/* Итоги и действия */}
           <div className="border-t border-blue-200/30 pt-4 space-y-4">
             {/* Итоговая сумма */}
-            <div className="bg-gradient-to-r from-red-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30">
+            <div className="bg-gradient-to-r from-sky-50/50 to-blue-50/40 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-slate-800">{t('cart.total')}</span>
-                <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-sky-400 to-sky-600 bg-clip-text text-transparent">
                   {totalPrice.toLocaleString('ru-RU')} ₽
                 </span>
               </div>
@@ -280,7 +280,7 @@ ${items.map(item => {
             <div className="space-y-3">
               <Button
                 onClick={handleOrderClick}
-                className="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] py-3"
+                className="w-full bg-gradient-to-r from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white border-0 transition-all duration-300 shadow-lg shadow-blue-200/30 hover:shadow-xl hover:shadow-blue-300/40 hover:scale-[1.02] py-3"
               >
                 <Phone className="w-4 h-4 mr-2" />
                 {t('cart.checkout')}

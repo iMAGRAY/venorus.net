@@ -201,7 +201,7 @@ export function ProductVariantSelectorHorizontal({
           className={cn(
             "p-3 border-2 rounded-xl cursor-pointer transition-all duration-300",
             selectedVariant?.id === variants[0].id
-              ? "bg-gradient-to-r from-red-50 to-blue-50 border-blue-600 shadow-lg shadow-blue-200/50"
+              ? "bg-gradient-to-r from-sky-50 to-blue-50 border-blue-600 shadow-lg shadow-blue-200/50"
               : "bg-white border-gray-200 hover:border-blue-300 hover:shadow-md"
           )}
           onClick={() => handleVariantSelect(variants[0])}
@@ -294,7 +294,7 @@ export function ProductVariantSelectorHorizontal({
                   className={cn(
                     "relative group cursor-pointer rounded-xl border-2 bg-white transition-all duration-300 flex-shrink-0 min-w-[100px] max-w-[150px] hover:scale-105",
                     selectedVariant?.id === variant.id
-                      ? "border-blue-600 shadow-lg shadow-blue-200/50 bg-gradient-to-br from-red-50 to-blue-50"
+                      ? "border-blue-600 shadow-lg shadow-blue-200/50 bg-gradient-to-br from-sky-50 to-blue-50"
                       : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                     !variant.in_stock && "opacity-60 cursor-not-allowed"
                   )}
@@ -351,7 +351,7 @@ export function ProductVariantSelectorHorizontal({
                     {!variant.in_stock && (
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                         <span className="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">
-                          Нет в наличии
+                          Agotado
                         </span>
                       </div>
                     )}
@@ -396,7 +396,7 @@ export function ProductVariantSelectorHorizontal({
                       </div>
                     )}
 
-                    {/* Цена */}
+                    {/* Precio */}
                     <div className="text-center">
                       {variant.discount_price ? (
                         <div className="space-y-0.5">
@@ -449,7 +449,7 @@ export function ProductVariantSelectorHorizontal({
 
       {/* Информация о выбранном варианте */}
       {selectedVariant && (
-        <div className="p-4 bg-gradient-to-r from-red-50 to-blue-50 border border-blue-200 rounded-xl transition-all duration-300">
+        <div className="p-4 bg-gradient-to-r from-sky-50 to-blue-50 border border-blue-200 rounded-xl transition-all duration-300">
           <div className="flex items-start gap-4">
             {selectedVariant.primary_image_url && (
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-white shadow-sm flex-shrink-0">
@@ -490,7 +490,7 @@ export function ProductVariantSelectorHorizontal({
                       {selectedVariant.price.toLocaleString('ru-RU')} ₽
                     </span>
                   ) : (
-                    <Badge variant="secondary">Цена по запросу</Badge>
+                    <Badge variant="secondary">Precio bajo consulta</Badge>
                   )}
                 </div>
                 

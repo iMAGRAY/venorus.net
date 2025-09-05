@@ -39,8 +39,8 @@ export function CategorySidebar({
             w-full text-left px-4 py-3 rounded-lg transition-all duration-300 font-medium border
             ${
               activeCategory === "All" || activeCategoryId === null
-                ? "bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-lg shadow-blue-200/30 border-blue-400"
-                : "text-blue-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-blue-50 border-blue-200/40 hover:border-blue-300/60 hover:shadow-md"
+                ? "bg-gradient-to-r from-sky-400 to-blue-600 text-white shadow-lg shadow-blue-200/30 border-blue-400"
+                : "text-blue-700 hover:bg-gradient-to-r hover:from-sky-50 hover:to-blue-50 border-blue-200/40 hover:border-blue-300/60 hover:shadow-md"
             }
           `}
         >

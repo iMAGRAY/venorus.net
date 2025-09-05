@@ -102,9 +102,9 @@ export function ProductSelector({ selectedProduct, onProductSelect, trigger }: P
   }
 
   const formatPrice = (price: string) => {
-    return new Intl.NumberFormat('ru-RU', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'RUB',
+      currency: 'USD',
       minimumFractionDigits: 0
     }).format(parseFloat(price))
   }

@@ -220,7 +220,7 @@ export const WarehouseBulkOperations: React.FC<WarehouseBulkOperationsProps> = (
         return [
           { value: 'active', label: 'Активен', color: 'bg-green-100 text-green-800' },
           { value: 'low_stock', label: 'Мало на складе', color: 'bg-yellow-100 text-yellow-800' },
-          { value: 'out_of_stock', label: 'Нет в наличии', color: 'bg-red-100 text-red-800' },
+          { value: 'out_of_stock', label: 'Нет в наличии', color: 'bg-sky-100 text-sky-800' },
           { value: 'discontinued', label: 'Снят с производства', color: 'bg-gray-100 text-gray-800' }
         ]
       case 'region':
@@ -422,7 +422,7 @@ export const WarehouseBulkOperations: React.FC<WarehouseBulkOperationsProps> = (
           {!item.can_delete && (
             <Tooltip>
               <TooltipTrigger>
-                <AlertTriangle className="w-4 h-4 text-red-500" />
+                <AlertTriangle className="w-4 h-4 text-sky-500" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Нельзя удалить</p>
@@ -442,7 +442,7 @@ export const WarehouseBulkOperations: React.FC<WarehouseBulkOperationsProps> = (
           <DialogTitle className="flex items-center gap-2">
             {operationProgress.status === 'running' && <Clock className="w-5 h-5 animate-pulse" />}
             {operationProgress.status === 'completed' && <CheckCircle className="w-5 h-5 text-green-600" />}
-            {operationProgress.status === 'failed' && <AlertTriangle className="w-5 h-5 text-red-600" />}
+            {operationProgress.status === 'failed' && <AlertTriangle className="w-5 h-5 text-sky-600" />}
             Выполнение операции
           </DialogTitle>
           <DialogDescription>
@@ -470,12 +470,12 @@ export const WarehouseBulkOperations: React.FC<WarehouseBulkOperationsProps> = (
 
           {operationProgress.errors.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-red-600">Ошибки:</p>
+              <p className="text-sm font-medium text-sky-600">Ошибки:</p>
               <div className="max-h-32 overflow-y-auto space-y-1">
                 {operationProgress.errors.map((error, index) => (
-                  <div key={index} className="text-xs p-2 bg-red-50 rounded border border-red-200">
+                  <div key={index} className="text-xs p-2 bg-sky-50 rounded border border-sky-200">
                     <p className="font-medium">{error.item_name}</p>
-                    <p className="text-red-600">{error.error}</p>
+                    <p className="text-sky-600">{error.error}</p>
                   </div>
                 ))}
               </div>
@@ -946,7 +946,7 @@ export const WarehouseBulkOperations: React.FC<WarehouseBulkOperationsProps> = (
               Вы уверены, что хотите выполнить операцию &quot;{pendingOperation?.operation.label}&quot;
               для {selectedItems.size} элементов?
               {pendingOperation?.operation.type === 'delete' && (
-                <div className="mt-2 p-2 bg-red-50 rounded text-red-700 text-sm">
+                <div className="mt-2 p-2 bg-sky-50 rounded text-sky-700 text-sm">
                   <strong>Внимание:</strong> Это действие нельзя отменить.
                 </div>
               )}

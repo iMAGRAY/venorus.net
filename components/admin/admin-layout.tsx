@@ -182,7 +182,7 @@ function AdminLayoutInner({ children }: AdminLayoutProps) {
             onClick={handleLogout}
             variant="ghost"
             size="sm"
-            className="w-full flex items-center gap-2 text-gray-500 hover:text-red-500 hover:bg-red-50 justify-start px-2 rounded-lg"
+            className="w-full flex items-center gap-2 text-gray-500 hover:text-sky-500 hover:bg-sky-50 justify-start px-2 rounded-lg"
           >
             <LogOut className="w-4 h-4" />
             Выход
@@ -267,7 +267,7 @@ function AdminLayoutInner({ children }: AdminLayoutProps) {
               onClick={handleLogout}
               variant="ghost"
               size="sm"
-              className="flex items-center gap-1 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg"
+              className="flex items-center gap-1 text-gray-500 hover:text-sky-500 hover:bg-sky-50 rounded-lg"
             >
               <LogOut className="w-3 h-3" />
             </Button>

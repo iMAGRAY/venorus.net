@@ -96,17 +96,17 @@ export function ProductGrid({ products, view, onQuickView, isLoading = false }: 
     return (
       <div className="relative">
         {/* Фоновый градиент */}
-        <div className="absolute inset-0 bg-gradient-to-br from-red-100/20 to-blue-100/30 rounded-2xl blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-100/20 to-blue-100/30 rounded-2xl blur-sm"></div>
 
         <div className="relative text-center py-16 bg-white/60 backdrop-blur-lg rounded-2xl border border-blue-200/40 shadow-lg shadow-blue-100/20">
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-red-100 to-blue-100 rounded-full flex items-center justify-center">
-            <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-blue-400 rounded-full"></div>
+          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-sky-100 to-blue-100 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-blue-400 rounded-full"></div>
           </div>
-          <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-red-700 to-blue-700 bg-clip-text text-transparent">
-            Товары не найдены
+          <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-sky-600 to-blue-700 bg-clip-text text-transparent">
+            Productos no encontrados
           </h3>
           <p className="text-slate-600 max-w-md mx-auto">
-            Попробуйте изменить поиск или фильтры, чтобы найти подходящие протезы
+            Intente cambiar la búsqueda o los filtros para encontrar productos adecuados
           </p>
         </div>
       </div>

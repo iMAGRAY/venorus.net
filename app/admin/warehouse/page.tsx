@@ -78,7 +78,7 @@ export default function WarehousePage() {
         <div className="flex items-center justify-center min-h-96">
           <Card className="max-w-md">
             <CardContent className="p-6 text-center">
-              <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-red-500" />
+              <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-sky-500" />
               <h3 className="text-lg font-semibold mb-2">Ошибка загрузки</h3>
               <p className="text-gray-600 mb-4">{error}</p>
               <Button onClick={loadAllData}>

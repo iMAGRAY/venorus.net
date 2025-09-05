@@ -178,7 +178,7 @@ export function ProductVariantSelectorModal({
               className={cn(
                 "relative group cursor-pointer rounded-lg border-2 bg-white transition-all duration-300 p-3",
                 isSelected
-                  ? "border-blue-600 shadow-md shadow-blue-200/50 bg-gradient-to-br from-red-50 to-blue-50"
+                  ? "border-blue-600 shadow-md shadow-blue-200/50 bg-gradient-to-br from-sky-50 to-blue-50"
                   : "border-gray-200 hover:border-gray-300 hover:shadow-md",
                 !inStock && "opacity-60"
               )}
@@ -224,7 +224,7 @@ export function ProductVariantSelectorModal({
                   {displayName}
                 </h4>
 
-                {/* Цена */}
+                {/* Precio */}
                 <div className="text-center">
                   {itemData.show_price === false || (!itemData.price && !itemData.discount_price) ? (
                     <div className="text-sm text-gray-600">По запросу</div>
@@ -247,8 +247,8 @@ export function ProductVariantSelectorModal({
                 {/* Статус наличия (только если нет в наличии) */}
                 {!inStock && (
                   <div className="text-center">
-                    <Badge className="bg-red-100 text-red-700 text-xs">
-                      Нет в наличии
+                    <Badge className="bg-sky-100 text-sky-700 text-xs">
+                      Agotado
                     </Badge>
                   </div>
                 )}

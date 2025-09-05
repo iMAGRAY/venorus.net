@@ -44,9 +44,9 @@ export function getProductStockLabel(product: any): string {
 
 export function formatPrice(price: number | string): string {
   const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-  return new Intl.NumberFormat('ru-RU', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'RUB',
+    currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
   }).format(numPrice);

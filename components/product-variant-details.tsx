@@ -72,20 +72,20 @@ export function ProductVariantDetails({
         <div className="flex-1 overflow-y-auto">
           <Tabs defaultValue="general" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="general">Основное</TabsTrigger>
-              <TabsTrigger value="pricing">Цены и наличие</TabsTrigger>
-              <TabsTrigger value="images">Изображения</TabsTrigger>
-              <TabsTrigger value="specs">Характеристики</TabsTrigger>
+              <TabsTrigger value="general">General</TabsTrigger>
+              <TabsTrigger value="pricing">Precios y disponibilidad</TabsTrigger>
+              <TabsTrigger value="images">Imágenes</TabsTrigger>
+              <TabsTrigger value="specs">Características</TabsTrigger>
             </TabsList>
 
             <div className="mt-4">
-              {/* Основная информация */}
+              {/* Información básica */}
               <TabsContent value="general" className="space-y-4">
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Info className="w-5 h-5" />
-                      Основная информация
+                      Información básica
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -122,14 +122,14 @@ export function ProductVariantDetails({
 
                     {variant.description && (
                       <div>
-                        <h3 className="font-medium text-sm text-slate-600 mb-1">Описание</h3>
+                        <h3 className="font-medium text-sm text-slate-600 mb-1">Descripción</h3>
                         <p className="text-slate-700 whitespace-pre-wrap">{variant.description}</p>
                       </div>
                     )}
 
                     {variant.sku && (
                       <div>
-                        <h3 className="font-medium text-sm text-slate-600 mb-1">Артикул</h3>
+                        <h3 className="font-medium text-sm text-slate-600 mb-1">Artículo</h3>
                         <p className="font-mono text-slate-800">{variant.sku}</p>
                       </div>
                     )}
@@ -152,7 +152,7 @@ export function ProductVariantDetails({
                 </Card>
               </TabsContent>
 
-              {/* Цены и наличие */}
+              {/* Precios y disponibilidad */}
               <TabsContent value="pricing" className="space-y-4">
                 <Card>
                   <CardHeader>
@@ -164,7 +164,7 @@ export function ProductVariantDetails({
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-slate-50 p-4 rounded-lg">
-                        <h3 className="font-medium text-sm text-slate-600 mb-2">Цена</h3>
+                        <h3 className="font-medium text-sm text-slate-600 mb-2">Precio</h3>
                         {variant.price ? (
                           <p className="text-2xl font-bold text-slate-800">
                             {variant.price.toLocaleString('ru-RU')} ₽
@@ -176,7 +176,7 @@ export function ProductVariantDetails({
 
                       {variant.discountPrice && (
                         <div className="bg-green-50 p-4 rounded-lg">
-                          <h3 className="font-medium text-sm text-green-700 mb-2">Цена со скидкой</h3>
+                          <h3 className="font-medium text-sm text-green-700 mb-2">Precio con descuento</h3>
                           <p className="text-2xl font-bold text-green-700">
                             {variant.discountPrice.toLocaleString('ru-RU')} ₽
                           </p>
@@ -209,13 +209,13 @@ export function ProductVariantDetails({
                 </Card>
               </TabsContent>
 
-              {/* Изображения */}
+              {/* Imágenes */}
               <TabsContent value="images">
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <ImageIcon className="w-5 h-5" />
-                      Изображения варианта
+                      Imágenes de la variante
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -234,7 +234,7 @@ export function ProductVariantDetails({
                       </div>
                     ) : (
                       <p className="text-center text-slate-500 py-8">
-                        Изображения не загружены
+                        Imágenes no cargadas
                       </p>
                     )}
                   </CardContent>
@@ -247,7 +247,7 @@ export function ProductVariantDetails({
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <FileText className="w-5 h-5" />
-                      Характеристики варианта
+                      Características de la variante
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -271,7 +271,7 @@ export function ProductVariantDetails({
                       </div>
                     ) : (
                       <p className="text-center text-slate-500 py-8">
-                        Характеристики не указаны
+                        Características no especificadas
                       </p>
                     )}
                   </CardContent>

@@ -505,7 +505,7 @@ export function SelectionTablesEditor({
                         size="sm"
                         variant="ghost"
                         onClick={() => removeRow(type, rowIndex)}
-                        className="h-8 w-8 p-0 text-red-600"
+                        className="h-8 w-8 p-0 text-sky-600"
                       >
                         <MinusCircle className="w-4 h-4" />
                       </Button>
