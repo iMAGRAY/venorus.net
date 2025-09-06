@@ -11,6 +11,7 @@ import { useAdminStore } from "@/lib/stores"
 import type { Prosthetic } from "@/lib/data"
 import { Package, Clock, Shield, Tag, ChevronLeft, ChevronRight, X, Building } from "lucide-react"
 import { useState, useMemo } from "react"
+import { getProductImageSrc } from "@/lib/product-image-utils"
 import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
 import { isProductOutOfStock, isProductAvailable, getActualPrice } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -76,7 +77,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
     if (selectedVariant?.imageUrl) {
       return [selectedVariant.imageUrl]
     }
-    return product.images || (product.imageUrl ? [product.imageUrl] : [])
+    return (Array.isArray(product.images) && product.images.length > 0) ? product.images : [getProductImageSrc(product)]
   }, [selectedVariant?.images, selectedVariant?.imageUrl, product?.images, product?.imageUrl, product?.id])
 
   // Вычисляем актуальную цену с учетом выбранного варианта
@@ -116,7 +117,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
       id: selectedVariant ? `${String(product.id)}-${selectedVariant.id}` : String(product.id),
       name: selectedVariant?.name || product.name,
       price: actualPrice || 0, // Используем 0 как fallback для null
-      image_url: images[0] || '',
+      image_url: images[0] || getProductImageSrc(product),
       category: product.category_name || product.category || '',
       sku: selectedVariant?.sku || product.sku || '',
       article_number: product.article_number || '',
@@ -243,7 +244,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                         masterProduct={{
                           id: product.id,
                           name: product.name,
-                          primary_image_url: images[0] || product.imageUrl || product.image_url || '',
+                          primary_image_url: images[0] || getProductImageSrc(product),
                           price: product.price,
                           discount_price: product.discount_price,
                           in_stock: (product as any).in_stock ?? (product as any).inStock ?? true,
@@ -294,7 +295,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                       {product.show_price === false || !actualPrice ? (
                         <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-600">
-                          По запросу
+                          {t('product.onRequest')}
                         </span>
                       ) : selectedVariant && selectedVariant.discountPrice && selectedVariant.price && selectedVariant.discountPrice < selectedVariant.price ? (
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
@@ -320,7 +321,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                         </span>
                       ) : (
                         <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-600">
-                          По запросу
+                          {t('product.onRequest')}
                         </span>
                       )}
                     </div>
@@ -343,7 +344,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                         }}
                         className="w-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base border-blue-300 bg-white/80 hover:bg-blue-50 text-blue-700 transition-all duration-300 rounded-lg font-medium"
                       >
-                        <span>Подробнее</span>
+                        <span>{t('product.details')}</span>
                       </Button>
                     </div>
                   </div>
@@ -364,7 +365,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
 
                 <div className="space-y-3 sm:space-y-4">
                   <div>
-                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1.5 sm:mb-2 text-slate-800">Descripción</h3>
+                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1.5 sm:mb-2 text-slate-800">{t('product.description')}</h3>
                     <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed whitespace-pre-wrap">
                       {selectedVariant?.description || product.description || "Descripción del producto no disponible"}
                     </p>
@@ -373,26 +374,26 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
                   <Separator />
 
                   <div>
-                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 sm:mb-3 text-slate-800">Características</h3>
+                    <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-2 sm:mb-3 text-slate-800">{t('product.characteristics')}</h3>
                     <div className="space-y-1.5 sm:space-y-2">
                       {product.warranty && (
                         <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-green-50 to-green-100 p-1.5 sm:p-2 rounded-lg border border-green-200/50">
                           <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-green-600" />
-                          <span className="font-medium text-green-700">Гарантия:</span>
+                          <span className="font-medium text-green-700">{t('product.warranty')}:</span>
                           <span className="ml-1">{product.warranty}</span>
                         </div>
                       )}
                       {product.batteryLife && (
                         <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-blue-50 to-blue-100 p-1.5 sm:p-2 rounded-lg border border-blue-200/50">
                           <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-blue-600" />
-                          <span className="font-medium text-blue-700">Время работы:</span>
+                          <span className="font-medium text-blue-700">{t('product.batteryLife')}:</span>
                           <span className="ml-1">{product.batteryLife}</span>
                         </div>
                       )}
                       {product.weight && (
                         <div className="flex items-center text-xs sm:text-sm lg:text-base text-slate-600 bg-gradient-to-r from-orange-50 to-amber-50 p-1.5 sm:p-2 rounded-lg border border-orange-200/50">
                           <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-orange-600" />
-                          <span className="font-medium text-orange-700">Вес:</span>
+                          <span className="font-medium text-orange-700">{t('product.weight')}:</span>
                           <span className="ml-1">{product.weight} г</span>
                         </div>
                       )}
@@ -409,7 +410,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
             <div className="hidden xl:block">
               <div className="sticky top-0 max-h-[calc(100vh-12rem)] overflow-y-auto">
                 <h3 className="text-base lg:text-lg font-semibold mb-3 lg:mb-4 text-slate-800">
-                  Рекомендуем также
+                  {t('hero.alsoRecommend')}
                 </h3>
                 <ProductRecommendationsSidebar
                   currentProduct={product as any}
@@ -423,7 +424,7 @@ export function ProductQuickView({ product, isOpen, onClose, onProductChange, al
           {/* Рекомендации для мобильных устройств */}
           <div className="xl:hidden mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
             <h3 className="text-sm sm:text-base font-semibold mb-2 sm:mb-3 text-slate-800">
-              Рекомендуем также
+              {t('hero.alsoRecommend')}
             </h3>
             <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
               <ProductRecommendationsSidebar

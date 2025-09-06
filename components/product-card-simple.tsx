@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import type { Prosthetic } from "@/lib/data"
 import { Eye } from "lucide-react"
 import { InstantLink } from "@/components/instant-link"
-import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
+import { getProductImageSrc } from "@/lib/product-image-utils"
 import { useCart } from "@/lib/cart-context"
 import { getActualPrice } from "@/lib/utils"
 import Link from "next/link"
@@ -41,7 +41,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
       id: String(product.id),
       name: product.name,
       price: getActualPrice(product),
-      image_url: product.imageUrl || product.image_url || (product.images && product.images.length > 0 ? product.images[0] : '') || '',
+      image_url: getProductImageSrc(product),
       category: product.category_name || product.category || '',
       sku: product.sku || '',
       article_number: product.article_number || '',
@@ -72,7 +72,7 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
         {/* Изображение */}
         <div className="relative w-full aspect-square bg-slate-50 overflow-hidden">
           <SafeImage
-            src={product.imageUrl || product.image_url || (product.images && product.images.length > 0 ? product.images[0] : null) || PROSTHETIC_FALLBACK_IMAGE}
+            src={getProductImageSrc(product)}
                             alt={product.short_name || product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -82,11 +82,6 @@ export function ProductCardSimple({ product, onQuickView, className = "" }: Prod
           {/* Лёгкая маска при ховере */}
           <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          {/* Бейджи происхождения и доставки */}
-          <div className="absolute top-3 left-3 flex gap-1">
-            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇻🇪 Hecho en Venezuela</span>
-            <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">📦 Entrega</span>
-          </div>
 
           {/* Кнопка быстрого просмотра */}
           <div className="absolute top-3 right-3">

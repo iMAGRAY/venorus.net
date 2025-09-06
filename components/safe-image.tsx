@@ -39,8 +39,23 @@ export function SafeImage({
 }: SafeImageProps) {
   const isS3Image = /s3\.twcstorage\.ru/i.test(src)
   const isLocalFile = src?.includes('/uploads/') || src?.startsWith('/uploads/')
+  // Only treat truly local uploads as problematic, not external HTTP/HTTPS URLs
+  const isExternalUrl = src?.startsWith('http://') || src?.startsWith('https://')
+  const shouldUseFallback = isLocalFile && !isExternalUrl
+  
+  // Debug logging
+  if (src?.includes('s3.twcstorage.ru')) {
+    console.log('🖼️ SafeImage S3 Debug:', {
+      src,
+      isS3Image,
+      isLocalFile,
+      isExternalUrl,
+      shouldUseFallback
+    })
+  }
+  
   const [useUnoptimized, setUseUnoptimized] = useState(isS3Image)
-  const [currentSrc, setCurrentSrc] = useState(isLocalFile ? PROSTHETIC_FALLBACK_IMAGE : src)
+  const [currentSrc, setCurrentSrc] = useState(shouldUseFallback ? PROSTHETIC_FALLBACK_IMAGE : src)
   const [hasError, setHasError] = useState(false)
   const [errorCount, setErrorCount] = useState(0)
 
@@ -96,7 +111,8 @@ export function SafeImage({
     if (src !== currentSrc && src !== PROSTHETIC_FALLBACK_IMAGE) {
       // Если новый src указывает на локальный файл, сразу переключаемся на fallback
       const isLocal = src?.includes('/uploads/') || src?.startsWith('/uploads/')
-      if (isLocal) {
+      const isExternal = src?.startsWith('http://') || src?.startsWith('https://')
+      if (isLocal && !isExternal) {
         setCurrentSrc(PROSTHETIC_FALLBACK_IMAGE)
         setUseUnoptimized(false)
         setHasError(false)

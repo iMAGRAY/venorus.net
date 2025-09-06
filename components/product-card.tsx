@@ -12,7 +12,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useState } from "react"
-import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
+import { getProductImageSrc } from "@/lib/product-image-utils"
 import { InstantLink } from "@/components/instant-link"
 import { useCart } from "@/lib/cart-context"
 import { isProductOutOfStock, isProductAvailable, getActualPrice, formatProductName } from "@/lib/utils"
@@ -36,7 +36,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   // Приоритет: галерея изображений, затем главное изображение
   const images = product.images && product.images.length > 0
     ? product.images
-    : (product.imageUrl ? [product.imageUrl] : [])
+    : [getProductImageSrc(product)]
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -58,7 +58,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         <CardHeader className="p-0 relative overflow-hidden rounded-t-2xl">
           <div className="relative w-full aspect-square bg-slate-50">
             <SafeImage
-              src={images[currentImageIndex] || PROSTHETIC_FALLBACK_IMAGE}
+              src={images[currentImageIndex] || getProductImageSrc(product)}
               alt={product.short_name || product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -100,11 +100,6 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               </>
             )}
 
-            {/* Бейджи происхождения и доставки */}
-            <div className="absolute top-3 left-3 flex gap-1">
-              <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm">🇷🇺 Hecho en Rusia</span>
-              <span className="px-2 py-0.5 rounded-full text-[11px] bg-white/90 border border-slate-200 text-slate-700 shadow-sm hidden sm:inline">🇻🇪 Entrega</span>
-            </div>
 
             {/* Кнопка быстрого просмотра */}
             <div className="absolute top-3 right-3">
@@ -307,7 +302,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
                     id: String(product.id),
                     name: product.name,
                     price: getActualPrice(product),
-                    image_url: product.imageUrl || '',
+                    image_url: getProductImageSrc(product),
                     category: product.category,
                     sku: product.sku || '',
                     article_number: product.article_number || '',

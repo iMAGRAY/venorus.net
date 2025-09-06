@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Prosthetic } from "@/lib/data"
 import { Package, Clock, Eye, Layers, Grid3X3 } from "lucide-react"
-import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
+import { getProductImageSrc } from "@/lib/product-image-utils"
 import { isProductOutOfStock, isProductAvailable, getActualPrice, formatProductName } from "@/lib/utils"
 import { useCart } from "@/lib/cart-context"
 import { ProductTagsDisplay } from "@/components/product-tags-display"
@@ -31,7 +31,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
             {/* Секция изображения */}
             <div className="relative w-full aspect-square sm:w-64 sm:h-64 flex-shrink-0 overflow-hidden rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none bg-gradient-to-br from-sky-50 to-blue-50">
               <SafeImage
-                src={product.imageUrl || PROSTHETIC_FALLBACK_IMAGE}
+                src={getProductImageSrc(product)}
                 alt={product.short_name || product.name}
                 fill
                 sizes="(max-width: 640px) 100vw, 256px"
@@ -191,7 +191,7 @@ export function ProductCardList({ product, onQuickView }: ProductCardListProps) 
                             id: String(product.id),
                             name: product.name,
                             price: getActualPrice(product),
-                            image_url: product.imageUrl || '',
+                            image_url: getProductImageSrc(product),
                             category: product.category,
                             sku: product.sku || '',
                             article_number: product.article_number || '',

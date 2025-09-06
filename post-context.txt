@@ -102,346 +102,829 @@ conversation:
 
 
 PROJECT CONTEXT:
-COMPRESSED_PROJECT[v3][CLAUDE.md,COMPLETE_SPANISH_TRANSLATION.md,CURRENCY_UPDATE_SUMMARY.md,DESIGN_MODERNIZATION_2025.md,QUICK_DEPLOY.md,README.md,RUSSIAN_TO_SPANISH_TRANSLATION.md,SPANISH_TRANSLATION_COMPLETE.md,TODO.md,TRUST_STRIP_FIX.md,components.json,ecosystem.config.js,ecosystem.simple.config.js,middleware.ts,package-lock.json,package.json,start-pm2.sh,tailwind.config.ts,trigger-deploy.js,tsconfig.json;__tests__[ssl-connection.test:j];app[error.tsx,global-error.tsx,globals.css,layout.tsx,loading.tsx,not-found.tsx,page.tsx];app/about[page.tsx];app/admin[layout.tsx,page.tsx];app/admin/catalog-files[page.tsx];app/admin/catalog-menu[page.tsx];app/admin/categories[page.tsx];app/admin/characteristic-templates[page.tsx];app/admin/export-import[page.tsx];app/admin/manufacturers[page.tsx];app/admin/manufacturers/[id][page.tsx];app/admin/media[page.tsx];app/admin/model-lines[page.tsx];app/admin/model-lines/[id]/products[page.tsx];app/admin/model-lineup[page.tsx];app/admin/orders[page.tsx];app/admin/products[loading.tsx,page.tsx];app/admin/products/[id]/edit[page.tsx];app/admin/products/[id]/variants[page.tsx];app/admin/products/create[page.tsx];app/admin/redis-monitor[page.tsx];app/admin/roles[page.tsx];app/admin/settings[page.tsx];app/admin/setup-templates[page.tsx];app/admin/specifications[page.tsx];app/admin/tags[page.tsx];app/admin/users[page.tsx];app/admin/warehouse[page.tsx];app/api/admin/auth/login[route:t];app/api/admin/auth/login-backup[route:t];app/api/admin/auth/logout[route:t];app/api/admin/auth/status[route:t];app/api/admin/auth/universal-login[route:t];app/api/admin/characteristic-templates[route:t];app/api/admin/characteristic-templates/[id][route:t];app/api/admin/cleanup-deleted-variants[route:t];app/api/admin/dashboard-stats[route:t];app/api/admin/performance[route:t];app/api/admin/permissions[route:t];app/api/admin/products/[id]/sizes[route:t];app/api/admin/roles[route:t];app/api/admin/roles/[id][route:t];app/api/admin/users[route:t];app/api/admin/users/[id][route:t];app/api/cache[route:t];app/api/cache-status[route:t];app/api/cache-test[route:t];app/api/cache/clear[route:t];app/api/cache/delete[route:t];app/api/cache/get[route:t];app/api/cache/invalidate[route:t];app/api/cache/set[route:t];app/api/cart[route:t];app/api/cart/add[route:t];app/api/catalog-files[route:t];app/api/catalog-files/[id][route:t];app/api/catalog-files/[id]/download[route:t];app/api/catalog-menu[route:t];app/api/catalog-menu-settings[route:t];app/api/catalog-menu/available-entities[route:t];app/api/catalog-subgroups[route:t];app/api/categories[route:t];app/api/categories-flat[route:t];app/api/categories/[id]/breadcrumbs[route:t];app/api/characteristics[route:t];app/api/characteristics/available[route:t];app/api/characteristics/by-category[route:t];app/api/characteristics/delete-info[route:t];app/api/characteristics/values[route:t];app/api/db-debug[route:t];app/api/db-reset[route:t];app/api/db-status[route:t];app/api/db-test-direct[route:t];app/api/debug/auth-info[route:t];app/api/debug/env-check[route:t];app/api/deploy/clean[route:t];app/api/deploy/status[route:t];app/api/export/excel[route:t];app/api/filter-characteristics[route:t];app/api/form-templates[route:t];app/api/form-templates/[id][route:t];app/api/form-templates/setup[route:t];app/api/form-templates/test[route:t];app/api/health[route:t];app/api/home[route:t];app/api/log-404[route:t];app/api/manufacturers[route:t];app/api/manufacturers/[id][route:t];app/api/manufacturers/[id]/model-lines[route:t];app/api/media[route:t];app/api/media/check[route:t];app/api/media/check-duplicate[route:t];app/api/media/delete[route:t];app/api/media/register[route:t];app/api/media/sync[route:t];app/api/model-lines[route:t];app/api/model-lines/[id][route:t];app/api/model-lines/[id]/products[route:t];app/api/orders[route:t];app/api/orders/[id][route:t];app/api/orders/[id]/items/[itemId][route:t];app/api/orders/count[route:t];app/api/orders/create[route:t];app/api/product-images[route:t];app/api/product-sizes[route:t];app/api/product-sizes/[id][route:t];app/api/product-specifications/[id][route:t];app/api/product-tags[route:t];app/api/product-variants[route:t];app/api/product-variants/[id][route:t];app/api/product-variants/[id]/characteristics[route:t];app/api/product-variants/[id]/characteristics-simple[route:t];app/api/products[route:t];app/api/products/[id][route:t];app/api/products/[id]/characteristics[route:t];app/api/products/[id]/characteristics-grouped[route:t];app/api/products/[id]/characteristics-simple[route:t];app/api/products/[id]/characteristics-templates[route:t];app/api/products/[id]/configurable-characteristics[route:t];app/api/products/[id]/images[route:t];app/api/products/[id]/personal-tags/[tagId][route:t];app/api/products/[id]/selection-tables[route:t];app/api/products/[id]/selection-tables/existing[route:t];app/api/products/[id]/selection-tables/new[route:t];app/api/products/[id]/similar[route:t];app/api/products/[id]/sizes[route:t];app/api/products/[id]/tags[route:t];app/api/products/[id]/variant[route:t];app/api/products/[id]/variants[route:t];app/api/products/[id]/warehouse-stock[route:t];app/api/products/export[route:t];app/api/products/fast[route:t];app/api/products/refresh[route:t];app/api/products/search[route:t];app/api/recommendations[route:t];app/api/redis-status[route:t];app/api/restart[route:t];app/api/search[route:t];app/api/setup-tags[route:t];app/api/setup-tags-complete[route:t];app/api/site-settings[route:t];app/api/size-charts[route:t];app/api/spec-enums[route:t];app/api/spec-groups-optimized[route:t];app/api/spec-values[route:t];app/api/specifications[route:t];app/api/specifications/available[route:t];app/api/sql-table/[table][route:t];app/api/suppliers[route:t];app/api/test-db[route:t];app/api/upload[route:t];app/api/v2/product-variants[route:t];app/api/v2/product-variants/[id][route:t];app/api/variant-images[route:t];app/api/variants/[id][route:t];app/api/variants/[id]/personal-tags/[tagId][route:t];app/api/variants/[id]/tags[route:t];app/api/variants/[id]/warehouse-stock[route:t];app/api/warehouse/analytics[route:t];app/api/warehouse/articles[route:t];app/api/warehouse/cities[route:t];app/api/warehouse/clean-fake-data[route:t];app/api/warehouse/init[route:t];app/api/warehouse/inventory[route:t];app/api/warehouse/movements[route:t];app/api/warehouse/regions[route:t];app/api/warehouse/sections[route:t];app/api/warehouse/sections/[id][route:t];app/api/warehouse/settings[route:t];app/api/warehouse/setup-hierarchy[route:t];app/api/warehouse/sync[route:t];app/api/warehouse/warehouses[route:t];app/api/warehouse/zones[route:t];app/api/warehouse/zones/capacity[route:t];app/api/warmup[route:t];app/api/webhook/github[route:t];app/contacts[page.tsx];app/products/[id][page.tsx];c[additional-contacts.tsx,cart-drawer.tsx,catalog-download-buttons.tsx,category-sidebar.tsx,fallback-image.tsx,footer.tsx,header.tsx,hero-image.tsx,hero-video.tsx,i18n-provider.tsx,instant-link.tsx,instant-navigation-provider.tsx,order-form.tsx,product-basic-info.tsx,product-card-list.tsx,product-card-simple.tsx,product-card.tsx,product-characteristics-minimal.tsx,product-characteristics.tsx,product-configuration-selector.tsx,product-filters.tsx,product-grid.tsx,product-main-parameters.tsx,product-quick-view.tsx,product-recommendations.tsx,product-selection-tables.tsx,product-tags-display.tsx,product-variant-details.tsx,product-variant-selector-grid.tsx,product-variant-selector-horizontal.tsx,product-variant-selector-modal.tsx,product-variant-selector-v2.tsx,product-variant-selector.tsx,product-variants-gallery.tsx,safe-image.tsx,search-bar.tsx,sidebar-filters.tsx,skeleton-provider.tsx,social-icons.tsx,sort-dropdown.tsx,theme-provider.tsx,trust-strip.tsx,view-toggle.tsx,warehouse-stock-display.tsx];c/admin[additional-contacts-manager.tsx,admin-layout.tsx,auth-guard.tsx,bulk-actions.tsx,characteristics-selector.tsx,characteristics-templates-manager.tsx,compact-characteristics.tsx,data-ready-indicator.tsx,duplicate-file-dialog.tsx,error-boundary.tsx,export-import.tsx,maintenance-page.tsx,manufacturers-manager.tsx,media-gallery.tsx,media-uploader.tsx,model-lines-dashboard.tsx,model-lines-manager.tsx,price-demo.tsx,product-basic-info-section.tsx,product-category-section.tsx,product-characteristics-manager.tsx,product-form-modern.tsx,product-image-uploader.tsx,product-pricing-section.tsx,product-selector.tsx,product-specifications-manager-new.tsx,product-specifications-manager.tsx,product-tags-selector.tsx,product-variant-form.tsx,product-variants-manager.tsx,products-filters.tsx,products-manager.tsx,selection-tables-editor.tsx,simple-characteristics.tsx,specifications-templates.tsx,stable-characteristics.tsx,variant-tags-selector.tsx,variant-warehouse-stock-manager.tsx,virtualized-media-grid.tsx,warehouse-advanced-search.tsx,warehouse-analytics-dashboard.tsx,warehouse-articles-section.tsx,warehouse-bulk-operations.tsx,warehouse-dialogs.tsx,warehouse-section.tsx,warehouse-settings.tsx,warehouse-stats.tsx,warehouse-stock-manager.tsx,warehouse-tree-manager.tsx,warehouse-tree-node.tsx];c/skeletons[page-skeletons.tsx];c/ui[accordion.tsx,alert-dialog.tsx,alert.tsx,aspect-ratio.tsx,avatar.tsx,badge.tsx,breadcrumb.tsx,button.tsx,calendar.tsx,card.tsx,carousel.tsx,chart.tsx,checkbox.tsx,collapsible.tsx,command.tsx,context-menu.tsx,custom-dialog.tsx,dialog.tsx,drawer.tsx,dropdown-menu.tsx,form.tsx,grouped-searchable-select.tsx,hover-card.tsx,index:t,input-otp.tsx,input.tsx,label.tsx,menubar.tsx,navigation-menu.tsx,pagination.tsx,popover.tsx,progress.tsx,radio-group.tsx,resizable.tsx,scroll-area.tsx,searchable-category-select.tsx,searchable-select.tsx,select.tsx,separator.tsx,sheet.tsx,sidebar.tsx,skeleton.tsx,slider.tsx,sonner.tsx,switch.tsx,table.tsx,tabs.tsx,textarea.tsx,toast.tsx,toaster.tsx,toggle-group.tsx,toggle.tsx,tooltip.tsx,use-mobile.tsx,use-toast:t,visually-hidden.tsx];d[ADMIN_PANEL_GUIDE.md,CATALOG_OPTIMIZATION_COMPLETE.md,INDEX.md,MODEL_LINES_DEBUG_GUIDE.md,ORDER_SYSTEM_GUIDE.md,PRODUCTION_PLAN.md,PRODUCTION_TODO.md,PRODUCT_IMAGES_GUIDE.md,PRODUCT_SPECIFICATIONS_GUIDE.md,PRODUCT_SPECIFICATIONS_MANAGER_GUIDE.md,PRODUCT_TAGS_SETUP.md,PRODUCT_VARIANTS_GUIDE.md,README.md,USER_MANAGEMENT_GUIDE.md,WAREHOUSE_MANAGEMENT_GUIDE.md,price-functionality.md];d/api[manufacturers.md,overview.md];d/database[DATABASE_CLEANUP_COMPLETE.md,schema.md];d/setup[installation.md,project-completion.md];d/testing[overview.md,writing-tests.md];database[apply-indexes:j,database_schema.sql,performance-indexes.sql];db[apply-indexes.sql,create-tags-tables.sql,performance-optimization.sql];hooks[use-characteristics-creator:t,use-characteristics-manager:t,use-instant-navigation:t,use-mobile.tsx,use-optimized-media:t,use-product-form-data:t,use-product-form:t,use-specification-groups:t,use-specifications-data:t,use-toast:t,use-warehouse-state:t,use-warehouse:t];l[admin-data:t,api-cache-headers:t,api-client:t,api-guards:t,app-config:t,cart-context.tsx,cart-storage:t,constants:t,data:t,database-auth:t,db-connection:t,db:t,dependency-injection:t,fallback-image:t,file-hash:t,index:t,init:t,logger:t,main-parameters-utils:t,orders-context.tsx,performance-monitor:t,rate-limit:t,recommendation-engine:t,redis-client:t,s3-client:t,theme-colors:t,unified-api-client:t,utils:t,validation:t];l/api[client:t,index:t,types:t];l/auth[database-auth:t,index:t,secure-db-config:t];l/cache[cache-middleware:t,cache-utils:t,client-cache:t,client-only:t,index:t,react-hooks:t,server-only:t,types:t,unified-cache:t];l/clients[api-client:t,index:t,redis-client:t,s3-client:t,unified-api-client:t];l/config[production:t];l/contexts[cart-context.tsx,index:t,orders-context.tsx];l/database[db-connection:t,db:t,index:t,prepared-statements:t,ssl-config.test:t,ssl-config:t];l/design-system[components:t,index:t];l/services[index:t,product-service:t,recommendation-engine:t,warehouse-service:t];l/stores[admin-store:t,index:t,types:t];l/types[config:t,product-form:t,warehouse:t];l/utils[field-mapper:t,sanitize:t,slug-generator:t,variant-attributes:t];scripts[activate-categories:j,check-category-111:j,check-duplicate-products:j,check-hierarchy:j,check-misplaced-categories:j,check-orders-table:j,check-parent-status:j,check-product-371:j,compare-categories:j,compare-db-vs-api:j,debug-categoriesmap:j,delete-numeric-categories:j,delete-test-categories-hard:j,find-strange-categories:j,find-test-categories:j,fix-async-params:j,fix-category-hierarchy:j,fix-db-imports:j,fix-product-tags-tables:j,force-clear-cache:j,kill-port:j];scripts/cleanup[README.md,analyze-legacy-tables:j,backup-before-cleanup:j,backup-legacy-tables:j,backup-sql-export:j,clean-inaccessible-images:j,clean-prosthetic-duplicates:j,clean-warehouse-system:j,cleanup-database:j,cleanup-duplicates:j,cleanup-obsolete-data:j,delete-legacy-tables:j,production-cleanup:j,remove-console-logs-ast:j,remove-console-logs:j,remove-placeholder-images:j,s3-cleanup-complete:j,s3-cleanup-files:j,verify-after-cleanup:j];scripts/database[add-discount-price-to-product-sizes.sql,add-performance-indexes.sql,add-personal-tags-support.sql,add-variant-personal-tags-support.sql,backup-full:j,create-catalog-files-table.sql,create-product-tags-table.sql,create-product-variants-system.sql,create-variant-characteristics-simple.sql,create-warehouses-tables.sql,extend-product-variants-table.sql,fix-database-system.sql,normalize-variant-attributes.sql,optimize-orders-performance:j,test-migration.sql,update-product-variants-system.sql];scripts/deploy[auto-deploy:j,clean-deploy:j];scripts/migration[README-enhanced-migration.md,enhanced-sizes-to-variants-migration:j,ensure-missing-tables:j,migrate-catalog-menu-settings:j,migrate-characteristics-to-enums:j,migrate-sizes-to-variants:j,migration-status-checker:j,migration-validator:j,run-color-migration:j,run-enhanced-migration:j,run-form-templates-migration:j,run-migration:j,run-product-characteristics-migration:j,run-product-variants-migration:j,run-sql:j,run-update-variants-migration:j,run-user-system-migration:j];scripts/monitoring[backup-system:j,health-check:j];scripts/seed[clear-database:j,russian-consumer-goods:j,russian-products-seed:j];scripts/setup[create-form-templates-table:j,create-hierarchical-structure-fixed:j,create-hierarchical-structure:j,create-initial-admin:j,create-logo:j,create-media-deduplication-tables:j,create-prosthetic-subgroups:j,create-smart-size-groups:j,create-super-admin:j,create-table-direct:j,create-table-with-env:j,create-test-user:j,create-universal-sizes:j,create-warehouse-system:j,fix-all-hardcoded-credentials:j,fix-api-endpoints:j,import-all-products:j,init-db:j,seed-data:j,seed-test-specifications:j,set-super-admin-credentials:j,setup-admin-credentials:j,setup-form-templates:j,setup-product-sizes-fixed:j,setup-product-sizes:j,setup-product-specifications:j,setup-remote-db:j,setup-specifications-simple:j,test-user-instructions.md,update-settings:j];scripts/tools[auto-fix-callback-deps:j,auto-fix-hooks-deps:j,auto-fix-jsx-keys:j,auto-fix-lint:j,auto-fix-shorthand-alias:j,fix-shorthand-from-tsc:j,fix-use-client-directive:j];services[product-service:t,warehouse-service:t];t[README.md,db-ssl-connection.test:j,run-all-tests:j,run-e2e:j,run-smoke:j,smoke-tests:j];t/api[about-page.test:j,contacts-page.test:j,db-status.test:j,manufacturers-page.test:j,manufacturers.test:j,not-found.test:j,product-specifications.test:j,site-settings.test:j,smoke-all-routes.test:j,stock-status-update.test:j];t/database[connection.test:j];t/e2e[comprehensive-testing:j,critical-user-flows:j];t/integration[api-integration-tests:j,auth-session-tests:j,hierarchy.test:j,static-assets.test:j];t/performance[db-latency.test:j,load-stress-testing:j,load-tests:j,media-gallery-performance.test:j];t/security[security-tests:j];t/utils[api-helper:j,db-helper:j,discover-api-routes:j]]
-METRICS[L130888,tsx:49743/190/21.5/8.7,t:35234/236/17.6/12.4,j:17501/135/15.8/12.2,json:16276/4/0.0/0.0,sql:6384/19/0.0/0.0,sh:32/1/0.0/0.0,md:5363/38/0.0/0.0,css:355/1/0.0/0.0;Q9/10/6;C18.5/11.1/170/151/529+32+0+0]
-IMPORTANT[index.ts,index.ts,index.ts,index.ts,index.ts]
-TOKENS:5329
-INCREMENTAL[MOD:components/header.tsx:13219b]
+COMPRESSED_PROJECT[v3][CLAUDE.md,COMPLETE_SPANISH_TRANSLATION.md,CURRENCY_UPDATE_SUMMARY.md,DESIGN_MODERNIZATION_2025.md,QUICK_DEPLOY.md,README.md,RUSSIAN_TO_SPANISH_TRANSLATION.md,SPANISH_TRANSLATION_COMPLETE.md,TODO.md,TRUST_STRIP_FIX.md,components.json,ecosystem.config.js,ecosystem.simple.config.js,middleware.ts,package-lock.json,package.json,start-pm2.sh,tailwind.config.ts,trigger-deploy.js,tsconfig.json;__tests__[ssl-connection.test:j];app[error.tsx,global-error.tsx,globals.css,layout.tsx,loading.tsx,not-found.tsx,page.tsx];app/about[page.tsx];app/admin[layout.tsx,page.tsx];app/admin/catalog-files[page.tsx];app/admin/catalog-menu[page.tsx];app/admin/categories[page.tsx];app/admin/characteristic-templates[page.tsx];app/admin/export-import[page.tsx];app/admin/manufacturers[page.tsx];app/admin/manufacturers/[id][page.tsx];app/admin/media[page.tsx];app/admin/model-lines[page.tsx];app/admin/model-lines/[id]/products[page.tsx];app/admin/model-lineup[page.tsx];app/admin/orders[page.tsx];app/admin/products[loading.tsx,page.tsx];app/admin/products/[id]/edit[page.tsx];app/admin/products/[id]/variants[page.tsx];app/admin/products/create[page.tsx];app/admin/redis-monitor[page.tsx];app/admin/roles[page.tsx];app/admin/settings[page.tsx];app/admin/setup-templates[page.tsx];app/admin/specifications[page.tsx];app/admin/tags[page.tsx];app/admin/users[page.tsx];app/admin/warehouse[page.tsx];app/api/admin/auth/login[route:t];app/api/admin/auth/login-backup[route:t];app/api/admin/auth/logout[route:t];app/api/admin/auth/status[route:t];app/api/admin/auth/universal-login[route:t];app/api/admin/characteristic-templates[route:t];app/api/admin/characteristic-templates/[id][route:t];app/api/admin/cleanup-deleted-variants[route:t];app/api/admin/dashboard-stats[route:t];app/api/admin/performance[route:t];app/api/admin/permissions[route:t];app/api/admin/products/[id]/sizes[route:t];app/api/admin/roles[route:t];app/api/admin/roles/[id][route:t];app/api/admin/users[route:t];app/api/admin/users/[id][route:t];app/api/cache[route:t];app/api/cache-status[route:t];app/api/cache-test[route:t];app/api/cache/clear[route:t];app/api/cache/delete[route:t];app/api/cache/get[route:t];app/api/cache/invalidate[route:t];app/api/cache/set[route:t];app/api/cart[route:t];app/api/cart/add[route:t];app/api/catalog-files[route:t];app/api/catalog-files/[id][route:t];app/api/catalog-files/[id]/download[route:t];app/api/catalog-menu[route:t];app/api/catalog-menu-settings[route:t];app/api/catalog-menu/available-entities[route:t];app/api/catalog-subgroups[route:t];app/api/categories[route:t];app/api/categories-flat[route:t];app/api/categories/[id]/breadcrumbs[route:t];app/api/characteristics[route:t];app/api/characteristics/available[route:t];app/api/characteristics/by-category[route:t];app/api/characteristics/delete-info[route:t];app/api/characteristics/values[route:t];app/api/db-debug[route:t];app/api/db-reset[route:t];app/api/db-status[route:t];app/api/db-test-direct[route:t];app/api/debug/auth-info[route:t];app/api/debug/env-check[route:t];app/api/deploy/clean[route:t];app/api/deploy/status[route:t];app/api/export/excel[route:t];app/api/filter-characteristics[route:t];app/api/form-templates[route:t];app/api/form-templates/[id][route:t];app/api/form-templates/setup[route:t];app/api/form-templates/test[route:t];app/api/health[route:t];app/api/home[route:t];app/api/log-404[route:t];app/api/manufacturers[route:t];app/api/manufacturers/[id][route:t];app/api/manufacturers/[id]/model-lines[route:t];app/api/media[route:t];app/api/media/check[route:t];app/api/media/check-duplicate[route:t];app/api/media/delete[route:t];app/api/media/register[route:t];app/api/media/sync[route:t];app/api/model-lines[route:t];app/api/model-lines/[id][route:t];app/api/model-lines/[id]/products[route:t];app/api/orders[route:t];app/api/orders/[id][route:t];app/api/orders/[id]/items/[itemId][route:t];app/api/orders/count[route:t];app/api/orders/create[route:t];app/api/product-images[route:t];app/api/product-sizes[route:t];app/api/product-sizes/[id][route:t];app/api/product-specifications/[id][route:t];app/api/product-tags[route:t];app/api/product-variants[route:t];app/api/product-variants/[id][route:t];app/api/product-variants/[id]/characteristics[route:t];app/api/product-variants/[id]/characteristics-simple[route:t];app/api/products[route:t];app/api/products/[id][route:t];app/api/products/[id]/characteristics[route:t];app/api/products/[id]/characteristics-grouped[route:t];app/api/products/[id]/characteristics-simple[route:t];app/api/products/[id]/characteristics-templates[route:t];app/api/products/[id]/configurable-characteristics[route:t];app/api/products/[id]/images[route:t];app/api/products/[id]/personal-tags/[tagId][route:t];app/api/products/[id]/selection-tables[route:t];app/api/products/[id]/selection-tables/existing[route:t];app/api/products/[id]/selection-tables/new[route:t];app/api/products/[id]/similar[route:t];app/api/products/[id]/sizes[route:t];app/api/products/[id]/tags[route:t];app/api/products/[id]/variant[route:t];app/api/products/[id]/variants[route:t];app/api/products/[id]/warehouse-stock[route:t];app/api/products/export[route:t];app/api/products/fast[route:t];app/api/products/refresh[route:t];app/api/products/search[route:t];app/api/recommendations[route:t];app/api/redis-status[route:t];app/api/restart[route:t];app/api/search[route:t];app/api/setup-tags[route:t];app/api/setup-tags-complete[route:t];app/api/site-settings[route:t];app/api/size-charts[route:t];app/api/spec-enums[route:t];app/api/spec-groups-optimized[route:t];app/api/spec-values[route:t];app/api/specifications[route:t];app/api/specifications/available[route:t];app/api/sql-table/[table][route:t];app/api/suppliers[route:t];app/api/test-db[route:t];app/api/upload[route:t];app/api/v2/product-variants[route:t];app/api/v2/product-variants/[id][route:t];app/api/variant-images[route:t];app/api/variants/[id][route:t];app/api/variants/[id]/personal-tags/[tagId][route:t];app/api/variants/[id]/tags[route:t];app/api/variants/[id]/warehouse-stock[route:t];app/api/warehouse/analytics[route:t];app/api/warehouse/articles[route:t];app/api/warehouse/cities[route:t];app/api/warehouse/clean-fake-data[route:t];app/api/warehouse/init[route:t];app/api/warehouse/inventory[route:t];app/api/warehouse/movements[route:t];app/api/warehouse/regions[route:t];app/api/warehouse/sections[route:t];app/api/warehouse/sections/[id][route:t];app/api/warehouse/settings[route:t];app/api/warehouse/setup-hierarchy[route:t];app/api/warehouse/sync[route:t];app/api/warehouse/warehouses[route:t];app/api/warehouse/zones[route:t];app/api/warehouse/zones/capacity[route:t];app/api/warmup[route:t];app/api/webhook/github[route:t];app/contacts[page.tsx];app/products/[id][page.tsx];c[additional-contacts.tsx,cart-drawer.tsx,catalog-download-buttons.tsx,category-sidebar.tsx,fallback-image.tsx,footer.tsx,header.tsx,hero-image.tsx,hero-video.tsx,i18n-provider.tsx,instant-link.tsx,instant-navigation-provider.tsx,order-form.tsx,product-basic-info.tsx,product-card-list.tsx,product-card-simple.tsx,product-card.tsx,product-characteristics-minimal.tsx,product-characteristics.tsx,product-configuration-selector.tsx,product-filters.tsx,product-grid.tsx,product-main-parameters.tsx,product-quick-view.tsx,product-recommendations.tsx,product-selection-tables.tsx,product-tags-display.tsx,product-variant-details.tsx,product-variant-selector-grid.tsx,product-variant-selector-horizontal.tsx,product-variant-selector-modal.tsx,product-variant-selector-v2.tsx,product-variant-selector.tsx,product-variants-gallery.tsx,safe-image.tsx,search-bar.tsx,sidebar-filters.tsx,skeleton-provider.tsx,social-icons.tsx,sort-dropdown.tsx,theme-provider.tsx,trust-strip.tsx,view-toggle.tsx,warehouse-stock-display.tsx];c/admin[additional-contacts-manager.tsx,admin-layout.tsx,auth-guard.tsx,bulk-actions.tsx,characteristics-selector.tsx,characteristics-templates-manager.tsx,compact-characteristics.tsx,data-ready-indicator.tsx,duplicate-file-dialog.tsx,error-boundary.tsx,export-import.tsx,maintenance-page.tsx,manufacturers-manager.tsx,media-gallery.tsx,media-uploader.tsx,model-lines-dashboard.tsx,model-lines-manager.tsx,price-demo.tsx,product-basic-info-section.tsx,product-category-section.tsx,product-characteristics-manager.tsx,product-form-modern.tsx,product-image-uploader.tsx,product-pricing-section.tsx,product-selector.tsx,product-specifications-manager-new.tsx,product-specifications-manager.tsx,product-tags-selector.tsx,product-variant-form.tsx,product-variants-manager.tsx,products-filters.tsx,products-manager.tsx,selection-tables-editor.tsx,simple-characteristics.tsx,specifications-templates.tsx,stable-characteristics.tsx,variant-tags-selector.tsx,variant-warehouse-stock-manager.tsx,virtualized-media-grid.tsx,warehouse-advanced-search.tsx,warehouse-analytics-dashboard.tsx,warehouse-articles-section.tsx,warehouse-bulk-operations.tsx,warehouse-dialogs.tsx,warehouse-section.tsx,warehouse-settings.tsx,warehouse-stats.tsx,warehouse-stock-manager.tsx,warehouse-tree-manager.tsx,warehouse-tree-node.tsx];c/skeletons[page-skeletons.tsx];c/ui[accordion.tsx,alert-dialog.tsx,alert.tsx,aspect-ratio.tsx,avatar.tsx,badge.tsx,breadcrumb.tsx,button.tsx,calendar.tsx,card.tsx,carousel.tsx,chart.tsx,checkbox.tsx,collapsible.tsx,command.tsx,context-menu.tsx,custom-dialog.tsx,dialog.tsx,drawer.tsx,dropdown-menu.tsx,form.tsx,grouped-searchable-select.tsx,hover-card.tsx,index:t,input-otp.tsx,input.tsx,label.tsx,menubar.tsx,navigation-menu.tsx,pagination.tsx,popover.tsx,progress.tsx,radio-group.tsx,resizable.tsx,scroll-area.tsx,searchable-category-select.tsx,searchable-select.tsx,select.tsx,separator.tsx,sheet.tsx,sidebar.tsx,skeleton.tsx,slider.tsx,sonner.tsx,switch.tsx,table.tsx,tabs.tsx,textarea.tsx,toast.tsx,toaster.tsx,toggle-group.tsx,toggle.tsx,tooltip.tsx,use-mobile.tsx,use-toast:t,visually-hidden.tsx];d[ADMIN_PANEL_GUIDE.md,CATALOG_OPTIMIZATION_COMPLETE.md,INDEX.md,MODEL_LINES_DEBUG_GUIDE.md,ORDER_SYSTEM_GUIDE.md,PRODUCTION_PLAN.md,PRODUCTION_TODO.md,PRODUCT_IMAGES_GUIDE.md,PRODUCT_SPECIFICATIONS_GUIDE.md,PRODUCT_SPECIFICATIONS_MANAGER_GUIDE.md,PRODUCT_TAGS_SETUP.md,PRODUCT_VARIANTS_GUIDE.md,README.md,USER_MANAGEMENT_GUIDE.md,WAREHOUSE_MANAGEMENT_GUIDE.md,price-functionality.md];d/api[manufacturers.md,overview.md];d/database[DATABASE_CLEANUP_COMPLETE.md,schema.md];d/setup[installation.md,project-completion.md];d/testing[overview.md,writing-tests.md];database[apply-indexes:j,database_schema.sql,performance-indexes.sql];db[apply-indexes.sql,create-tags-tables.sql,performance-optimization.sql];hooks[use-characteristics-creator:t,use-characteristics-manager:t,use-instant-navigation:t,use-mobile.tsx,use-optimized-media:t,use-product-form-data:t,use-product-form:t,use-specification-groups:t,use-specifications-data:t,use-toast:t,use-warehouse-state:t,use-warehouse:t];l[admin-data:t,api-cache-headers:t,api-client:t,api-guards:t,app-config:t,cart-context.tsx,cart-storage:t,constants:t,data:t,database-auth:t,db-connection:t,db:t,dependency-injection:t,fallback-image:t,file-hash:t,index:t,init:t,logger:t,main-parameters-utils:t,orders-context.tsx,performance-monitor:t,product-image-utils:t,rate-limit:t,recommendation-engine:t,redis-client:t,s3-client:t,theme-colors:t,unified-api-client:t,utils:t,validation:t];l/api[client:t,index:t,types:t];l/auth[database-auth:t,index:t,secure-db-config:t];l/cache[cache-middleware:t,cache-utils:t,client-cache:t,client-only:t,index:t,react-hooks:t,server-only:t,types:t,unified-cache:t];l/clients[api-client:t,index:t,redis-client:t,s3-client:t,unified-api-client:t];l/config[production:t];l/contexts[cart-context.tsx,index:t,orders-context.tsx];l/database[db-connection:t,db:t,index:t,prepared-statements:t,ssl-config.test:t,ssl-config:t];l/design-system[components:t,index:t];l/services[index:t,product-service:t,recommendation-engine:t,warehouse-service:t];l/stores[admin-store:t,index:t,types:t];l/types[config:t,product-form:t,warehouse:t];l/utils[field-mapper:t,sanitize:t,slug-generator:t,variant-attributes:t];scripts[activate-categories:j,check-category-111:j,check-duplicate-products:j,check-hierarchy:j,check-misplaced-categories:j,check-orders-table:j,check-parent-status:j,check-product-371:j,compare-categories:j,compare-db-vs-api:j,debug-categoriesmap:j,delete-numeric-categories:j,delete-test-categories-hard:j,find-strange-categories:j,find-test-categories:j,fix-async-params:j,fix-category-hierarchy:j,fix-db-imports:j,fix-product-tags-tables:j,force-clear-cache:j,kill-port:j];scripts/cleanup[README.md,analyze-legacy-tables:j,backup-before-cleanup:j,backup-legacy-tables:j,backup-sql-export:j,clean-inaccessible-images:j,clean-prosthetic-duplicates:j,clean-warehouse-system:j,cleanup-database:j,cleanup-duplicates:j,cleanup-obsolete-data:j,delete-legacy-tables:j,production-cleanup:j,remove-console-logs-ast:j,remove-console-logs:j,remove-placeholder-images:j,s3-cleanup-complete:j,s3-cleanup-files:j,verify-after-cleanup:j];scripts/database[add-discount-price-to-product-sizes.sql,add-performance-indexes.sql,add-personal-tags-support.sql,add-variant-personal-tags-support.sql,backup-full:j,create-catalog-files-table.sql,create-product-tags-table.sql,create-product-variants-system.sql,create-variant-characteristics-simple.sql,create-warehouses-tables.sql,extend-product-variants-table.sql,fix-database-system.sql,normalize-variant-attributes.sql,optimize-orders-performance:j,test-migration.sql,update-product-variants-system.sql];scripts/deploy[auto-deploy:j,clean-deploy:j];scripts/migration[README-enhanced-migration.md,enhanced-sizes-to-variants-migration:j,ensure-missing-tables:j,migrate-catalog-menu-settings:j,migrate-characteristics-to-enums:j,migrate-sizes-to-variants:j,migration-status-checker:j,migration-validator:j,run-color-migration:j,run-enhanced-migration:j,run-form-templates-migration:j,run-migration:j,run-product-characteristics-migration:j,run-product-variants-migration:j,run-sql:j,run-update-variants-migration:j,run-user-system-migration:j];scripts/monitoring[backup-system:j,health-check:j];scripts/seed[clear-database:j,russian-consumer-goods:j,russian-products-seed:j];scripts/setup[create-form-templates-table:j,create-hierarchical-structure-fixed:j,create-hierarchical-structure:j,create-initial-admin:j,create-logo:j,create-media-deduplication-tables:j,create-prosthetic-subgroups:j,create-smart-size-groups:j,create-super-admin:j,create-table-direct:j,create-table-with-env:j,create-test-user:j,create-universal-sizes:j,create-warehouse-system:j,fix-all-hardcoded-credentials:j,fix-api-endpoints:j,import-all-products:j,init-db:j,seed-data:j,seed-test-specifications:j,set-super-admin-credentials:j,setup-admin-credentials:j,setup-form-templates:j,setup-product-sizes-fixed:j,setup-product-sizes:j,setup-product-specifications:j,setup-remote-db:j,setup-specifications-simple:j,test-user-instructions.md,update-settings:j];scripts/tools[auto-fix-callback-deps:j,auto-fix-hooks-deps:j,auto-fix-jsx-keys:j,auto-fix-lint:j,auto-fix-shorthand-alias:j,fix-shorthand-from-tsc:j,fix-use-client-directive:j];services[product-service:t,warehouse-service:t];t[README.md,db-ssl-connection.test:j,run-all-tests:j,run-e2e:j,run-smoke:j,smoke-tests:j];t/api[about-page.test:j,contacts-page.test:j,db-status.test:j,manufacturers-page.test:j,manufacturers.test:j,not-found.test:j,product-specifications.test:j,site-settings.test:j,smoke-all-routes.test:j,stock-status-update.test:j];t/database[connection.test:j];t/e2e[comprehensive-testing:j,critical-user-flows:j];t/integration[api-integration-tests:j,auth-session-tests:j,hierarchy.test:j,static-assets.test:j];t/performance[db-latency.test:j,load-stress-testing:j,load-tests:j,media-gallery-performance.test:j];t/security[security-tests:j];t/unit[product-image-utils.test:j];t/utils[api-helper:j,db-helper:j,discover-api-routes:j]]
+METRICS[L131370,json:16276/4/0.0/0.0,j:17823/136/15.7/12.2,tsx:49668/190/21.5/8.7,t:35469/237/17.9/12.8,sh:32/1/0.0/0.0,md:5363/38/0.0/0.0,css:355/1/0.0/0.0,sql:6384/19/0.0/0.0;Q9/10/6;C18.6/11.2/170/151/530+33+0+0]
+IMPORTANT[index.ts,index.ts,package.json,index.ts,index.ts]
+TOKENS:5348
+INCREMENTAL[MOD:lib/stores/admin-store.ts:25082b]
 
 
 CODE CHANGES (diff format):
-=== Full file with Edit changes: C:\Users\1\Documents\GitHub\venorus.net\components\header.tsx ===
+=== Full file with Edit changes: C:\Users\1\Documents\GitHub\venorus.net\lib\stores\admin-store.ts ===
 (Edit target not found, showing original file)
 
-   1   "use client"
-   2   
-   3   import { Button } from "@/components/ui/button"
-   4   import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-   5   import { Menu, X, Phone, Mail, MapPin, ClipboardList } from "lucide-react"
-   6   import { useAdminStore } from "@/lib/stores"
-   7   import { AdditionalContacts } from "@/components/additional-contacts"
-   8   import { InstantLink } from "@/components/instant-link"
-   9   import { CartDrawer } from "@/components/cart-drawer"
-  10   import { useCart } from "@/lib/cart-context"
-  11   import { Badge } from "@/components/ui/badge"
-  12   import { useState, useEffect } from "react"
-  13   import { useI18n } from "@/components/i18n-provider"
-  14   import { SafeImage } from "@/components/safe-image"
-  15   
-  16   // Безопасный компонент списка
-  17   function SafeCartButton() {
-  18     const [isClient, setIsClient] = useState(false)
-  19     const cart = useCart()
-  20   
-  21     useEffect(() => {
-  22       setIsClient(true)
-  23     }, [])
+   1   'use client'
+   2   import { create } from 'zustand'
+   3   import { immer } from 'zustand/middleware/immer'
+   4   import { subscribeWithSelector } from 'zustand/middleware'
+   5   import { AdminStore, Product, Category, SiteSettings } from './types'
+   6   import type { Prosthetic } from '@/lib/data'
+   7   import { CACHE_TAGS } from '../cache/types'
+   8   import { logger } from '../logger'
+   9   import { ApiClient } from '../api-client'
+  10   
+  11   // Кеш для мемоизации адаптированных продуктов
+  12   let adaptedProductsCache: {
+  13     products: Product[]
+  14     categories: Category[]
+  15     result: Prosthetic[]
+  16   } | null = null
+  17   
+  18   // Константы для кеш ключей
+  19   const CACHE_KEYS = {
+  20     PRODUCTS: 'admin:products',
+  21     CATEGORIES: 'admin:categories', 
+  22     SETTINGS: 'admin:settings'
+  23   } as const
   24   
-  25     const totalItems = cart?.totalItems ?? 0
-  26   
-  27     if (!isClient) {
-  28       return (
-  29         <Button
-  30           variant="outline"
-  31           size="sm"
-  32           className="relative h-9"
-  33         >
-  34           <ClipboardList className="w-4 h-4" />
-  35         </Button>
-  36       )
-  37     }
+  25   // Асинхронное получение кеша для избежания импорта Redis в клиенте
+  26   async function getCache() {
+  27     if (typeof window === 'undefined') {
+  28       // На сервере используем серверный кеш из отдельного файла
+  29       const { getServerCache } = await import('../cache/server-only')
+  30       const { serverCache } = await getServerCache()
+  31       return serverCache
+  32     } else {
+  33       // На клиенте используем клиентскую версию
+  34       const { unifiedCache } = await import('../cache')
+  35       return unifiedCache
+  36     }
+  37   }
   38   
-  39     return (
-  40       <CartDrawer>
-  41         <Button
-  42           variant="outline"
-  43           size="sm"
-  44           id="cart-button"
-  45           className="relative h-9"
-  46         >
-  47           <ClipboardList className="w-4 h-4" />
-  48           {totalItems > 0 && (
-  49             <Badge className="absolute -top-1 -right-1 bg-primary text-primary-foreground border-0 text-2xs min-w-[16px] h-4 flex items-center justify-center p-0 rounded-full">
-  50               {totalItems}
-  51             </Badge>
-  52           )}
-  53         </Button>
-  54       </CartDrawer>
-  55     )
-  56   }
-  57   
-  58   export default function Header() {
-  59     const { t } = useI18n()
-  60     const siteSettings = useAdminStore(state => state.settings)
-  61     const isInitialized = useAdminStore(state => state.initialized.settings)
-  62     const initializeSettings = useAdminStore(state => state.initializeSettings)
-  63     const [isContactModalOpen, setIsContactModalOpen] = useState(false)
-  64     const [isSheetOpen, setIsSheetOpen] = useState(false)
-  65   
-  66     // Inicialización de configuraciones
-  67     useEffect(() => {
-  68       if (!isInitialized) {
-  69         initializeSettings()
-  70       }
-  71     }, [isInitialized, initializeSettings])
-  72   
-  73   
-  74     const navLinks = [
-  75       { href: "#contact", label: t('header.contacts') },
-  76     ]
-  77     const contactLink = navLinks.find((l) => l.href === "#contact")
-  78   
-  79     const handleContactClick = (e: React.MouseEvent) => {
-  80       e.preventDefault()
-  81       setIsContactModalOpen(true)
-  82       // Cerrar menú lateral al abrir modal de contactos
-  83       setIsSheetOpen(false)
-  84     }
-  85   
-  86     // Функция для обработки открытия/закрытия бокового меню
-  87     const handleSheetOpenChange = (open: boolean) => {
-  88       setIsSheetOpen(open)
-  89       // Cerrar modal de contactos al abrir menú lateral
-  90       if (open) {
-  91         setIsContactModalOpen(false)
-  92       }
-  93     }
-  94   
-  95     return (
-  96       <>
-  97         {/* Banda promocional superior eliminada según especificaciones */}
-  98   
-  99         <header className="sticky top-0 z-50 w-full backdrop-blur-md border-b bg-background/80 border-border">
- 100           <div className="container flex items-center h-14 mx-auto px-4 lg:px-6">
- 101             {/* Логотип */}
- 102             <div className="flex items-center">
- 103               <InstantLink href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
- 104                 <div className="w-7 h-7 flex items-center justify-center">
- 105                   <SafeImage src="/logo.webp?v=2" alt="Venorus" width={24} height={24} className="w-6 h-6" />
- 106                 </div>
- 107                 <span className="text-lg font-semibold tracking-tight">Venorus</span>
- 108               </InstantLink>
- 109             </div>
- 110   
- 111             {/* Центральная навигация */}
- 112             <nav className="flex-1 hidden md:flex items-center justify-center">
- 113               <div className="flex items-center gap-1">
- 114                 {navLinks.filter((l) => l.href !== "#contact").map((link) => (
- 115                   <InstantLink
- 116                     key={link.label}
- 117                     href={link.href}
- 118                     className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
- 119                   >
- 120                     {link.label}
- 121                   </InstantLink>
- 122                 ))}
- 123               </div>
- 124             </nav>
- 125   
- 126             {/* Правая часть */}
- 127             <div className="flex items-center gap-2 ml-auto">
- 128               {/* Контакты (десктоп) */}
- 129               <div className="hidden md:flex">
- 130                 {[contactLink].map((link) => (
- 131                   link?.href === "#contact" ? (
- 132                     <button
- 133                       key={link.label}
- 134                       onClick={handleContactClick}
- 135                       className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
- 136                     >
- 137                       {link.label}
- 138                     </button>
- 139                   ) : null
- 140                 ))}
- 141               </div>
- 142   
- 143               {/* Контакты (мобильная) */}
- 144               <div className="md:hidden">
- 145                 <button
- 146                   onClick={handleContactClick}
- 147                   className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
- 148                   title="Contactos"
- 149                 >
- 150                   <Phone className="w-4 h-4" />
- 151                 </button>
- 152               </div>
- 153   
- 154               {/* Carrito */}
- 155               <SafeCartButton />
- 156   
- 157               {/* Мобильное меню */}
- 158               <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
- 159                 <SheetTrigger asChild>
- 160                   <Button
- 161                     variant="ghost"
- 162                     size="icon"
- 163                     className="md:hidden h-9 w-9"
- 164                   >
- 165                     <Menu className="w-4 h-4" />
- 166                     <span className="sr-only">Menú</span>
- 167                   </Button>
- 168                 </SheetTrigger>
- 169                 <SheetContent side="right" className="w-full sm:max-w-xs">
- 170                   <nav className="grid gap-2 py-4">
- 171                     <InstantLink href="/" className="flex items-center gap-2 mb-6">
- 172                       <div className="w-7 h-7 flex items-center justify-center">
- 173                         <SafeImage
- 174                           src="/logo.webp?v=2"
- 175                           alt="Venorus"
- 176                           width={24}
- 177                           height={24}
- 178                           className="w-6 h-6"
- 179                         />
- 180                       </div>
- 181                       <span className="text-lg font-semibold">Venorus</span>
- 182                     </InstantLink>
- 183   
- 184   
- 185                     {navLinks.map((link) => (
- 186                       link.href === "#contact" ? (
- 187                         <button
- 188                           key={link.label}
- 189                           onClick={(e) => {
- 190                             handleContactClick(e);
- 191                             setIsSheetOpen(false);
- 192                           }}
- 193                           className="text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
- 194                         >
- 195                           {link.label}
- 196                         </button>
- 197                       ) : (
- 198                         <InstantLink
- 199                           key={link.label}
- 200                           href={link.href}
- 201                           className="text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
- 202                         >
- 203                           {link.label}
- 204                         </InstantLink>
- 205                       )
- 206                     ))}
- 207                   </nav>
- 208                 </SheetContent>
- 209               </Sheet>
- 210             </div>
- 211           </div>
- 212         </header>
- 213   
- 214         {/* Contact Modal */}
- 215         {isContactModalOpen && (
- 216           <div className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto">
- 217             {/* Backdrop */}
- 218             <div
- 219               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
- 220               onClick={() => setIsContactModalOpen(false)}
- 221             />
- 222   
- 223             {/* Modal Content */}
- 224             <div className="relative w-full h-full sm:h-auto sm:w-auto flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
- 225               <div className="relative bg-card rounded-2xl shadow-lg w-full sm:max-w-lg p-6 transform transition-all duration-300 scale-100 max-h-[90vh] overflow-y-auto border">
- 226                 {/* Close Button */}
- 227                 <button
- 228                   onClick={() => setIsContactModalOpen(false)}
- 229                   className="absolute top-4 right-4 p-2 rounded-lg hover:bg-accent transition-colors"
- 230                 >
- 231                   <X className="w-4 h-4" />
- 232                 </button>
+  39   // Единый API клиент с кешированием и retry логикой  
+  40   const apiClient = ApiClient.getInstance()
+  41   
+  42   // API методы используют единый клиент
+  43   const adminApi = {
+  44     async fetchProducts(): Promise<Product[]> {
+  45       // Всегда запрашиваем свежие данные с сервера, обходя кеш
+  46       const result = await apiClient.getProducts({ detailed: true, forceRefresh: true })
+  47       return result.success ? result.data : []
+  48     },
+  49   
+  50     async fetchCategories(): Promise<Category[]> {
+  51       const result = await apiClient.getCategories()
+  52       return result.success ? result.data : []
+  53     },
+  54   
+  55     async fetchSettings(): Promise<SiteSettings> {
+  56       const result = await apiClient.getSiteSettings()
+  57       return result.success ? result.data : result
+  58     },
+  59   
+  60     async createProduct(product: Omit<Product, 'id' | 'created_at' | 'updated_at'>): Promise<Product> {
+  61       const response = await fetch('/api/products', {
+  62         method: 'POST',
+  63         headers: { 'Content-Type': 'application/json' },
+  64         credentials: 'include',
+  65         body: JSON.stringify(product)
+  66       })
+  67       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  68       return response.json()
+  69     },
+  70   
+  71     async updateProduct(id: number, updates: Partial<Product>): Promise<Product> {
+  72       const response = await fetch(`/api/admin/products/${id}`, {
+  73         method: 'PUT',
+  74         headers: { 'Content-Type': 'application/json' },
+  75         credentials: 'include',
+  76         body: JSON.stringify(updates)
+  77       })
+  78       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  79       return response.json()
+  80     },
+  81   
+  82     async deleteProduct(id: number): Promise<void> {
+  83       const response = await fetch(`/api/products/${id}`, {
+  84         method: 'DELETE',
+  85         credentials: 'include'
+  86       })
+  87       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  88     },
+  89   
+  90     async createCategory(category: Omit<Category, 'id' | 'created_at' | 'updated_at'>): Promise<Category> {
+  91       const response = await fetch('/api/categories', {
+  92         method: 'POST',
+  93         headers: { 'Content-Type': 'application/json' },
+  94         credentials: 'include',
+  95         body: JSON.stringify(category)
+  96       })
+  97       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  98       return response.json()
+  99     },
+ 100   
+ 101     async updateCategory(id: number, updates: Partial<Category>): Promise<Category> {
+ 102       const response = await fetch(`/api/categories`, {
+ 103         method: 'PUT',
+ 104         headers: { 'Content-Type': 'application/json' },
+ 105         credentials: 'include',
+ 106         body: JSON.stringify({ id, ...updates })
+ 107       })
+ 108       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+ 109       const result = await response.json()
+ 110       return result.success ? result.data : result
+ 111     },
+ 112   
+ 113     async deleteCategory(id: number): Promise<void> {
+ 114       const response = await fetch(`/api/categories?id=${id}`, {
+ 115         method: 'DELETE',
+ 116         credentials: 'include'
+ 117       })
+ 118       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+ 119     },
+ 120   
+ 121     async updateSettings(settings: Partial<SiteSettings>): Promise<void> {
+ 122       const response = await fetch('/api/site-settings', {
+ 123         method: 'PUT',
+ 124         headers: { 'Content-Type': 'application/json' },
+ 125         credentials: 'include',
+ 126         body: JSON.stringify(settings)
+ 127       })
+ 128       if (!response.ok) throw new Error(`HTTP ${response.status}`)
+ 129     }
+ 130   }
+ 131   
+ 132   // Начальное состояние
+ 133   const initialState = {
+ 134     // Данные
+ 135     products: [],
+ 136     categories: [],
+ 137     settings: {
+ 138       id: 0,
+ 139       siteName: '',
+ 140       updatedAt: ''
+ 141     } as SiteSettings,
+ 142     
+ 143     // Состояние загрузки
+ 144     loading: {
+ 145       products: false,
+ 146       categories: false,
+ 147       settings: false
+ 148     },
+ 149     
+ 150     // Ошибки
+ 151     errors: {
+ 152       products: null,
+ 153       categories: null,
+ 154       settings: null
+ 155     },
+ 156     
+ 157     // Время последнего обновления
+ 158     lastFetch: {
+ 159       products: null,
+ 160       categories: null,
+ 161       settings: null
+ 162     },
+ 163     
+ 164     // Флаги инициализации
+ 165     initialized: {
+ 166       products: false,
+ 167       categories: false,
+ 168       settings: false
+ 169     }
+ 170   }
+ 171   
+ 172   // Адаптер для преобразования Product[] в Prosthetic[] для обратной совместимости
+ 173   function adaptProductsToProsthetics(products: Product[], categories: Category[]): Prosthetic[] {
+ 174     const categoryMap = new Map(categories.map(cat => [cat.id, cat.name]))
+ 175     
+ 176     return products.map(product => {
+ 177       const categoryName = product.category_id != null ? categoryMap.get(product.category_id) : undefined
+ 178       const imageUrl = product.image_url || product.imageUrl
+ 179       
+ 180       return {
+ 181         id: product.id,
+ 182         name: product.name,
+ 183         category: categoryName,
+ 184         category_name: categoryName,
+ 185         manufacturer: product.manufacturer_name,
+ 186         manufacturer_name: product.manufacturer_name,
+ 187         price: product.price,
+ 188         discount_price: product.discount_price,
+ 189         imageUrl: imageUrl,
+ 190         image_url: imageUrl,
+ 191         images: product.images || [],
+ 192         inStock: product.stock_quantity > 0,
+ 193         stock_quantity: product.stock_quantity,
+ 194         sku: product.sku,
+ 195         description: product.description,
+ 196         category_id: product.category_id
+ 197       } as Prosthetic
+ 198     })
+ 199   }
+ 200   
+ 201   export const useAdminStore = create<AdminStore>()(
+ 202     subscribeWithSelector(
+ 203       immer((set, get) => ({
+ 204         ...initialState,
+ 205   
+ 206         // === ИНИЦИАЛИЗАЦИЯ ===
+ 207         
+ 208         initializeProducts: async () => {
+ 209           if (get().initialized.products && get().products.length > 0) {
+ 210             return // Уже инициализирован
+ 211           }
+ 212   
+ 213           set((state) => {
+ 214             state.loading.products = true
+ 215             state.errors.products = null
+ 216           })
+ 217   
+ 218           try {
+ 219             // Пытаемся получить из кеша
+ 220             const cache = await getCache()
+ 221             let products = await cache.get<Product[]>(CACHE_KEYS.PRODUCTS)
+ 222             
+ 223             if (!products) {
+ 224               // Загружаем с сервера
+ 225               products = await adminApi.fetchProducts()
+ 226               
+ 227               // Сохраняем в кеш
+ 228               await cache.set(CACHE_KEYS.PRODUCTS, products, {
+ 229                 ttl: 5 * 60 * 1000, // 5 минут
+ 230                 tags: [CACHE_TAGS.PRODUCTS]
+ 231               })
+ 232             }
  233   
- 234                 {/* Header */}
- 235                 <div className="mb-6 pr-12">
- 236                   <h2 className="text-2xl font-semibold mb-2">
- 237                     {t('header.contacts')}
- 238                   </h2>
- 239                   <p className="text-muted-foreground text-sm">
- 240                     {t('header.contactSubtitle')}
- 241                   </p>
- 242                 </div>
- 243   
- 244                 {/* Contact Information */}
- 245                 <div className="space-y-3">
- 246                   {/* Phone */}
- 247                   <a href="tel:+74951326265" className="block">
- 248                     <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors">
- 249                       <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
- 250                         <Phone className="w-4 h-4 text-primary-foreground" />
- 251                       </div>
- 252                       <div>
- 253                         <p className="font-medium text-sm">Teléfono</p>
- 254                         <p className="text-sm text-muted-foreground">
- 255                           +7 495 132-62-65
- 256                         </p>
- 257                       </div>
- 258                     </div>
- 259                   </a>
- 260   
- 261                   {/* Venezuela Phone - William Warrick */}
- 262                   <a href="tel:+584142328611" className="block">
- 263                     <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors">
- 264                       <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
- 265                         <Phone className="w-4 h-4 text-primary-foreground" />
- 266                       </div>
- 267                       <div>
- 268                         <p className="font-medium text-sm">Venezuela</p>
- 269                         <p className="text-sm text-muted-foreground">
- 270                           +58 414-2328611
- 271                         </p>
- 272                         <p className="text-xs text-muted-foreground">
- 273                           William Warrick
- 274                         </p>
- 275                       </div>
- 276                     </div>
- 277                   </a>
- 278   
- 279                   {/* Email */}
- 280                   <a href="mailto:info@venorus.ru" className="block">
- 281                     <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors">
- 282                       <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
- 283                         <Mail className="w-4 h-4 text-primary-foreground" />
- 284                       </div>
- 285                       <div>
- 286                         <p className="font-medium text-sm">Email</p>
- 287                         <p className="text-sm text-muted-foreground">
- 288                           info@venorus.ru
- 289                         </p>
- 290                       </div>
- 291                     </div>
- 292                   </a>
- 293   
- 294                   {/* Address */}
- 295                   <div className="flex items-center gap-3 p-3 rounded-lg border">
- 296                     <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
- 297                       <MapPin className="w-4 h-4 text-primary-foreground" />
- 298                     </div>
- 299                     <div>
- 300                       <p className="font-medium text-sm">Dirección</p>
- 301                       <p className="text-sm text-muted-foreground">
- 302                         121615, Москва, Рублевское ш., д. 26
- 303                       </p>
- 304                     </div>
- 305                   </div>
- 306   
- 307                   {/* Additional Contacts */}
- 308                   {(siteSettings as any)?.additionalContacts && (siteSettings as any).additionalContacts.length > 0 && (
- 309                     <div className="mt-6 pt-6 border-t">
- 310                       <h3 className="text-lg font-semibold mb-4">
- 311                         Contactos adicionales
- 312                       </h3>
- 313                       <AdditionalContacts
- 314                         contacts={(siteSettings as any).additionalContacts}
- 315                         className="space-y-3"
- 316                         theme="light"
- 317                       />
- 318                     </div>
- 319                   )}
- 320                 </div>
- 321               </div>
- 322             </div>
- 323           </div>
- 324         )}
- 325       </>
- 326     )
- 327   }
+ 234             set((state) => {
+ 235               state.products = products!
+ 236               state.loading.products = false
+ 237               state.initialized.products = true
+ 238               state.lastFetch.products = Date.now()
+ 239             })
+ 240             
+ 241             adaptedProductsCache = null // Сброс кеша при обновлении продуктов
+ 242   
+ 243             logger.info('Products initialized', { count: products.length })
+ 244           } catch (error) {
+ 245             const message = error instanceof Error ? error.message : 'Unknown error'
+ 246             set((state) => {
+ 247               state.loading.products = false
+ 248               state.errors.products = message
+ 249             })
+ 250             logger.error('Failed to initialize products:', error)
+ 251             throw error
+ 252           }
+ 253         },
+ 254   
+ 255         initializeCategories: async () => {
+ 256           if (get().initialized.categories && get().categories.length > 0) {
+ 257             return
+ 258           }
+ 259   
+ 260           set((state) => {
+ 261             state.loading.categories = true
+ 262             state.errors.categories = null
+ 263           })
+ 264   
+ 265           try {
+ 266             const cache = await getCache()
+ 267             let categories = await cache.get<Category[]>(CACHE_KEYS.CATEGORIES)
+ 268             
+ 269             if (!categories) {
+ 270               categories = await adminApi.fetchCategories()
+ 271               
+ 272               await cache.set(CACHE_KEYS.CATEGORIES, categories, {
+ 273                 ttl: 10 * 60 * 1000, // 10 минут (категории меняются реже)
+ 274                 tags: [CACHE_TAGS.CATEGORIES]
+ 275               })
+ 276             }
+ 277   
+ 278             set((state) => {
+ 279               state.categories = categories!
+ 280               state.loading.categories = false
+ 281               state.initialized.categories = true
+ 282               state.lastFetch.categories = Date.now()
+ 283             })
+ 284             
+ 285             adaptedProductsCache = null // Сброс кеша при обновлении категорий
+ 286   
+ 287             logger.info('Categories initialized', { count: categories.length })
+ 288           } catch (error) {
+ 289             const message = error instanceof Error ? error.message : 'Unknown error'
+ 290             set((state) => {
+ 291               state.loading.categories = false
+ 292               state.errors.categories = message
+ 293             })
+ 294             logger.error('Failed to initialize categories:', error)
+ 295             throw error
+ 296           }
+ 297         },
+ 298   
+ 299         initializeSettings: async () => {
+ 300           if (get().initialized.settings) {
+ 301             return
+ 302           }
+ 303   
+ 304           set((state) => {
+ 305             state.loading.settings = true
+ 306             state.errors.settings = null
+ 307           })
+ 308   
+ 309           try {
+ 310             const cache = await getCache()
+ 311             let settings = await cache.get<SiteSettings>(CACHE_KEYS.SETTINGS)
+ 312             
+ 313             if (!settings) {
+ 314               settings = await adminApi.fetchSettings()
+ 315               
+ 316               await cache.set(CACHE_KEYS.SETTINGS, settings, {
+ 317                 ttl: 15 * 60 * 1000, // 15 минут
+ 318                 tags: [CACHE_TAGS.SETTINGS]
+ 319               })
+ 320             }
+ 321   
+ 322             set((state) => {
+ 323               state.settings = settings!
+ 324               state.loading.settings = false
+ 325               state.initialized.settings = true
+ 326               state.lastFetch.settings = Date.now()
+ 327             })
+ 328   
+ 329             logger.info('Settings initialized')
+ 330           } catch (error) {
+ 331             const message = error instanceof Error ? error.message : 'Unknown error'
+ 332             set((state) => {
+ 333               state.loading.settings = false
+ 334               state.errors.settings = message
+ 335             })
+ 336             logger.error('Failed to initialize settings:', error)
+ 337             throw error
+ 338           }
+ 339         },
+ 340   
+ 341         initializeAll: async () => {
+ 342           await Promise.allSettled([
+ 343             get().initializeProducts(),
+ 344             get().initializeCategories(),
+ 345             get().initializeSettings()
+ 346           ])
+ 347         },
+ 348   
+ 349         // === ОБНОВЛЕНИЕ ДАННЫХ ===
+ 350   
+ 351         refreshProducts: async () => {
+ 352           set((state) => {
+ 353             state.loading.products = true
+ 354             state.errors.products = null
+ 355           })
+ 356   
+ 357           try {
+ 358             const products = await adminApi.fetchProducts()
+ 359             const cache = await getCache()
+ 360             
+ 361             await cache.set(CACHE_KEYS.PRODUCTS, products, {
+ 362               ttl: 5 * 60 * 1000,
+ 363               tags: [CACHE_TAGS.PRODUCTS]
+ 364             })
+ 365   
+ 366             set((state) => {
+ 367               state.products = products
+ 368               state.loading.products = false
+ 369               state.lastFetch.products = Date.now()
+ 370             })
+ 371   
+ 372             logger.info('Products refreshed', { count: products.length })
+ 373           } catch (error) {
+ 374             const message = error instanceof Error ? error.message : 'Unknown error'
+ 375             set((state) => {
+ 376               state.loading.products = false
+ 377               state.errors.products = message
+ 378             })
+ 379             throw error
+ 380           }
+ 381         },
+ 382   
+ 383         refreshCategories: async () => {
+ 384           set((state) => {
+ 385             state.loading.categories = true
+ 386             state.errors.categories = null
+ 387           })
+ 388   
+ 389           try {
+ 390             const categories = await adminApi.fetchCategories()
+ 391             const cache = await getCache()
+ 392             
+ 393             await cache.set(CACHE_KEYS.CATEGORIES, categories, {
+ 394               ttl: 10 * 60 * 1000,
+ 395               tags: [CACHE_TAGS.CATEGORIES]
+ 396             })
+ 397   
+ 398             set((state) => {
+ 399               state.categories = categories
+ 400               state.loading.categories = false
+ 401               state.lastFetch.categories = Date.now()
+ 402             })
+ 403   
+ 404             logger.info('Categories refreshed', { count: categories.length })
+ 405           } catch (error) {
+ 406             const message = error instanceof Error ? error.message : 'Unknown error'
+ 407             set((state) => {
+ 408               state.loading.categories = false
+ 409               state.errors.categories = message
+ 410             })
+ 411             throw error
+ 412           }
+ 413         },
+ 414   
+ 415         refreshSettings: async () => {
+ 416           set((state) => {
+ 417             state.loading.settings = true
+ 418             state.errors.settings = null
+ 419           })
+ 420   
+ 421           try {
+ 422             const settings = await adminApi.fetchSettings()
+ 423             const cache = await getCache()
+ 424             
+ 425             await cache.set(CACHE_KEYS.SETTINGS, settings, {
+ 426               ttl: 15 * 60 * 1000,
+ 427               tags: [CACHE_TAGS.SETTINGS]
+ 428             })
+ 429   
+ 430             set((state) => {
+ 431               state.settings = settings
+ 432               state.loading.settings = false
+ 433               state.lastFetch.settings = Date.now()
+ 434             })
+ 435   
+ 436             logger.info('Settings refreshed')
+ 437           } catch (error) {
+ 438             const message = error instanceof Error ? error.message : 'Unknown error'
+ 439             set((state) => {
+ 440               state.loading.settings = false
+ 441               state.errors.settings = message
+ 442             })
+ 443             throw error
+ 444           }
+ 445         },
+ 446   
+ 447         refreshAll: async () => {
+ 448           await Promise.allSettled([
+ 449             get().refreshProducts(),
+ 450             get().refreshCategories(),
+ 451             get().refreshSettings()
+ 452           ])
+ 453         },
+ 454   
+ 455         // === CRUD ПРОДУКТЫ ===
+ 456   
+ 457         createProduct: async (productData) => {
+ 458           set((state) => {
+ 459             state.loading.products = true
+ 460           })
+ 461   
+ 462           try {
+ 463             const newProduct = await adminApi.createProduct(productData)
+ 464             
+ 465             set((state) => {
+ 466               state.products.push(newProduct)
+ 467               state.loading.products = false
+ 468             })
+ 469   
+ 470             // Инвалидируем кеш продуктов
+ 471             const cache = await getCache()
+ 472             await cache.invalidateByTags([CACHE_TAGS.PRODUCTS])
+ 473   
+ 474             logger.info('Product created', { id: newProduct.id, name: newProduct.name })
+ 475             return newProduct
+ 476           } catch (error) {
+ 477             set((state) => {
+ 478               state.loading.products = false
+ 479             })
+ 480             throw error
+ 481           }
+ 482         },
+ 483   
+ 484         updateProduct: async (id, updates) => {
+ 485           set((state) => {
+ 486             state.loading.products = true
+ 487           })
+ 488   
+ 489           try {
+ 490             const updatedProduct = await adminApi.updateProduct(id, updates)
+ 491             
+ 492             set((state) => {
+ 493               const index = state.products.findIndex(p => p.id === id)
+ 494               if (index !== -1) {
+ 495                 state.products[index] = updatedProduct
+ 496               }
+ 497               state.loading.products = false
+ 498             })
+ 499   
+ 500             // Инвалидируем кеш продуктов и конкретного продукта
+ 501             const cache = await getCache()
+ 502             await cache.invalidateByTags([
+ 503               CACHE_TAGS.PRODUCTS,
+ 504               CACHE_TAGS.PRODUCT(id.toString())
+ 505             ])
+ 506   
+ 507             logger.info('Product updated', { id, updates: Object.keys(updates) })
+ 508             return updatedProduct
+ 509           } catch (error) {
+ 510             set((state) => {
+ 511               state.loading.products = false
+ 512             })
+ 513             throw error
+ 514           }
+ 515         },
+ 516   
+ 517         deleteProduct: async (id) => {
+ 518           set((state) => {
+ 519             state.loading.products = true
+ 520           })
+ 521   
+ 522           try {
+ 523             await adminApi.deleteProduct(id)
+ 524             
+ 525             // Инвалидируем кеш ДО обновления состояния
+ 526             const cache = await getCache()
+ 527             await cache.invalidateByTags([
+ 528               CACHE_TAGS.PRODUCTS,
+ 529               CACHE_TAGS.PRODUCT(id.toString())
+ 530             ])
+ 531   
+ 532             // Принудительно перезагружаем список товаров с сервера
+ 533             const products = await adminApi.fetchProducts()
+ 534             
+ 535             // ВАЖНО: Обновляем кеш новыми данными
+ 536             await cache.set(CACHE_KEYS.PRODUCTS, products, {
+ 537               ttl: 5 * 60 * 1000,
+ 538               tags: [CACHE_TAGS.PRODUCTS]
+ 539             })
+ 540             
+ 541             set((state) => {
+ 542               state.products = products
+ 543               state.loading.products = false
+ 544               state.lastFetch.products = Date.now()
+ 545             })
+ 546   
+ 547             logger.info('Product deleted, list refreshed and cache updated', { id, newCount: products.length })
+ 548           } catch (error) {
+ 549             set((state) => {
+ 550               state.loading.products = false
+ 551             })
+ 552             throw error
+ 553           }
+ 554         },
+ 555   
+ 556         // === CRUD КАТЕГОРИИ ===
+ 557   
+ 558         createCategory: async (categoryData) => {
+ 559           set((state) => {
+ 560             state.loading.categories = true
+ 561           })
+ 562   
+ 563           try {
+ 564             const newCategory = await adminApi.createCategory(categoryData)
+ 565             
+ 566             set((state) => {
+ 567               state.categories.push(newCategory)
+ 568               state.loading.categories = false
+ 569             })
+ 570   
+ 571             const cache = await getCache()
+ 572             await cache.invalidateByTags([CACHE_TAGS.CATEGORIES])
+ 573   
+ 574             logger.info('Category created', { id: newCategory.id, name: newCategory.name })
+ 575             return newCategory
+ 576           } catch (error) {
+ 577             set((state) => {
+ 578               state.loading.categories = false
+ 579             })
+ 580             throw error
+ 581           }
+ 582         },
+ 583   
+ 584         updateCategory: async (id, updates) => {
+ 585           set((state) => {
+ 586             state.loading.categories = true
+ 587           })
+ 588   
+ 589           try {
+ 590             const updatedCategory = await adminApi.updateCategory(id, updates)
+ 591             
+ 592             set((state) => {
+ 593               const index = state.categories.findIndex(c => c.id === id)
+ 594               if (index !== -1) {
+ 595                 state.categories[index] = updatedCategory
+ 596               }
+ 597               state.loading.categories = false
+ 598             })
+ 599   
+ 600             const cache = await getCache()
+ 601             await cache.invalidateByTags([
+ 602               CACHE_TAGS.CATEGORIES,
+ 603               CACHE_TAGS.CATEGORY(id.toString())
+ 604             ])
+ 605   
+ 606             logger.info('Category updated', { id, updates: Object.keys(updates) })
+ 607             return updatedCategory
+ 608           } catch (error) {
+ 609             set((state) => {
+ 610               state.loading.categories = false
+ 611             })
+ 612             throw error
+ 613           }
+ 614         },
+ 615   
+ 616         deleteCategory: async (id) => {
+ 617           set((state) => {
+ 618             state.loading.categories = true
+ 619           })
+ 620   
+ 621           try {
+ 622             await adminApi.deleteCategory(id)
+ 623             
+ 624             set((state) => {
+ 625               state.categories = state.categories.filter(c => c.id !== id)
+ 626               state.loading.categories = false
+ 627             })
+ 628   
+ 629             const cache = await getCache()
+ 630             await cache.invalidateByTags([
+ 631               CACHE_TAGS.CATEGORIES,
+ 632               CACHE_TAGS.CATEGORY(id.toString())
+ 633             ])
+ 634   
+ 635             logger.info('Category deleted', { id })
+ 636           } catch (error) {
+ 637             set((state) => {
+ 638               state.loading.categories = false
+ 639             })
+ 640             throw error
+ 641           }
+ 642         },
+ 643   
+ 644         // === НАСТРОЙКИ ===
+ 645   
+ 646         updateSettings: async (newSettings) => {
+ 647           set((state) => {
+ 648             state.loading.settings = true
+ 649           })
+ 650   
+ 651           try {
+ 652             await adminApi.updateSettings(newSettings)
+ 653             
+ 654             set((state) => {
+ 655               Object.assign(state.settings, newSettings)
+ 656               state.loading.settings = false
+ 657             })
+ 658   
+ 659             const cache = await getCache()
+ 660             await cache.invalidateByTags([CACHE_TAGS.SETTINGS])
+ 661   
+ 662             logger.info('Settings updated', { keys: Object.keys(newSettings) })
+ 663           } catch (error) {
+ 664             set((state) => {
+ 665               state.loading.settings = false
+ 666             })
+ 667             throw error
+ 668           }
+ 669         },
+ 670   
+ 671         // === СЕЛЕКТОРЫ ===
+ 672   
+ 673         getProduct: (id) => {
+ 674           return get().products.find(p => p.id === id)
+ 675         },
+ 676   
+ 677         getProductsByCategory: (categoryId) => {
+ 678           return get().products.filter((p: any) => p.category_id === categoryId)
+ 679         },
+ 680   
+ 681         getProductsByManufacturer: (manufacturerId) => {
+ 682           return get().products.filter((p: any) => p.manufacturer_id === manufacturerId)
+ 683         },
+ 684   
+ 685         searchProducts: (query) => {
+ 686           const lowerQuery = query.toLowerCase()
+ 687           return get().products.filter((p: any) => 
+ 688             p.name.toLowerCase().includes(lowerQuery) ||
+ 689             p.sku?.toLowerCase().includes(lowerQuery) ||
+ 690             p.category_name?.toLowerCase().includes(lowerQuery) ||
+ 691             p.manufacturer_name?.toLowerCase().includes(lowerQuery)
+ 692           )
+ 693         },
+ 694   
+ 695         getCategory: (id) => {
+ 696           return get().categories.find(c => c.id === id)
+ 697         },
+ 698   
+ 699         getRootCategories: () => {
+ 700           return get().categories.filter((c: Category) => c.parent_id === null)
+ 701         },
+ 702   
+ 703         getCategoryChildren: (id) => {
+ 704           return get().categories.filter((c: Category) => c.parent_id === id)
+ 705         },
+ 706   
+ 707         getCategoryPath: (id) => {
+ 708           const categories = get().categories
+ 709           const path: Category[] = []
+ 710           let current = categories.find(c => c.id === id)
+ 711           
+ 712           while (current) {
+ 713             path.unshift(current)
+ 714             current = current.parent_id ? categories.find(c => c.id === current!.parent_id) : undefined
+ 715           }
+ 716           
+ 717           return path
+ 718         },
+ 719   
+ 720         isLoading: (resource) => {
+ 721           const loading = get().loading
+ 722           if (resource) {
+ 723             return loading[resource]
+ 724           }
+ 725           return Object.values(loading).some(Boolean)
+ 726         },
+ 727   
+ 728         hasError: (resource) => {
+ 729           const errors = get().errors
+ 730           if (resource) {
+ 731             return errors[resource] !== null
+ 732           }
+ 733           return Object.values(errors).some(e => e !== null)
+ 734         },
+ 735   
+ 736         isInitialized: (resource) => {
+ 737           const initialized = get().initialized
+ 738           if (resource) {
+ 739             return initialized[resource]
+ 740           }
+ 741           return Object.values(initialized).every(Boolean)
+ 742         },
+ 743   
+ 744         getProductsCount: () => {
+ 745           return get().products.length
+ 746         },
+ 747   
+ 748         getCategoriesCount: () => {
+ 749           return get().categories.length
+ 750         },
+ 751   
+ 752         getActiveProductsCount: () => {
+ 753           return get().products.filter((p: any) => p.inStock !== false).length
+ 754         },
+ 755         
+ 756         // Обратная совместимость: адаптирует Product[] в Prosthetic[] с мемоизацией
+ 757         getAdaptedProducts: () => {
+ 758           const state = get()
+ 759           
+ 760           // Проверяем, нужно ли пересчитывать
+ 761           if (adaptedProductsCache && 
+ 762               adaptedProductsCache.products === state.products &&
+ 763               adaptedProductsCache.categories === state.categories) {
+ 764             return adaptedProductsCache.result
+ 765           }
+ 766           
+ 767           // Пересчитываем и кешируем
+ 768           const result = adaptProductsToProsthetics(state.products, state.categories)
+ 769           adaptedProductsCache = {
+ 770             products: state.products,
+ 771             categories: state.categories,
+ 772             result
+ 773           }
+ 774           
+ 775           return result
+ 776         },
+ 777   
+ 778         // === УТИЛИТЫ ===
+ 779   
+ 780         reset: () => {
+ 781           adaptedProductsCache = null // Сброс кеша
+ 782           set(() => ({ ...initialState }))
+ 783         },
+ 784   
+ 785         clearErrors: () => {
+ 786           set((state) => {
+ 787             state.errors = {
+ 788               products: null,
+ 789               categories: null,
+ 790               settings: null
+ 791             }
+ 792           })
+ 793         }
+ 794       }))
+ 795     )
+ 796   )
+ 797   
+ 798   // Селекторы для оптимизации (избегают лишних ререндеров)
+ 799   export const adminSelectors = {
+ 800     products: (state: AdminStore) => state.products,
+ 801     categories: (state: AdminStore) => state.categories,
+ 802     settings: (state: AdminStore) => state.settings,
+ 803     isProductsLoading: (state: AdminStore) => state.loading.products,
+ 804     isCategoriesLoading: (state: AdminStore) => state.loading.categories,
+ 805     isSettingsLoading: (state: AdminStore) => state.loading.settings,
+ 806     productsError: (state: AdminStore) => state.errors.products,
+ 807     categoriesError: (state: AdminStore) => state.errors.categories,
+ 808     settingsError: (state: AdminStore) => state.errors.settings,
+ 809     isInitialized: (state: AdminStore) => state.isInitialized()
+ 810   }
 
-=== End of C:\Users\1\Documents\GitHub\venorus.net\components\header.tsx ===
+=== End of C:\Users\1\Documents\GitHub\venorus.net\lib\stores\admin-store.ts ===
 
 
 

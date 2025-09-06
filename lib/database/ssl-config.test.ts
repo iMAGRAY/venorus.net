@@ -8,7 +8,7 @@ import { getSSLConfig, clearSSLCache, getSSLStatus } from './ssl-config'
 const mockFs = fs as any
 
 // Mock logger
-// @ts-ignore
+jest.mock('@/lib/logger', () => ({
   logger: {
     info: jest.fn(),
     warn: jest.fn(),

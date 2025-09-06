@@ -173,24 +173,29 @@ const initialState = {
 function adaptProductsToProsthetics(products: Product[], categories: Category[]): Prosthetic[] {
   const categoryMap = new Map(categories.map(cat => [cat.id, cat.name]))
   
-  return products.map(product => ({
-    id: product.id,
-    name: product.name,
-    category: typeof product.category_id === 'number' ? categoryMap.get(product.category_id) : undefined,
-    category_name: typeof product.category_id === 'number' ? categoryMap.get(product.category_id) : undefined,
-    manufacturer: product.manufacturer_name,
-    manufacturer_name: product.manufacturer_name,
-    price: product.price,
-    discount_price: product.discount_price,
-    imageUrl: product.main_image_url,
-    image_url: product.main_image_url,
-    images: product.image_urls,
-    inStock: product.stock_quantity > 0,
-    stock_quantity: product.stock_quantity,
-    sku: product.sku,
-    description: product.description,
-    category_id: product.category_id
-  } as Prosthetic))
+  return products.map(product => {
+    const categoryName = product.category_id != null ? categoryMap.get(product.category_id) : undefined
+    const imageUrl = product.image_url || product.imageUrl
+    
+    return {
+      id: product.id,
+      name: product.name,
+      category: categoryName,
+      category_name: categoryName,
+      manufacturer: product.manufacturer_name,
+      manufacturer_name: product.manufacturer_name,
+      price: product.price,
+      discount_price: product.discount_price,
+      imageUrl: imageUrl,
+      image_url: imageUrl,
+      images: product.images || [],
+      inStock: product.stock_quantity > 0,
+      stock_quantity: product.stock_quantity,
+      sku: product.sku,
+      description: product.description,
+      category_id: product.category_id
+    } as Prosthetic
+  })
 }
 
 export const useAdminStore = create<AdminStore>()(

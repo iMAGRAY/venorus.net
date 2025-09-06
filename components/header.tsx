@@ -1,8 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, X, Phone, Mail, MapPin, ClipboardList } from "lucide-react"
+import { Phone, Mail, MapPin, ClipboardList, X } from "lucide-react"
 import { useAdminStore } from "@/lib/stores"
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { InstantLink } from "@/components/instant-link"
@@ -61,9 +60,8 @@ export default function Header() {
   const isInitialized = useAdminStore(state => state.initialized.settings)
   const initializeSettings = useAdminStore(state => state.initializeSettings)
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
-  // Inicialización de configuraciones
+  // Initialize settings
   useEffect(() => {
     if (!isInitialized) {
       initializeSettings()
@@ -79,18 +77,8 @@ export default function Header() {
   const handleContactClick = (e: React.MouseEvent) => {
     e.preventDefault()
     setIsContactModalOpen(true)
-    // Cerrar menú lateral al abrir modal de contactos
-    setIsSheetOpen(false)
   }
 
-  // Функция для обработки открытия/закрытия бокового меню
-  const handleSheetOpenChange = (open: boolean) => {
-    setIsSheetOpen(open)
-    // Cerrar modal de contactos al abrir menú lateral
-    if (open) {
-      setIsContactModalOpen(false)
-    }
-  }
 
   return (
     <>
@@ -98,7 +86,7 @@ export default function Header() {
 
       <header className="sticky top-0 z-50 w-full backdrop-blur-md border-b bg-background/80 border-border">
         <div className="container flex items-center h-14 mx-auto px-4 lg:px-6">
-          {/* Логотип */}
+          {/* Logo */}
           <div className="flex items-center">
             <InstantLink href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
               <div className="w-7 h-7 flex items-center justify-center">
@@ -108,7 +96,7 @@ export default function Header() {
             </InstantLink>
           </div>
 
-          {/* Центральная навигация */}
+          {/* Central navigation */}
           <nav className="flex-1 hidden md:flex items-center justify-center">
             <div className="flex items-center gap-1">
               {navLinks.filter((l) => l.href !== "#contact").map((link) => (
@@ -123,9 +111,9 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Правая часть */}
+          {/* Right section */}
           <div className="flex items-center gap-2 ml-auto">
-            {/* Контакты (десктоп) */}
+            {/* Contacts (desktop) */}
             <div className="hidden md:flex">
               {[contactLink].map((link) => (
                 link?.href === "#contact" ? (
@@ -140,7 +128,7 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Контакты (мобильная) */}
+            {/* Contacts (mobile) */}
             <div className="md:hidden">
               <button
                 onClick={handleContactClick}
@@ -154,59 +142,6 @@ export default function Header() {
             {/* Carrito */}
             <SafeCartButton />
 
-            {/* Мобильное меню */}
-            <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden h-9 w-9"
-                >
-                  <Menu className="w-4 h-4" />
-                  <span className="sr-only">Menú</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-xs">
-                <nav className="grid gap-2 py-4">
-                  <InstantLink href="/" className="flex items-center gap-2 mb-6">
-                    <div className="w-7 h-7 flex items-center justify-center">
-                      <SafeImage
-                        src="/logo.webp?v=2"
-                        alt="Venorus"
-                        width={24}
-                        height={24}
-                        className="w-6 h-6"
-                      />
-                    </div>
-                    <span className="text-lg font-semibold">Venorus</span>
-                  </InstantLink>
-
-
-                  {navLinks.map((link) => (
-                    link.href === "#contact" ? (
-                      <button
-                        key={link.label}
-                        onClick={(e) => {
-                          handleContactClick(e);
-                          setIsSheetOpen(false);
-                        }}
-                        className="text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
-                      >
-                        {link.label}
-                      </button>
-                    ) : (
-                      <InstantLink
-                        key={link.label}
-                        href={link.href}
-                        className="text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
-                      >
-                        {link.label}
-                      </InstantLink>
-                    )
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
           </div>
         </div>
       </header>

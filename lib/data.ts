@@ -10,6 +10,8 @@ export interface Prosthetic {
   discount_price?: number
   imageUrl?: string
   image_url?: string
+  primary_image_url?: string
+  primaryImageUrl?: string
   images?: string[]
   specifications?: any[]
   modelLine?: string
@@ -29,7 +31,6 @@ export interface Prosthetic {
   weight?: string
   short_name?: string
   category_id?: number | string
-  primary_image_url?: string
   modelLineId?: string
   manufacturerId?: string
 }

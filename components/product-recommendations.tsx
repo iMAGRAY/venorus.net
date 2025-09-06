@@ -4,10 +4,13 @@ import { useState, useEffect, useMemo } from "react"
 import { RecommendationEngine } from "@/lib/recommendation-engine"
 import { ProductCardSimple } from "@/components/product-card-simple"
 import { SafeImage } from "@/components/safe-image"
+import { getProductImageSrc } from "@/lib/product-image-utils"
+import { PROSTHETIC_FALLBACK_IMAGE } from "@/lib/fallback-image"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Sparkles, Package, Building2, TrendingUp } from "lucide-react"
 import type { Prosthetic } from "@/lib/data"
 import { useI18n } from "@/components/i18n-provider"
+
 
 // Функция загрузки товаров из API
 async function fetchProducts(): Promise<Prosthetic[]> {
@@ -245,6 +248,12 @@ export function ProductRecommendationsSidebar({
 }: ProductRecommendationsProps) {
   const { t } = useI18n()
   const [sourceProducts, setSourceProducts] = useState<Prosthetic[]>(allProducts)
+  const [isClient, setIsClient] = useState(false)
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Загружаем товары, если они не переданы (только один раз)
   useEffect(() => {
@@ -307,7 +316,7 @@ export function ProductRecommendationsSidebar({
             <div className="flex gap-3 p-2 rounded-lg hover:bg-blue-50/50 transition-colors">
               <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-sky-50 to-blue-50">
                 <SafeImage
-                  src={product.imageUrl || product.image_url || (product.images && product.images.length > 0 ? product.images[0] : null) || '/placeholder.jpg'}
+                  src={getProductImageSrc(product)}
                   alt={product.name}
                   fill
                   sizes="64px"

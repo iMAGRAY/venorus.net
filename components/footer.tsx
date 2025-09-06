@@ -1,12 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Mail, Phone, MapPin, Youtube } from "lucide-react"
-import { VkIcon, TelegramIcon, OkIcon } from "@/components/social-icons"
+import { Mail, Phone, MapPin } from "lucide-react"
 import FactoryIcon from '@mui/icons-material/Factory'
-import StarIcon from '@mui/icons-material/Star'
-import ShieldIcon from '@mui/icons-material/Shield'
-import VerifiedIcon from '@mui/icons-material/Verified'
 import HomeIcon from '@mui/icons-material/Home'
 import { AdditionalContacts } from "@/components/additional-contacts"
 import { useAdminStore } from "@/lib/stores"
@@ -105,59 +101,6 @@ export function Footer() {
               </div>
             )}
 
-            {/* Social Media */}
-            {(siteSettings?.socialMedia?.vk || siteSettings?.socialMedia?.telegram ||
-              siteSettings?.socialMedia?.youtube || siteSettings?.socialMedia?.ok) && (
-              <div className="mt-6 pt-4 border-t">
-                <h5 className="text-sm font-medium mb-3">{t('footer.socialTitle')}</h5>
-                <div className="flex gap-2">
-                  {siteSettings.socialMedia?.vk && (
-                    <a
-                      href={siteSettings.socialMedia.vk}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors"
-                      title="VKontakte"
-                    >
-                      <VkIcon className="w-4 h-4 text-primary-foreground" />
-                    </a>
-                  )}
-                  {siteSettings.socialMedia?.telegram && (
-                    <a
-                      href={siteSettings.socialMedia.telegram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors"
-                      title="Telegram"
-                    >
-                      <TelegramIcon className="w-4 h-4 text-primary-foreground" />
-                    </a>
-                  )}
-                  {siteSettings.socialMedia?.youtube && (
-                    <a
-                      href={siteSettings.socialMedia.youtube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors"
-                      title="YouTube"
-                    >
-                      <Youtube className="w-4 h-4 text-primary-foreground" />
-                    </a>
-                  )}
-                  {siteSettings.socialMedia?.ok && (
-                    <a
-                      href={siteSettings.socialMedia.ok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors"
-                      title="Odnoklassniki"
-                    >
-                      <OkIcon className="w-4 h-4 text-primary-foreground" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

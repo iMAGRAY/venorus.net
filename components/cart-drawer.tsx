@@ -132,7 +132,7 @@ ${items.map(item => {
                 <ClipboardList className="w-16 h-16 text-blue-500 mx-auto mb-6" />
                 <h3 className="text-xl font-semibold text-slate-800 mb-4">{t('cart.empty')}</h3>
                 <p className="text-slate-600 mb-6">
-                  Добавьте товары в заявку для оформления заказа
+                  {t('cart.emptyDescription')}
                 </p>
                 <Button
                   onClick={() => setIsOpen(false)}

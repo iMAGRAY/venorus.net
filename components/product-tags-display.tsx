@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Sparkles, TrendingUp, Star, Percent, Crown, Gem, Leaf, ShieldCheck, Truck, Flag, Tag, ChevronDown, ChevronUp } from 'lucide-react'
+import { useI18n } from '@/components/i18n-provider'
 
 interface ProductTag {
   id: number
@@ -44,6 +45,7 @@ export function ProductTagsDisplay({
   className = '',
   maxTags = 3 
 }: ProductTagsDisplayProps) {
+  const { t } = useI18n()
   const [tags, setTags] = useState<ProductTag[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -51,13 +53,6 @@ export function ProductTagsDisplay({
   const fetchProductTags = useCallback(async () => {
       try {
         setIsLoading(true)
-        // Temporarily return empty tags to prevent React error #185
-        setTags([])
-        setIsLoading(false)
-        return
-        
-        /* DISABLED TEMPORARILY TO FIX REACT ERROR #185
-        const _allTags: ProductTag[] = []
         const tagMap = new Map<number, ProductTag>()
         
         // Загружаем теги товара
@@ -89,7 +84,6 @@ export function ProductTagsDisplay({
         // Преобразуем Map в массив и сортируем по sort_order
         const uniqueTags = Array.from(tagMap.values()).sort((a, b) => a.sort_order - b.sort_order)
         setTags(uniqueTags)
-        */
         
       } catch (error) {
         console.error('Error fetching tags:', error)
@@ -174,7 +168,7 @@ export function ProductTagsDisplay({
           }`}
           onClick={() => setIsExpanded(false)}
         >
-          Свернуть
+          {t('common.hide')}
           <ChevronUp className={variant === 'compact' ? "h-2.5 w-2.5" : "h-3 w-3"} />
         </Badge>
       )}
